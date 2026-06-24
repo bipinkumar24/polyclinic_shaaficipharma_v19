@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="web.SwitchBranchMenu">
+    <div class="o_switch_branch_menu d-none d-md-block">
+        <DropdownGroup group="'web-navbar-group'">
+            <Dropdown
+                position="'bottom-end'"
+                menuRef="containerRef"
+                state="this.dropdown"
+                onStateChanged.bind="handleDropdownChange"
+                navigationOptions="navigationOptions"
+                menuClass="'o_switch_branch_menu_dropdown'"
+                disabled="isSingleBranch"
+            >
+                <button t-att-disabled="isSingleBranch" t-att-title="BranchService.currentBranch.name">
+                    <i class="fa fa-building d-lg-none"/>
+                    <span class="oe_topbar_name d-none d-lg-block text-truncate" t-esc="BranchService.currentBranch.name"/>
+                </button>
+
+                <t t-set-slot="content">
+                    <t t-call="web.SwitchBranchMenu.Items"/>
+                </t>
+            </Dropdown>
+        </DropdownGroup>
+    </div>
+</t>
+
+
+<t t-name="web.SwitchBranchMenu.Items">
+     <div class="d-flex flex-row pe-2 mb-2" t-att-class="{ 'visually-hidden': !state.showFilter }">
+         <div
+            role="menuitemcheckbox"
+            t-att-aria-checked="BranchSelector.selectedBranchesIds.length > 0 ? 'true' : 'false'"
+            t-att-aria-label="BranchSelector.selectedBranchesIds.length > 0 ? 'Deselect all' : 'Select all'"
+            t-att-title="BranchSelector.selectedBranchesIds.length > 0 ? 'Deselect all' : 'Select all'"
+            t-on-click="() => BranchSelector.selectAll()"
+        >
+            <span class="btn border-0 pt-2 px-2" t-att-class="selectAllClass">
+                <i class="fa fa-fw" t-att-class="selectAllIcon"/>
+            </span>
+        </div>
+         <div
+                 class="form-control d-flex align-items-center py-1"
+                 role="search"
+         >
+            <i class="oi oi-search me-2" role="img" aria-label="Search..." title="Search..."/>
+             <div class="d-flex flex-grow-1 flex-wrap gap-1">
+                <input
+                        t-att-value="state.searchFilter"
+                        t-on-input="this.onSearch"
+                        t-ref="inputRef"
+                        type="text"
+                        class="o_input flex-grow-1 border-0 o-navigable"
+                        placeholder="Search..."
+                        role="searchbox"
+                />
+            </div>
+        </div>
+    </div>
+
+    <div class="o_switch_branch_menu_items">
+        <t t-foreach="branchesEntries" t-as="entry" t-key="entry.branch.id">
+            <SwitchBranchItem branch="entry.branch" level="entry.level"/>
+        </t>
+    </div>
+
+     <div t-if="BranchSelector.hasSelectionChanged" class="o_switch_branch_menu_buttons d-flex justify-content-end gap-2 px-2 pt-2">
+        <button
+            class="btn btn-primary o-navigable flex-grow-1 text-center"
+            t-on-click="() => this.confirm()"
+        >
+            Confirm
+        </button>
+        <button
+            class="btn btn-secondary o-navigable flex-grow-1 text-center"
+            t-on-click="() => BranchSelector.reset()"
+        >
+            Reset
+        </button>
+    </div>
+</t>
+
+</templates>
+

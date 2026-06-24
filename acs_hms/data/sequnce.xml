@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="seq_daily_custom" model="ir.sequence">
+        <field name="name">Daily Custom Sequence</field>
+        <field name="code">daily.custom.sequence</field>
+        <field name="prefix">DAILY/%(month)s/%(day)s/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+</odoo>

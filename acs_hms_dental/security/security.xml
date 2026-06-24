@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="group_hms_odontology" model="res.groups">
+        <field name="name">Odontology User</field>
+        <field name="privilege_id" ref="acs_hms_base.privilege_hms_speciality"/>
+        <field name="implied_ids" eval="[(4, ref('acs_hms_base.group_hms_user'))]"/>
+        <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+</odoo>

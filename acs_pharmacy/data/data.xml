@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Lot-related subtypes for messaging / Chatter -->
+        <record id="mt_lock_lot" model="mail.message.subtype">
+            <field name="name">Serial Number/lot blocked</field>
+            <field name="res_model">stock.lot</field>
+            <field name="default" eval="False"/>
+            <field name="description">Serial Number/lot blocked</field>
+        </record>
+
+        <record id="mt_unlock_lot" model="mail.message.subtype">
+            <field name="name">Serial Number/lot unblocked</field>
+            <field name="res_model">stock.lot</field>
+            <field name="default" eval="False"/>
+            <field name="description">Serial Number/lot unblocked</field>
+        </record>
+
+        <record forcecreate="True" id="ir_cron_block_expired_lots" model="ir.cron">
+            <field name="name">Block Expired Lots</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="stock.model_stock_lot"/>
+            <field name="code">model.cron_block_expired_lots()</field>
+        </record>
+
+    </data>
+</odoo>

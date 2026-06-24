@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<odoo>
+    <!-- radiology View -->
+    <record id="patient_radiology_request_inherit_form" model="ir.ui.view">
+        <field name="name">acs.radiology.request.form</field>
+        <field name="model">acs.radiology.request</field>
+        <field name="inherit_id" ref="acs_radiology.patient_radiology_test_request_form"/>
+        <field name="arch" type="xml">
+            <field name="acs_no_radiology_result" position="after">
+                <field name="branch_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>

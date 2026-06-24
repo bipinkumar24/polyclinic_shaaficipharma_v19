@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!-- Appointment View -->
+    <record id="view_hms_odontology_appointment_form" model="ir.ui.view">
+        <field name="name">hms.appointment.form</field>
+        <field name="model">hms.appointment</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_appointment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook/page[@name='diseases']" position="after">
+                <page name="odontology" string="Odontology" invisible="department_type!='dental'" groups="acs_hms_dental.group_hms_odontology">
+                    <separator string="Medical Questionnaire"/>
+                    <field name='medical_questionnaire_ids' readonly="state in ('cancel', 'done')"/>
+                    <separator string="Dental Questionnaire"/>
+                    <field name='dental_questionnaire_ids' readonly="state in ('cancel', 'done')"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_appointment" model="ir.actions.act_window">
+        <field name="name">Appointment</field>
+        <field name="path">almightyhms-dental-appointment</field>
+        <field name="res_model">hms.appointment</field>
+        <field name="view_mode">list,form,kanban,calendar,pivot</field>
+        <field name="domain" eval="[('department_id.department_type','=','dental')]"/>
+        <field name="context">{'search_default_today': 1,'search_default_done': 1,'acs_department_type': 'dental'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+            <p>
+                Click to add an Dental Appointment.
+            </p>
+        </field>
+    </record>
+
+    <!-- Treatment -->
+    <record id="view_hospital_hms_treatment_form" model="ir.ui.view">
+        <field name="name">hms.treatment.form</field>
+        <field name="model">hms.treatment</field>
+        <field name="inherit_id" ref="acs_hms.view_hospital_hms_treatment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='patient_procedure_ids']//field[@name='product_id']" position="after">
+                <field name="tooth_ids" widget="many2many_tags" column_invisible="parent.department_type!='dental'" required="parent.department_type=='dental'"/>
+                <field name="tooth_surface_ids" widget="many2many_tags" column_invisible="parent.department_type!='dental'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_acs_treatment" model="ir.actions.act_window">
+        <field name="name">Treatment</field>
+        <field name="path">almightyhms-dental-treatment</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">hms.treatment</field>
+        <field name="view_mode">list,form,calendar,pivot</field>
+        <field name="domain" eval="[('department_id.department_type','=','dental')]"/>
+        <field name="context">{'acs_department_type': 'dental'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+            <p>
+                Click to add a Dental Treatment.
+            </p>
+        </field>
+    </record>
+
+    <!-- Patient Procedures View -->
+    <record id="view_acs_patient_procedure_list" model="ir.ui.view">
+        <field name="name">acs.patient.procedure.list</field>
+        <field name="model">acs.patient.procedure</field>
+        <field name="inherit_id" ref="acs_hms.view_acs_patient_procedure_list"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="tooth_ids" widget="many2many_tags" groups="acs_hms_dental.group_hms_odontology"/>
+                <field name="tooth_surface_ids" widget="many2many_tags" groups="acs_hms_dental.group_hms_odontology"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_acs_patient_procedure_form" model="ir.ui.view">
+        <field name="name">acs.patient.procedure.form</field>
+        <field name="model">acs.patient.procedure</field>
+        <field name="inherit_id" ref="acs_hms.view_acs_patient_procedure_form"/>
+        <field name="arch" type="xml">
+            <field name="appointment_ids" position="after">
+                <field name="tooth_ids" widget="many2many_tags" readonly="state in ('cancel', 'done')" invisible="department_type!='dental'" groups="acs_hms_dental.group_hms_odontology"/>
+                <field name="tooth_surface_ids" widget="many2many_tags" readonly="state in ('cancel', 'done')" invisible="department_type!='dental'" groups="acs_hms_dental.group_hms_odontology"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_acs_dental_procedure_search" model="ir.ui.view">
+        <field name="name">acs.patient.procedure.search</field>
+        <field name="model">acs.patient.procedure</field>
+        <field name="inherit_id" ref="acs_hms.view_acs_patient_procedure_search"/>
+        <field name="arch" type="xml">
+            <field name="appointment_ids" position="after">  
+                <field name="tooth_ids" widget="many2many_tags" groups="acs_hms_dental.group_hms_odontology"/>
+                <field name="tooth_surface_ids" widget="many2many_tags" groups="acs_hms_dental.group_hms_odontology"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="action_acs_dental_procedure" model="ir.actions.act_window">
+        <field name="name">Patient Procedures</field>
+        <field name="path">almightyhms-patient-dental-procedure</field>
+        <field name="res_model">acs.patient.procedure</field>
+        <field name="view_mode">list,form,calendar,pivot</field>
+        <field name="context">{'acs_department_type': 'dental', 'search_default_not_done': 1}</field>
+        <field name="domain" eval="[('department_id.department_type','=','dental')]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Click to add a Patient Dental Procedure.
+            </p>
+        </field>
+    </record>
+
+</odoo>

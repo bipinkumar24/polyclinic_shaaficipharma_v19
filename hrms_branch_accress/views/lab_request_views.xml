@@ -1,0 +1,32 @@
+<odoo>
+	<record id="patient_laboratory_test_request_field_card_form" model="ir.ui.view">
+        <field name="name">acs.laboratory.request.from</field>
+        <field name="model">acs.laboratory.request</field>
+        <field name="inherit_id" ref="acs_hms_laboratory.patient_laboratory_test_request_form"/>
+        <field name="arch" type="xml">
+            <field name="treatment_id" position="after">
+              <field name="branch_id"/>
+            </field>
+        </field>
+    </record>
+    <record id="patient_laboratory_test_field_view" model="ir.ui.view">
+        <field name="name">Laboratory Test</field>
+        <field name="model">patient.laboratory.test</field>
+        <field name="inherit_id" ref="acs_laboratory.patient_laboratory_test_view"/>
+        <field name="arch" type="xml">
+            <field name="collection_center_id" position="after">
+              <field name="branch_id"/>
+            </field>
+        </field>
+    </record>
+    <record id="patient_laboratory_sample_field_view" model="ir.ui.view">
+        <field name="name">Patient Laboratory Sample</field>
+        <field name="model">acs.patient.laboratory.sample</field>
+        <field name="inherit_id" ref="acs_laboratory.acs_patient_laboratory_sample_form"/>
+        <field name="arch" type="xml">
+            <field name="test_ids" position="after">
+              <field name="branch_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>

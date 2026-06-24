@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_hospital_death_register_template">
+        <t t-call="web.external_layout">
+            <t t-set="doc" t-value="doc.with_context({'lang':doc.patient_id.lang})"/>
+            <div class="page acs_report">
+                <br/>
+                <h3 class="text-center mt-3 mb-3">Death Report</h3>
+                <div>
+                    <strong>Date: </strong><span t-field="doc.date"/>
+                </div>
+                <br/>
+                <table class="w-100 border-0">
+                    <tbody>
+                        <tr>
+                            <td class="w-50 px-3 py-2">
+                                <strong>Patient Name : </strong><span t-field="doc.patient_id.name"/>
+                            </td>
+                            <td class="w-50 px-3 py-2">
+                                <strong>Physician Name : </strong><span t-field="doc.physician_id"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-3 py-2">
+                                <strong>Gender : </strong><span t-field="doc.patient_gender"/>
+                            </td>
+                            <td class="px-3 py-2">
+                                <strong>Age : </strong><span t-field="doc.patient_age"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-3 py-2">
+                                <strong>Date of Death : </strong><span t-field="doc.date_of_death"/>
+                            </td>
+                            <td class="px-3 py-2">
+                                <strong>Place of Death : </strong><span t-field="doc.place_of_death"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-3 py-2">
+                                <strong>Permanent Address : </strong><span t-field="doc.address"/>
+                            </td>
+                            <td class="px-3 py-2">
+                                <strong>Marital Status : </strong><span t-field="doc.marital_status"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-3 py-2">
+                                <strong>Father Name : </strong><span t-field="doc.father_name"/>
+                            </td>
+                            <td class="px-3 py-2">
+                                <strong>Mother Name : </strong><span t-field="doc.mother_name"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="px-3 py-2 border-0">
+                                <strong>Death Reason : </strong><span t-field="doc.reason"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="px-3 py-2 border-0">
+                                <strong>Remarks : </strong><span t-field="doc.extra_info"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br/>
+                <div>
+                    <strong>Signature : </strong><t t-if="doc.physician_id.signature"><img t-att-src="image_data_uri(doc.physician_id.signature)" style="max-height: 100px !important;"/></t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_hospital_death_register">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="acs_hms_hospitalization.report_hospital_death_register_template"/>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_death_register" model="ir.actions.report">
+        <field name="name">Death Reaport</field>
+        <field name="model">patient.death.register</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">acs_hms_hospitalization.report_hospital_death_register</field>
+        <field name="report_file">acs_hms_hospitalization.report_hospital_death_register</field>
+        <field name="binding_model_id" ref="model_patient_death_register"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Death Report - %s' % (object.patient_id.name)</field>
+    </record>
+
+</odoo>

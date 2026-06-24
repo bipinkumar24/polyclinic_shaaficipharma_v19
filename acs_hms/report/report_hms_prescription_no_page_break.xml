@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_hms_prescription_no_page_break">
+        <t t-call="web.external_layout">
+
+            <main>
+                <div class="page">
+
+                    <t t-foreach="docs" t-as="doc">
+                        <t t-set="doc" t-value="doc.with_context({'lang': doc.patient_id.lang})"/>
+
+                        <div style="margin-bottom:20px;">
+
+                            <div class="mt8 mb8 text-center">
+                                <h2>
+                                    <strong>Medical Prescription:</strong>
+                                    <span t-field="doc.name"/>
+                                </h2>
+                            </div>
+
+                            <!-- patient table -->
+                            <table class="table table-condensed">
+                                <tbody>
+                                    <tr>
+                                        <td style="width:20%"><strong>Patient:</strong></td>
+                                        <td style="width:30%"><span t-field="doc.patient_id"/></td>
+                                        <td><strong>Age/Gender:</strong></td>
+                                        <td>
+                                            <span t-field="doc.patient_id.age"/> /
+                                            <span t-field="doc.patient_id.gender"/>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><strong>Doctor:</strong></td>
+                                        <td><span t-field="doc.physician_id"/></td>
+                                        <td><strong>Date:</strong></td>
+                                        <td><span t-field="doc.prescription_date"/></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><strong>Mobile:</strong></td>
+                                        <td><span t-field="doc.patient_id.mobile"/></td>
+                                        <td colspan="2"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- medicines -->
+                            <table class="table table-sm o_main_table mt16">
+                                <thead>
+                                    <tr>
+                                        <th>SR.NO</th>
+                                        <th>MEDICINE</th>
+                                        <th>Total QTY</th>
+                                        <th>FREQUENCY</th>
+                                        <th>COMMENT</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <t t-foreach="doc.prescription_line_ids" t-as="line">
+                                        <tr t-if="not line.display_type">
+                                            <td>
+                                                <span t-esc="line_index + 1"/>
+                                            </td>
+
+                                            <td>
+                                                <t t-if="line.name">
+                                                    <span t-field="line.name"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="line.product_id.name"/>
+                                                </t>
+                                            </td>
+
+                                            <td>
+                                                <span t-field="line.quantity"/>
+                                            </td>
+
+                                            <td>
+                                                <span t-field="line.common_dosage_id"/>
+                                            </td>
+
+                                            <td>
+                                                <span t-field="line.short_comment"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <b>Comment:</b>
+                                    <span t-field="doc.notes"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <b>Doctor’s Stamp/Signature</b>
+                                    <br/>
+                                </div>
+
+                            </div>
+
+                            <hr/>
+
+                        </div>
+
+                    </t>
+
+                </div>
+            </main>
+
+        </t>
+    </template>
+
+    <record id="report_hms_prescription_no_page_break_action" model="ir.actions.report">
+        <field name="name">All Prescription</field>
+        <field name="model">prescription.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">acs_hms.report_hms_prescription_no_page_break</field>
+        <field name="report_file">acs_hms.report_hms_prescription_no_page_break</field>
+        <field name="binding_model_id" ref="model_prescription_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

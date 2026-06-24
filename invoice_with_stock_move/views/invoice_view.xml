@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Invoice View -->
+    <record id="view_move_form" model="ir.ui.view">
+        <field name="name">account.move.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_post'][2]" position="replace">
+                <button name="action_post" string="Post" class="oe_highlight" type="object" groups="account.group_account_invoice" data-hotkey="q" context="{'validate_analytic': True}" invisible="hide_post_button or move_type == 'entry' or display_inactive_currency_warning or create_stock_moves"/>
+                <button name="action_post" string="Confirm" class="oe_highlight" type="object" groups="account.group_account_invoice" data-hotkey="q" context="{'validate_analytic': True}" invisible="hide_post_button or move_type == 'entry' or display_inactive_currency_warning or not create_stock_moves" confirm="Are you sure that you want to create stock moves with this Invoice."/>
+            </xpath>
+
+            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='quantity']" position="after">
+                <field name="tracking" column_invisible="1"/>
+                <field name="acs_lot_id" context="{'acs_product_id': product_id, 'default_product_id': product_id, 'default_company_id': company_id}" column_invisible="not parent.create_stock_moves" readonly="tracking not in ['serial', 'lot']" required="tracking in ['serial','lot']"/>
+                <field name="exp_date" readonly="1" force_save="1" column_invisible="not parent.create_stock_moves"/>
+            </xpath>
+
+            <xpath expr="//field[@name='invoice_line_ids']/form//field[@name='quantity']" position="after">
+                <field name="tracking" column_invisible="1"/>
+                <field name="acs_lot_id" context="{'acs_product_id': product_id, 'default_product_id': product_id, 'default_company_id': company_id}" readonly="tracking not in ['serial', 'lot']" required="tracking in ['serial','lot']"/>
+                <field name="exp_date" readonly="1" force_save="1"/>
+            </xpath>
+
+            <xpath expr="//group[@name='accounting_info_group']" position="after">
+                <group string="Picking" name="almightycs_picking_info" invisible="move_type not in ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')">
+                    <field name='create_stock_moves' readonly="state=='posted'"/>
+                    <field name='picking_id' readonly='1' invisible="not create_stock_moves"/>
+                    <field name="warehouse_id" readonly="state=='posted'" invisible="not create_stock_moves"/>
+                    <field name="picking_type_id" readonly="state=='posted'"/>
+                    <field name="acs_location_id" readonly="1" force_save="1"/>
+                    <field name="acs_location_dest_id" readonly="1" force_save="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

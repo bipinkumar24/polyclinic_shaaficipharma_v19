@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!-- Radiology Room -->
+    <record id="view_acs_radiology_room_list" model="ir.ui.view">
+        <field name="name">acs.radiology.room.list</field>
+        <field name="model">acs.radiology.room</field>
+        <field name="arch" type="xml">
+            <list string="Radiology Room">
+                <field name="name"/>
+                <field name="radiology_test_ids" widget="many2many_tags"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_acs_radiology_room_form" model="ir.ui.view">
+        <field name="name">acs.radiology.room.form.form</field>
+        <field name="model">acs.radiology.room</field>
+        <field name="arch" type="xml">
+            <form string="Radiology Room">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="Radiology Room"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="radiology_test_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="act_acs_radiology_room" model="ir.actions.act_window">
+        <field name="name">Radiology Room</field>
+        <field name="path">almighty-radiology-room</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">acs.radiology.room</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+            <p>
+                Click to add an Radiology Room.
+            </p>
+        </field>
+    </record>
+
+    <!-- Radiology -->
+    <record id="view_acs_radiology_list" model="ir.ui.view">
+        <field name="name">acs.radiology.list</field>
+        <field name="model">acs.radiology</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="description"/>
+                <field name="is_collection_center"/>
+                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_acs_radiology_form" model="ir.ui.view">
+        <field name="name">acs.radiology.form</field>
+        <field name="model">acs.radiology</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name" required="1"/>
+                        <field name="partner_id" readonly="1" required="0"/>
+                        <field name="is_collection_center"/>
+                        <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_acs_radiology" model="ir.actions.act_window">
+        <field name="name">Radiology</field>
+        <field name="path">almighty-radiology</field>
+        <field name="res_model">acs.radiology</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_collection_center','=',False)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Click to add a new Radiology.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_acs_collection_center" model="ir.actions.act_window">
+        <field name="name">Collection Center</field>
+        <field name="path">almighty-radiology-collection-center</field>
+        <field name="res_model">acs.radiology</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_collection_center','=',True)]</field>
+        <field name="context">{'default_is_collection_center':True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Click to add a new Collection Center.
+            </p>
+        </field>
+    </record>
+
+</odoo>

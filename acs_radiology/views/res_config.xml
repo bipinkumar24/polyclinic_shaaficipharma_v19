@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.radiology</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="10"/>
+        <field name="inherit_id" ref="acs_hms_base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='radiology']" position="after">
+                <block title="Radiology" name="radiology_setting_container">
+                    <setting help="Location to take consumed Material in Radiology Test." id="acs_radiology_stock_location_id_setting">
+                        <field name="acs_radiology_stock_location_id" class="o_light_label" string="Stock Location"/>
+                    </setting>
+                    <setting help="Location to manage consumed Material in Radiology Test." id="acs_radiology_usage_location_id_setting">
+                        <field name="acs_radiology_usage_location_id" class="o_light_label" string="Stock Usage Location"/>
+                    </setting>
+                    <setting help="Allow user to Authenticate Radiology Result by scanning QrCode from report." id="acs_radiology_result_qrcode_setting">
+                        <field name="acs_radiology_result_qrcode" class="o_light_label" string="Radiology Result Authentication"/>
+                    </setting>
+                    <setting help="Manage Only Radiology Requests" id="acs_no_radiology_result">
+                        <field name="acs_no_radiology_result" class="o_light_label" string="Manage Only Radiology request and result as Attachment in it"/>
+                    </setting>
+                    <setting help="Based on Configured option Create Invoice option will be shown on Radiology request." id="acs_radiology_invoice_policy_setting">
+                        <field name="acs_radiology_invoice_policy" class="o_light_label" string="Invoice Policy"/>
+                    </setting>
+                    <setting  invisible="acs_radiology_invoice_policy!='in_advance'"  help="Do not allow to accept request before completion of payment." id="acs_check_radiology_payment_setting">
+                        <field name="acs_check_radiology_payment" class="o_light_label" string="Check Payment Status"/>
+                    </setting>
+                    <setting help="It will set this disclaimer by default on radiology Result &amp; Request Records." id="acs_radiology_disclaimer_setting">
+                        <field name="acs_radiology_disclaimer" placeholder="Add Your Default Disclaimer here.." class="o_light_label" string="Default Disclaimer"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

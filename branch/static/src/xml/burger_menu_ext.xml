@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+<!-- Owl Templates -->
+
+<t t-name="branch.BurgerMenu" t-inherit="web.BurgerMenu" t-inherit-mode="extension">
+    <xpath expr="//div[hasclass('o_burger_menu')]//nav" position="replace">
+        <nav class="o_burger_menu_content flex-grow-1 flex-shrink-1 overflow-auto o_burger_menu_app">
+            <t t-log="branch"/>
+            <MobileSwitchCompanyMenu t-if="Object.values(company.allowedCompanies).length > 1" />
+            <MobileSwitchBranchMenu t-if="Object.values(branch.allowedBranches).length > 1" />
+            <BurgerUserMenu/>
+        </nav>
+    </xpath>
+</t>
+
+</templates>

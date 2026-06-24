@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<odoo>
+
+    <!-- Main Emergency Menu -->
+    <menuitem id="menu_main_acs_hms_emergency" name="Emergency" sequence="24" web_icon="acs_hms_emergency,static/description/icon.png" groups="acs_hms_emergency.group_hms_emergency"/>
+
+    <menuitem id="menu_acs_hms_emergency" name="Emergency" parent="acs_hms_emergency.menu_main_acs_hms_emergency" action="acs_hms_emergency.action_hms_emergency" sequence="10"/>
+
+    <menuitem id="menuitem_action_emergency_bed" name="Beds" parent="menu_main_acs_hms_emergency" action="action_hospital_bed" groups="acs_hms.group_hms_receptionist"/>
+
+</odoo>

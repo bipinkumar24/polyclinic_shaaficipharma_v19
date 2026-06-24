@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="acs_radiology_result_details" name="Radiology Detail">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container">
+                    <div id="radiology_result_content" class="col-12 col-lg mt32 mb64 o_portal_html_view shadow p-3" style="background-color: white;">
+                        <t t-call="acs_radiology.report_acs_radiology_test_document">
+                            <t t-set="doc" t-value="radiology_result.sudo()"/>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

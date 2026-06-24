@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Report Template -->
+    <template id="report_lab_result_table_line_all">
+        <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.display_type == 'line_section' else ''">
+            <t t-if="not line.display_type">
+                <td>
+                    <span t-field="test.name"/>
+                </td>
+                <td>
+                    <span t-field="test.test_id"/>
+                </td>
+                <td t-attf-class="text-#{line.result_type} #{'text-danger' if line.result_type in ['high','low'] else ''}">
+                    <span t-field="line.name"/>
+                </td>
+                <td t-attf-class="text-#{line.result_type} #{'text-danger' if line.result_type in ['high','low'] else ''}">
+                    <span t-field="line.result"/>
+                </td>
+                <td t-attf-class="text-#{line.result_type} #{'text-danger' if line.result_type in ['high','low'] else ''}">
+                    <span t-field="line.normal_range"/>
+                    <span t-if="line.lab_uom_id" t-field="line.lab_uom_id"/>
+                </td>
+                <td t-attf-class="text-#{line.result_type} #{'text-danger' if line.result_type in ['high','low'] else ''}">
+                    <span t-field="line.remark"/>
+                </td>
+            </t>
+            <t t-if="line.display_type == 'line_section'">
+                <td colspan="6">
+                    <strong>
+                        <span t-field="line.name"/>
+                    </strong>
+                </td>
+            </t>
+        </tr>
+    </template>
+    <template id="report_lab_result_table_all">
+        <table class="table table-sm o_main_table mt16">
+            <thead>
+                <tr>
+                    <th>Investigation Number</th>
+                    <th>Test</th>
+                    <th>Test Name</th>
+                    <th>Result</th>
+                    <th>Normal Range</th>
+                    <th>Remark</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <!-- Loop Tests -->
+                <t t-foreach="lab_tests" t-as="test">
+
+                    <!-- Reset tracker for each test -->
+                    <t t-set="first_line" t-value="True"/>
+
+                    <!-- Main Test Lines -->
+                    <t t-foreach="test.critearea_ids" t-as="line">
+                        <tr>
+
+                            <!-- Show only first time -->
+                            <t t-if="first_line">
+                                <td>
+                                    <strong><span t-field="test.name"/></strong>
+                                </td>
+                                <td>
+                                    <strong><span t-field="test.test_id"/></strong>
+                                </td>
+
+                                <!-- Mark as used -->
+                                <t t-set="first_line" t-value="False"/>
+                            </t>
+                            <t t-else="">
+                                <td></td>
+                                <td></td>
+                            </t>
+
+                            <!-- Always show -->
+                            <td>
+                                <span t-field="line.name"/>
+                            </td>
+                            <td t-attf-class="text-#{line.result_type} #{'text-danger' if line.result_type in ['high','low'] else ''}">
+                                <span t-field="line.result"/>
+                            </td>
+                            <td>
+                                <span t-field="line.normal_range"/>
+                                <span t-if="line.lab_uom_id" t-field="line.lab_uom_id"/>
+                            </td>
+                            <td>
+                                <span t-field="line.remark"/>
+                            </td>
+                        </tr>
+                    </t>
+
+                    <!-- Child Tests -->
+                    <t t-if="test.child_test_ids">
+                        <t t-foreach="test.child_test_ids" t-as="child">
+
+                            <!-- Reset again for child -->
+                            <t t-set="first_line" t-value="True"/>
+
+                            <t t-foreach="child.critearea_ids" t-as="line">
+                                <tr>
+
+                                    <!-- Show only first time -->
+                                    <t t-if="first_line">
+                                        <td>
+                                            <strong><span t-field="child.name"/></strong>
+                                        </td>
+                                        <td>
+                                            <strong><span t-field="child.test_id"/></strong>
+                                        </td>
+
+                                        <t t-set="first_line" t-value="False"/>
+                                    </t>
+                                    <t t-else="">
+                                        <td></td>
+                                        <td></td>
+                                    </t>
+
+                                    <!-- Always show -->
+                                    <td>
+                                        <span t-field="line.name"/>
+                                    </td>
+                                    <td t-attf-class="text-#{line.result_type} #{'text-danger' if line.result_type in ['high','low'] else ''}">
+                                        <span t-field="line.result"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.normal_range"/>
+                                        <span t-if="line.lab_uom_id" t-field="line.lab_uom_id"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.remark"/>
+                                    </td>
+                                </tr>
+                            </t>
+
+                        </t>
+                    </t>
+
+                </t>
+
+            </tbody>
+        </table>
+    </template>
+    <!-- <template id="report_lab_result_table_all">
+        <table class="table table-sm o_main_table mt16">
+            <thead>
+                <tr>
+                    <th>Investigation Number</th>
+                    <th>Test</th>
+                    <th>Test Name</th>
+                    <th>Result</th>
+                    <th>Normal Range</th>
+                    <th>Remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                <t t-foreach="lab_tests" t-as="test">
+                    <t t-foreach="test.critearea_ids" t-as="line">
+                        <t t-call="acs_laboratory.report_lab_result_table_line_all">
+                            <t t-set="line" t-value="line"/>
+                            <t t-set="test" t-value="test"/>
+                        </t>
+                    </t>
+                    <t t-if="test.child_test_ids">
+                        <t t-foreach="test.child_test_ids" t-as="child">
+                            <t t-foreach="child.critearea_ids" t-as="line">
+                                <t t-call="acs_laboratory.report_lab_result_table_line_all">
+                                    <t t-set="line" t-value="line"/>
+                                    <t t-set="test" t-value="test"/>
+                                </t>
+                            </t>
+                        </t>
+                    </t>
+                </t>
+            </tbody>
+        </table>
+    </template> -->
+    <template id="report_acs_lab_test_all">
+        <t t-call="web.html_container">
+            <t t-foreach="grouped_docs" t-as="group">
+                <t t-call="web.external_layout">
+                    <style>
+                        .lab-report-font {
+                            font-size: 18px;
+                        }
+                        .lab-report-font table th,
+                        .lab-report-font table td,
+                        .lab-report-font table td span,
+                        .lab-report-font table td div {
+                            font-size: 18px !important;
+                        }
+                    </style>
+
+                    <div class="page lab-report-font">
+
+                        <!-- First Record -->
+                        <t t-set="doc" t-value="group['tests'][0]"/>
+
+                        <h2 class="text-center">
+                            Investigation
+                        </h2>
+
+                        <div class="mt8 mb8" id="informations">
+                            <div class="row">
+                                <div t-if="doc.patient_id" class="col-auto col-3 mw-100 mb-2">
+                                    <strong>Patient:</strong>
+                                    <p class="m-0" t-field="doc.patient_id"/>
+                                </div>
+                                <div t-if="doc.request_id.patient_age" class="col-3 mb-2">
+                                    <strong>Patient Age</strong>
+                                    <p class="m-0" t-field="doc.request_id.patient_age"/>
+                                </div>
+                                <div t-if="doc.patient_id.gender" class="col-3 mb-2">
+                                    <strong>Gender</strong>
+                                    <p class="m-0" t-field="doc.patient_id.gender"/>
+                                </div>
+                                <div t-if="doc.date_analysis" class="col-auto col-3 mw-100 mb-2">
+                                    <strong>Date:</strong>
+                                    <p class="m-0" t-field="doc.date_analysis"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div t-if="doc.appointment_id" class="col-auto col-3 mw-100 mb-2">
+                                    <strong>Appointment:</strong>
+                                    <p class="m-0" t-field="doc.appointment_id"/>
+                                </div>
+                            </div>
+                        </div>
+                        <t t-call="acs_laboratory.report_lab_result_table_all">
+                            <t t-set="lab_tests" t-value="group['tests']"/>        
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_acs_lab_test_mutiple" model="ir.actions.report">
+        <field name="name">Lab Report Appoinmnet Wise</field>
+        <field name="model">patient.laboratory.test</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">acs_laboratory.report_acs_lab_test_all</field>
+        <field name="report_file">acs_laboratory.report_acs_lab_test_all</field>
+        <field name="print_report_name">(object.name or 'LabReport').replace('/','_') + '_LabReport'</field>
+        <field name="binding_model_id" ref="model_patient_laboratory_test"/>
+        <field name="binding_type">report</field>
+    </record>
+
+</odoo>

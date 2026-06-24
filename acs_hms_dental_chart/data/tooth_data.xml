@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Tooth -->
+        <record id="acs_hms_dental.acs_hms_tooth_1" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth1.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_2" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth2.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_3" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth3.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_4" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth4.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_5" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth5.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_6" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth6.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_7" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth7.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_8" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth8.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_9" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth9.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_10" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth10.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_11" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth11.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_12" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth12.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_13" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth13.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_14" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth14.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_15" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth15.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_16" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth16.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_17" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth17.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_18" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth18.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_19" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth19.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_20" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth20.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_21" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth21.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_22" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth22.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_23" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth23.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_24" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth24.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_25" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth25.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_26" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth26.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_27" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth27.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_28" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth28.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_29" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth29.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_30" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth30.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_31" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth31.png"/>
+        </record>
+
+        <record id="acs_hms_dental.acs_hms_tooth_32" model="acs.hms.tooth">
+            <field name="image" type="base64" file="acs_hms_dental_chart/static/src/img/tooth32.png"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+     
+    <template id="patient_information_template">
+        <table name="patient_info" class="table table-condensed" t-if="patient">
+            <tbody name="patient_info_body">
+                <tr name="patient_name_tr">
+                    <td class="col-6" name="patient_name">
+                        <strong class="text-center ms-2">Patient:</strong> <span t-field="patient.name"/> (<span t-field="patient.code"/>)
+                    </td>
+                    <td class="col-6"  name="patient_age">
+                        <strong>Age/Gender:</strong> <span t-field="patient.age"/>/<span t-field="patient.gender"/> 
+                    </td>
+                </tr>
+                <tr name="patient_gov_mobile_tr">
+                    <td name="patient_gov">
+                        <strong class="ms-2"><span t-field="patient.gov_code_label"/>:</strong> <span t-field="patient.gov_code"/>
+                    </td>
+                    <td name="patient_mobile">
+                        <strong>Mobile:</strong> <span t-field="patient.mobile"/>
+                    </td>
+                </tr>
+                <tr name="patient_address_tr">
+                    <td colspan="2" name="patient_address">
+                        <strong class="ms-2">Address:</strong> <span t-field="patient.acs_contact_address_complete"/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </template>
+
+    <template id="report_invoice_document_inherit" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[@name='reference']" position="after">
+            <div class="col" t-if="o.physician_id" name="physician">
+                <strong>Physician:</strong>
+                <p class="m-0" t-field="o.physician_id"/>
+            </div>
+        </xpath>
+        
+        <xpath expr="//div[@id='informations']" position="before">
+            <t t-call="acs_hms_base.patient_information_template">
+                <t t-set="patient" t-value="o.patient_id"/>
+                <t t-set="inv_data" t-value="o"/>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_document_directory_user,Directory User,acs_document_base.model_document_directory,acs_document_base.group_document_user,1,0,0,0
+access_document_directory_manager,Directory Manager,acs_document_base.model_document_directory,acs_document_base.group_document_manager,1,1,1,1
+access_acs_document_tag_user,access_acs_document_tag,model_acs_document_tag,acs_document_base.group_document_user,1,1,1,0
+access_acs_document_tag_manager,access_acs_document_tag,model_acs_document_tag,acs_document_base.group_document_manager,1,1,1,1

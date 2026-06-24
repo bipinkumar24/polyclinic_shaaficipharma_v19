@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="0">
+
+    <!-- Income Account for Discount -->
+    <record id="account_discount_given" model="account.account">
+        <field name="name">Discounts Given</field>
+        <field name="code">4099</field>
+        <field name="account_type">income</field>
+        <field name="reconcile" eval="False"/>
+    </record>
+
+    <!-- Discount Product -->
+    <record id="product_discount" model="product.product">
+        <field name="name">Discount</field>
+        <field name="type">service</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="list_price">-1.0</field>
+        <field name="taxes_id" eval="[(5,0,0)]"/>
+        <field name="property_account_income_id" ref="account_discount_given"/>
+    </record>
+
+</odoo>

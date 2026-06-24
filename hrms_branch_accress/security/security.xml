@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+		<record id="appoinment_branch_manager_rule" model="ir.rule">
+            <field name="name">Appoinment Branch Manager</field>
+            <field name="model_id" ref="model_hms_appointment"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('acs_hms.group_hms_all_appointments'))]"/>
+        </record>
+
+        <record id="appoinment_branch_rule" model="ir.rule">
+            <field name="name">Appoinment Branch</field>
+            <field name="model_id" ref="model_hms_appointment"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+               [
+                    '&amp;',
+                        '|',
+                            ('physician_id.user_id', '=', user.id),
+                            ('physician_id', '=', False),
+                        '|',
+                            ('branch_id', '=', False),
+                            ('branch_id', 'in', branch_ids)
+                ]
+                <!-- ['|',('branch_id','=',False),('branch_id','in',branch_ids)] -->
+            </field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="radiology_request_branch_manager_rule" model="ir.rule">
+            <field name="name">Radiology Request Branch Manager</field>
+            <field name="model_id" ref="model_acs_radiology_request"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('acs_radiology.group_hms_radiology_manager'))]"/>
+        </record>
+        <record id="patient_radiology_test_branch_manager_rule" model="ir.rule">
+            <field name="name">Radiology Request Branch Manager</field>
+           	<field name="model_id" ref="acs_radiology.model_patient_radiology_test"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('acs_radiology.group_hms_radiology_manager'))]"/>
+        </record>
+        <record id="all_hms_radiology_request_rule" model="ir.rule">
+            <field name="name">All Radiology Requests</field>
+            <field name="model_id" ref="model_acs_radiology_request"/>
+            <field name="domain_force">['|',('branch_id','=',False),('branch_id','in',branch_ids)]</field>
+        </record>
+        <record id="all_patient_radiology_test_rule" model="ir.rule">
+            <field name="name">All Radiology Result</field>
+            <field name="model_id" ref="model_patient_radiology_test"/>
+            <field name="domain_force">['|',('branch_id','=',False),('branch_id','in',branch_ids)]</field>
+            <!-- <field name="groups" eval="[(4, ref('acs_radiology.group_hms_radiology_user'))]"/> -->
+        </record>
+         <record id="laboratory_request_branch_manager_rule" model="ir.rule">
+            <field name="name">Lab Request Branch Manager</field>
+            <field name="model_id" ref="model_acs_laboratory_request"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('acs_laboratory.group_hms_lab_manager'))]"/>
+        </record>
+        <record id="all_hms_laboratory_request_rule" model="ir.rule">
+            <field name="name">All Laboratory Requests</field>
+            <field name="model_id" ref="acs_laboratory.model_acs_laboratory_request"/>
+           	<field name="domain_force">['|',('branch_id','=',False),('branch_id','in',branch_ids)]</field>
+        </record>
+        <record id="all_hms_laboratory_request_rule" model="ir.rule">
+            <field name="name">All Laboratory Requests</field>
+            <field name="model_id" ref="model_acs_laboratory_request"/>
+            <field name="domain_force">['|',('branch_id','=',False),('branch_id','in',branch_ids)]</field>
+        </record>
+        <record id="all_patient_laboratory_test_rule" model="ir.rule">
+            <field name="name">All Laboratory Result</field>
+            <field name="model_id" ref="acs_laboratory.model_patient_laboratory_test"/>
+            <field name="domain_force">['|',('branch_id','=',False),('branch_id','in',branch_ids)]</field>
+        </record>
+        <record id="all_patient_laboratory_sample_rule" model="ir.rule">
+            <field name="name">All Laboratory Sample Result</field>
+            <field name="model_id" ref="acs_laboratory.model_acs_patient_laboratory_sample"/>
+            <field name="domain_force">['|',('branch_id','=',False),('branch_id','in',branch_ids)]</field>
+            <field name="groups" eval="[(4, ref('acs_laboratory.group_hms_lab_sample_user'))]"/>
+        </record>
+    </data>
+</odoo>
