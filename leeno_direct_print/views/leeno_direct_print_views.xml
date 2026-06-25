@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         Direct Print Wizard – form view
+         ══════════════════════════════════════════════════════════════ -->
+    <record id="view_leeno_direct_print_wizard_form" model="ir.ui.view">
+        <field name="name">leeno.direct.print.wizard.form</field>
+        <field name="model">odoo.leeno.direct.print.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Direct Print">
+                <group>
+                    <field name="model" invisible="1"/>
+                    <field name="report_ref" invisible="1"/>
+                    <field name="res_ids" invisible="1"/>
+                    <field name="report_id" options="{'no_create': True}"/>
+                    <field name="record_count" string="Records selected"/>
+                </group>
+                <div class="alert alert-info" role="alert">
+                    <strong>How it works:</strong> Click <em>Print</em> and your
+                    browser's native print dialog will open so you can choose any
+                    printer connected to your computer (USB, network, or virtual).
+                </div>
+                <footer>
+                    <button string="Print" type="object" name="action_print"
+                            class="btn-primary" icon="fa-print"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_leeno_direct_print_wizard" model="ir.actions.act_window">
+        <field name="name">Direct Print</field>
+        <field name="res_model">odoo.leeno.direct.print.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_leeno_direct_print_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         Add "Use Direct Print" toggle on report configuration
+         ══════════════════════════════════════════════════════════════ -->
+    <record id="view_ir_actions_report_form_leeno_direct_print" model="ir.ui.view">
+        <field name="name">ir.actions.report.form.leeno_direct_print</field>
+        <field name="model">ir.actions.report</field>
+        <field name="inherit_id" ref="base.act_report_xml_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='print_report_name']" position="after">
+                <field name="use_leeno_direct_print"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         Configuration menu
+         ══════════════════════════════════════════════════════════════ -->
+    <menuitem id="menu_leeno_direct_print_root"
+              name="Direct Print"
+              sequence="90"/>
+    <menuitem id="menu_leeno_direct_print_config"
+              name="Configuration"
+              parent="menu_leeno_direct_print_root"
+              sequence="10"/>
+
+    <record id="action_create_print_actions" model="ir.actions.server">
+        <field name="name">Create / Repair Print Actions</field>
+        <field name="model_id" ref="model_odoo_leeno_direct_print_action"/>
+        <field name="state">code</field>
+        <field name="code">
+action = env['odoo.leeno.direct.print.action'].action_create_print_actions()
+        </field>
+    </record>
+
+    <menuitem id="menu_create_print_actions"
+              name="Create / Repair Print Actions"
+              parent="menu_leeno_direct_print_config"
+              action="action_create_print_actions"/>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         Binding actions – gear menu entries
+         ══════════════════════════════════════════════════════════════ -->
+    <record id="action_leeno_direct_print_partner" model="ir.actions.server">
+        <field name="name">Direct Print</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">form,list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = {
+        'name': 'Direct Print',
+        'type': 'ir.actions.act_window',
+        'res_model': 'odoo.leeno.direct.print.wizard',
+        'view_mode': 'form',
+        'target': 'new',
+        'context': {
+            'default_model': records._name,
+            'active_model': records._name,
+            'active_ids': records.ids,
+            'active_id': records.ids[0] if records.ids else False,
+        },
+    }
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         Header buttons on document forms
+         ══════════════════════════════════════════════════════════════ -->
+
+    <!-- Invoice / Bill -->
+    <record id="view_move_form_leeno_direct_print" model="ir.ui.view">
+        <field name="name">account.move.form.leeno_direct_print</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='button_draft']" position="after">
+                <button name="%(action_leeno_direct_print_wizard)d"
+                        string="Direct Print"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-print"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Sale Order -->
+    <record id="view_sale_order_form_leeno_direct_print" model="ir.ui.view">
+        <field name="name">sale.order.form.leeno_direct_print</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_draft']" position="after">
+                <button name="%(action_leeno_direct_print_wizard)d"
+                        string="Direct Print"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-print"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Purchase Order -->
+    <record id="view_purchase_order_form_leeno_direct_print" model="ir.ui.view">
+        <field name="name">purchase.order.form.leeno_direct_print</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='button_cancel']" position="after">
+                <button name="%(action_leeno_direct_print_wizard)d"
+                        string="Direct Print"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-print"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Stock Picking (Transfers) -->
+    <record id="view_picking_form_leeno_direct_print" model="ir.ui.view">
+        <field name="name">stock.picking.form.leeno_direct_print</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_cancel']" position="after">
+                <button name="%(action_leeno_direct_print_wizard)d"
+                        string="Direct Print"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-print"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- Prescription Order -->
+    <record id="view_prescription_order_form_leeno_direct_print" model="ir.ui.view">
+        <field name="name">prescription.order.form.leeno_direct_print</field>
+        <field name="model">prescription.order</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_prescription_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(action_leeno_direct_print_wizard)d"
+                        string="Direct Print"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-print"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Radiology Order -->
+    <record id="view_acs_radiology_request_form_leeno_direct_print" model="ir.ui.view">
+        <field name="name">acs.radiology.request.form.leeno_direct_print</field>
+        <field name="model">acs.radiology.request</field>
+        <field name="inherit_id" ref="acs_radiology.patient_radiology_test_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(action_leeno_direct_print_wizard)d"
+                        string="Direct Print"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-print"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- Laboratory Order -->
+    <record id="view_acs_laboratory_request_form_leeno_direct_print" model="ir.ui.view">
+        <field name="name">acs.laboratory.request.form.leeno_direct_print</field>
+        <field name="model">acs.laboratory.request</field>
+        <field name="inherit_id" ref="acs_laboratory.patient_laboratory_test_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(action_leeno_direct_print_wizard)d"
+                        string="Direct Print"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-print"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- HMS Appointment Order -->
+    <record id="view_hms_appointment_form_leeno_direct_print" model="ir.ui.view">
+        <field name="name">hms.appointment.form.leeno_direct_print</field>
+        <field name="model">hms.appointment</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_appointment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(action_leeno_direct_print_wizard)d"
+                        string="Direct Print"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-print"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- Patient Laboratory Sample -->
+    <record id="view_acs_patient_laboratory_sample_leeno_direct_print" model="ir.ui.view">
+        <field name="name">acs.patient.laboratory.sample.form.leeno_direct_print</field>
+        <field name="model">acs.patient.laboratory.sample</field>
+        <field name="inherit_id" ref="acs_laboratory.acs_patient_laboratory_sample_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(action_leeno_direct_print_wizard)d"
+                        string="Direct Print"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-print"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- Patient Laboratory Sample -->
+    <record id="view_patient_laboratory_test_leeno_direct_print" model="ir.ui.view">
+        <field name="name">patient.laboratory.test.form.leeno_direct_print</field>
+        <field name="model">patient.laboratory.test</field>
+        <field name="inherit_id" ref="acs_laboratory.patient_laboratory_test_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(action_leeno_direct_print_wizard)d"
+                        string="Direct Print"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-print"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- Patient Laboratory Sample -->
+    <record id="view_patient_radiology_test_leeno_direct_print" model="ir.ui.view">
+        <field name="name">patient.radiology.test.form.leeno_direct_print</field>
+        <field name="model">patient.radiology.test</field>
+        <field name="inherit_id" ref="acs_radiology.patient_radiology_test_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(action_leeno_direct_print_wizard)d"
+                        string="Direct Print"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-print"/>
+            </xpath>
+        </field>
+    </record>
+    <!-- Patient Laboratory Sample -->
+    <record id="view_hms_treatment_leeno_direct_print" model="ir.ui.view">
+        <field name="name">hms.treatment.form.leeno_direct_print</field>
+        <field name="model">hms.treatment</field>
+        <field name="inherit_id" ref="acs_hms.view_hospital_hms_treatment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(action_leeno_direct_print_wizard)d"
+                        string="Direct Print"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-print"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

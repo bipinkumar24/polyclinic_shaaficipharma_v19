@@ -1,0 +1,48 @@
+<odoo>
+    <record id="appointment_invoice_wizard_form" model="ir.ui.view">
+        <field name="name">appointment.invoice.wizard.form</field>
+        <field name="model">appointment.invoice.wizard</field>
+        <field name="arch" type="xml">
+
+            <form string="Create Invoice">
+
+                <group>
+                    <field name="insurance_type"/>
+                    <field name="insurance_company_id"
+                           invisible ="insurance_type == 'no'" required="insurance_type in ['partial','full']"/>
+                </group>
+                <field name="line_ids">
+                    <list editable="bottom" delete="1" create="0">
+                        <field name="product_id"/>
+                        <field name="quantity"/>
+                        <field name="price_unit"/>
+                        <field name="subtotal"/>
+                    </list>
+                </field>
+
+                <group>
+                    <field name="total_amount" readonly="1"/>
+                    <field name="insurance_amount" invisible ="insurance_type == 'no'" required="insurance_type == 'partial'"/>
+                    <field name="patient_amount" readonly="1" invisible ="insurance_type == ['no', 'full']"/>
+                </group>
+
+                <footer>
+                    <button name="action_create_invoice"
+                            string="Create Invoice"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            special="cancel"/>
+                </footer>
+
+            </form>
+
+        </field>
+    </record>
+    <record id="action_appointment_invoice_wizard" model="ir.actions.act_window">
+        <field name="name">Create Invoice</field>
+        <field name="res_model">appointment.invoice.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

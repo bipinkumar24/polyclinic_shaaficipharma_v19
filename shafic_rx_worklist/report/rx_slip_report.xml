@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="action_report_rx_slip" model="ir.actions.report">
+        <field name="name">Prescription Slip</field>
+        <field name="model">prescription.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">shafic_rx_worklist.report_rx_slip</field>
+        <field name="report_file">shafic_rx_worklist.report_rx_slip</field>
+        <field name="print_report_name">'Rx Slip - %s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="acs_hms.model_prescription_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_rx_slip">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+                    <div class="page"
+                         style="text-align:center; font-family:Arial, sans-serif; padding-top:10px;">
+                        <div style="font-size:20px; font-weight:bold;">
+                            Shafic Pharmacy &amp; Polyclinic
+                        </div>
+                        <div style="font-size:13px; color:#555; margin-bottom:6px;">
+                            Prescription Handoff
+                        </div>
+                        <div style="border-top:1px solid #ccc; margin:6px 0;"/>
+                        <div style="font-size:18px; margin:8px 0;">
+                            <span t-field="o.patient_id.name"/>
+                        </div>
+                        <div style="font-size:24px; font-weight:bold; letter-spacing:2px; margin:8px 0;">
+                            <span t-field="o.name"/>
+                        </div>
+                        <div t-if="o.acs_rx_qr_image" style="margin:10px 0;">
+                            <img t-att-src="image_data_uri(o.acs_rx_qr_image)"
+                                 style="width:190px; height:190px;"/>
+                        </div>
+                        <div style="font-size:12px; color:#777; margin-top:6px;">
+                            Scan at the pharmacy POS to load this prescription
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

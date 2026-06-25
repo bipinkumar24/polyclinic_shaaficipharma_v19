@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pulse_dashboard_viewer,shafic.pulse.dashboard.viewer,model_shafic_pulse_dashboard,group_pulse_viewer,1,1,1,1

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Report action for the Shaafici Appointment Receipt.
+        This makes the report available under the "Print" button
+        on the hms.appointment form/list.
+    -->
+    <record id="action_report_appointment_receipt" model="ir.actions.report">
+        <field name="name">Appointment Receipt</field>
+        <field name="model">hms.appointment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">shaafici_appointment_receipt.report_appointment_receipt</field>
+        <field name="report_file">shaafici_appointment_receipt.report_appointment_receipt</field>
+        <field name="print_report_name">'Receipt - %s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="acs_hms.model_hms_appointment"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_us"/>
+    </record>
+
+</odoo>

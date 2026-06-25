@@ -8,7 +8,7 @@
     'name'                  :  "Pos Credit Limit",
     "summary"               :  "POS Credit Limit allows you to add a credit limit for your customers and manage credit functions such as hold, block, and several other criteria. Further, the module shows validation errors in the POS session based on credit limit configuration. Also, you can configure different limits and configurations for distinct customers. Credit Limit | Credit Limit in Odoo | POS Credit Limit | Credit Management in Odoo | Point of Sale Credit Limit | Credit Hold | POS Customer Credit Limit",
     "category"              :  "Point of Sale",
-    "version"               :  "1.0.0",
+    "version"               :  "19.0.0.1",
     "sequence"              :  1,
     "author"                :  "Webkul Software Pvt. Ltd.",
     "license"               :  "Other proprietary",

@@ -1,0 +1,33 @@
+<odoo>
+	<data>
+		<record id="view_account_invoice_type_filter" model="ir.ui.view"> 
+	        <field name="name">account.move.filter</field>
+	        <field name="model">account.move</field>
+	        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+	        <field name="arch" type="xml">
+	        	<filter name="draft" position="before">
+	        		<filter name="Appointment" string="Appointment" domain = "[('hospital_invoice_type', '=', 'appointment')]"/>
+	        		<filter name="treatment" string="Treatment" domain = "[('hospital_invoice_type', '=', 'treatment')]"/>
+	        		<filter name="procedure" string="Procedure" domain = "[('hospital_invoice_type', '=', 'procedure')]"/>
+	        		<filter name="laboratory" string="Laboratory" domain = "[('hospital_invoice_type', '=', 'laboratory')]"/>
+	        		<filter name="pharmacy" string="Pharmacy" domain = "[('hospital_invoice_type', '=', 'pharmacy')]"/>
+	        		<filter name="surgery" string="Surgery" domain = "[('hospital_invoice_type', '=', 'surgery')]"/>
+	        		<filter name="hospitalization" string="Hospitalization" domain = "[('hospital_invoice_type', '=', 'hospitalization')]"/>
+	        		<filter name="radiology" string="Radiology" domain = "[('hospital_invoice_type', '=', 'radiology')]"/>
+	        		<!-- <filter name="vaccination" string="Vaccination" domain = "[('hospital_invoice_type', '=', 'vaccination')]"/> -->
+	        	</filter>
+	        </field>
+	    </record>
+		<record id="action_update_commission_values" model="ir.actions.server">
+		    <field name="name">Update Commission</field>
+		    <field name="model_id" ref="do_insurance_card_balance_system.model_account_move"/>
+		    <field name="binding_model_id" ref="do_insurance_card_balance_system.model_account_move"/>
+		    <field name="binding_view_types">list</field>
+		    <field name="state">code</field>
+		    <field name="code">
+			if records:
+			    records.update_commission_values_action()
+		    </field>
+		</record>
+	</data>
+</odoo>

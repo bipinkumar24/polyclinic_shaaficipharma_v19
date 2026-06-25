@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_phys_presc_pivot" model="ir.ui.view">
+        <field name="name">shafic.physician.prescription.pivot</field>
+        <field name="model">shafic.physician.prescription</field>
+        <field name="arch" type="xml">
+            <pivot string="Physician Prescriptions" sample="1">
+                <field name="physician_id" type="row"/>
+                <field name="prescription_count" type="measure"/>
+                <field name="value" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_phys_presc_graph" model="ir.ui.view">
+        <field name="name">shafic.physician.prescription.graph</field>
+        <field name="model">shafic.physician.prescription</field>
+        <field name="arch" type="xml">
+            <graph string="Prescription Value by Physician" type="bar" sample="1">
+                <field name="physician_id"/>
+                <field name="value" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_phys_presc_list" model="ir.ui.view">
+        <field name="name">shafic.physician.prescription.list</field>
+        <field name="model">shafic.physician.prescription</field>
+        <field name="arch" type="xml">
+            <list string="Physician Prescriptions" create="false" sample="1">
+                <field name="date"/>
+                <field name="physician_id"/>
+                <field name="patient_id" optional="show"/>
+                <field name="product_id"/>
+                <field name="categ_id" optional="hide"/>
+                <field name="quantity" sum="Units"/>
+                <field name="value" sum="Total value"/>
+                <field name="prescription_count" sum="Prescriptions" optional="show"/>
+                <field name="prescription_id" optional="hide"/>
+                <field name="company_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_phys_presc_search" model="ir.ui.view">
+        <field name="name">shafic.physician.prescription.search</field>
+        <field name="model">shafic.physician.prescription</field>
+        <field name="arch" type="xml">
+            <search string="Physician Prescriptions">
+                <field name="physician_id"/>
+                <field name="patient_id"/>
+                <field name="product_id"/>
+                <field name="categ_id"/>
+                <filter name="today" string="Today"
+                        domain="[('date','=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="this_month" string="This Month"
+                        domain="[('date','&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="this_year" string="This Year"
+                        domain="[('date','&gt;=', (context_today() + relativedelta(month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                <group >
+                    <filter name="g_phys" string="Physician" context="{'group_by':'physician_id'}"/>
+                    <filter name="g_prod" string="Medicament" context="{'group_by':'product_id'}"/>
+                    <filter name="g_categ" string="Product Category" context="{'group_by':'categ_id'}"/>
+                    <filter name="g_patient" string="Patient" context="{'group_by':'patient_id'}"/>
+                    <filter name="g_date" string="Date" context="{'group_by':'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_phys_presc" model="ir.actions.act_window">
+        <field name="name">Physician Prescriptions</field>
+        <field name="res_model">shafic.physician.prescription</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="view_phys_presc_search"/>
+        <field name="context">{'search_default_this_month': 1, 'search_default_g_phys': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No prescriptions yet</p>
+            <p>Counts and values prescriptions by the prescribing doctor.
+               Value is units x the medicament sale price.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_phys_presc"
+              name="Physician Prescriptions"
+              parent="menu_clinic_perf_root"
+              action="action_phys_presc"
+              groups="account.group_account_user"
+              sequence="20"/>
+
+</odoo>

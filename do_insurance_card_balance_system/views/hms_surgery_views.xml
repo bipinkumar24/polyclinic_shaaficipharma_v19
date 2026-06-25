@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<odoo>
+    <!-- <Laboratory> -->
+    <record id="hms_surgery_cardbalance_view" model="ir.ui.view">
+        <field name="name">hms.surgery.from</field>
+        <field name="model">hms.surgery</field>
+        <field name="inherit_id" ref="acs_hms_surgery.hms_surgery_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='general']//div[@name='invoice_exemption']" position="after">
+                <field name="available_insurancecard_balance_surgery" readonly="insurance_readonly"/>
+                <field name="new_insurance_company_id" required="available_insurancecard_balance_surgery" invisible="not available_insurancecard_balance_surgery" readonly="insurance_readonly"/>
+                <field name="card_insurance_company_id" invisible="1"/>
+                <field name="insurancecard_balance_amount" invisible="1" readonly="insurance_readonly"/>
+                <field name="insurancecard_total_amount" invisible="not available_insurancecard_balance_surgery" readonly="insurance_readonly" groups="acs_hms_pharmacy.group_show_amounts_on_prescription"/>
+                <field name="insurance_covers_amount" invisible="not available_insurancecard_balance_surgery" readonly="insurance_readonly"/>
+                <field name="patient_pay_amount" invisible="not available_insurancecard_balance_surgery" 
+                    readonly="insurance_readonly" groups="acs_hms_pharmacy.group_show_amounts_on_prescription"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

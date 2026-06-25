@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_phys_perf_acct,shafic.physician.performance.acct,model_shafic_physician_performance,account.group_account_user,1,0,0,0
+access_phys_presc_acct,shafic.physician.prescription.acct,model_shafic_physician_prescription,account.group_account_user,1,0,0,0
+access_script_capture_acct,shafic.script.capture.acct,model_shafic_script_capture,account.group_account_user,1,0,0,0

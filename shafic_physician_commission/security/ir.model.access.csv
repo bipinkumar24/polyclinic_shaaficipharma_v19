@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pcr_mgr,pcr.mgr,model_physician_commission_rate,account.group_account_manager,1,1,1,1
+access_pcr_user,pcr.user,model_physician_commission_rate,account.group_account_user,1,0,0,0
+access_pcw_mgr,pcw.mgr,model_physician_commission_wizard,account.group_account_manager,1,1,1,1
+access_pcl_mgr,pcl.mgr,model_physician_commission_line,account.group_account_manager,1,1,1,1
+access_pcc_mgr,pcc.mgr,model_physician_commission_config,account.group_account_manager,1,1,1,1
+access_phys_read_fin,phys.read.fin,acs_hms_base.model_hms_physician,account.group_account_manager,1,0,0,0

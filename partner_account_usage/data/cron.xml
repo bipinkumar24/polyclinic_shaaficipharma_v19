@@ -1,0 +1,11 @@
+<odoo>
+    <record id="cron_update_partner_account_usage" model="ir.cron">
+        <field name="name">Update Partner Accounting Usage</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_update_partner_account_usage()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

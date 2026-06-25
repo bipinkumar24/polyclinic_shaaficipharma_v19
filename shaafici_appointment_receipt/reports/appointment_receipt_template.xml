@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Main document template: one page per appointment record -->
+    <template id="report_appointment_receipt_document">
+        <t t-call="web.external_layout">
+            <!-- We don't want Odoo's default header/footer styling to dominate;
+                 but external_layout is used so company context is set. -->
+            <t t-set="o" t-value="o.with_context(lang=(o.patient_id.partner_id.lang if o.patient_id and o.patient_id.partner_id and o.patient_id.partner_id.lang else lang))"/>
+            <t t-set="company" t-value="o.company_id or res_company"/>
+
+            <div class="page" style="font-family: Arial, sans-serif; color: #000; ">
+                <style>
+                    .lable{
+                    font-weight: bold; padding: 6px 8px;
+                    }
+                </style>
+                <!-- ================= PRINT / ISSUE DATE ROW ================= -->
+                <div class="row col-12 " style="display: flex; justify-content: space-between;
+                            font-weight: bold; font-size: 16px;
+                            padding: 6px 0; border-bottom: 2px solid #000;">
+                    <div class="ol-auto col-7" >
+                        Print Date:
+                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')"/>
+                    </div>
+                    <div class="ol-auto col-5 text-center">
+                        Issue Date:
+                        <t t-if="o.date">
+                            <span t-esc="o.date.strftime('%Y-%m-%d')"/>
+                        </t>
+                        <t t-elif="o.appointment_date">
+                            <span t-esc="o.appointment_date.strftime('%Y-%m-%d')"/>
+                        </t>
+                    </div>
+                </div>
+                <div class="row col-12" style="display: flex; justify-content: space-between;
+                            padding: 14px 0 6px 0; font-size: 16px; font-weight: bold;">
+                    <div class="ol-auto col-7">
+                        Ref No: <span t-field="o.name"/>
+                    </div>
+                    <div class="ol-auto col-5 text-center">
+                        RECEIPT
+                    </div>
+                </div>
+
+                <!-- ================= QUEUE / TOKEN NUMBER CIRCLE ================= -->
+                <div style="text-align: center; padding: 10px 0 14px 0;
+                           ">
+                    <div style="display: inline-block;
+                               height: 55px;
+                                border-radius: 50%;
+                                line-height: 55px;
+                                text-align: center;
+                                font-size: 22px;
+                                font-weight: 600;">
+                        <t t-if="o.daily_number">
+                            <t t-esc ="o.daily_number"/>
+                        </t>
+                        <t t-else="">
+                            -
+                        </t>
+                    </div>
+                </div>
+
+                <!-- ================= PATIENT INFO BLOCK ================= -->
+                <table style="width: 100%; font-size: 16px; border-collapse: collapse;
+                              margin-top: 10px;">
+                    <tr>
+                        <td class="lable">
+                            Patient ID:
+                        </td>
+                        <td class="lable">
+                            <t t-if="o.patient_id">
+                                <span t-field="o.patient_id.code"/>
+                                <!-- Fallback if patient_seq not available in this build: -->
+                                <t t-if="not o.patient_id.code">
+                                    <span t-field="o.patient_id.name"/>
+                                </t>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="lable">
+                            Name:
+                        </td>
+                        <td class="lable">
+                            <t t-if="o.patient_id">
+                                <span t-field="o.patient_id.name"/>
+                            </t>
+                        </td>
+                    </tr>
+                    <!-- <tr>
+                        <td colspan="2" style="border-bottom: 1px solid #000; padding: 0;"></td>
+                    </tr> -->
+                    <tr>
+                        <td class="lable">
+                            Age:
+                        </td>
+                        <td class="lable">
+                            <t t-if="o.age">
+                                <span t-field="o.age"/>
+                            </t>
+                            <t t-elif="o.patient_id and o.patient_id.age">
+                                <span t-field="o.patient_id.age"/>
+                            </t>
+                        </td>
+                    </tr>
+                   <!--  <tr>
+                        <td colspan="2" style="border-bottom: 1px solid #000; padding: 0;"></td>
+                    </tr> -->
+                    <tr>
+                        <td class="lable">
+                            Doctor:
+                        </td>
+                        <td class="lable">
+                            <t t-if="o.physician_id">
+                                <span t-field="o.physician_id.name"/>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="lable">
+                            Department:
+                        </td>
+                        <td style="padding: 6px 0;">
+                            <t t-if="o.department_id">
+                                <span t-field="o.department_id.name"/>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="lable">
+                            Service:
+                        </td>
+                        <td class="lable">
+                            <t t-if="o.product_id">
+                                <span t-field="o.product_id.name"/>
+                            </t>
+                        </td>
+                    </tr>
+                    <!-- <tr>
+                        <td colspan="2" style="border-bottom: 1px solid #000; padding: 0;"></td>
+                    </tr> -->
+                </table>
+
+                <!-- ================= AMOUNT / DISCOUNT / TOTAL ================= -->
+                <div style="margin-top: 25px; display: flex; justify-content: center;">
+                    <table style="width: 55%; font-size: 16px; border-collapse: collapse;">
+                        <tr style="border-top: 1px solid #000; border-bottom: 1px solid #000;">
+                            <td class="lable">Amount:</td>
+                            <td class="lable">
+                                <t t-if="o.invoice_id">
+                                    <span t-esc="'%.0f' % o.invoice_id.amount_untaxed"/>
+                                </t>
+                                <t t-elif="o.product_id">
+                                    <span t-esc="'%.0f' % o.product_id.lst_price"/>
+                                </t>
+                                <t t-else="">0</t>
+                            </td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #000;">
+                            <td class="lable">Discount:</td>
+                            <td class="lable">
+                                <t t-if="o.invoice_id">
+                                    <!-- Sum of discount amount across invoice lines -->
+                                    <t t-set="discount_total"
+                                       t-value="sum([(l.price_unit * l.quantity * (l.discount or 0.0) / 100.0) for l in o.invoice_id.invoice_line_ids])"/>
+                                    <span t-esc="'%.0f' % discount_total"/>
+                                </t>
+                                <t t-else="">0</t>
+                            </td>
+                        </tr>
+                        <tr style="border-bottom: 2px solid #000;">
+                            <td class="lable">Total:</td>
+                            <td class="lable">
+                                <t t-if="o.invoice_id">
+                                    <span t-esc="o.invoice_id.amount_total"
+                                          t-options='{"widget": "monetary", "display_currency": o.invoice_id.currency_id}'/>
+                                </t>
+                                <t t-elif="o.product_id">
+                                    <span t-esc="o.product_id.lst_price"
+                                          t-options='{"widget": "monetary", "display_currency": (company.currency_id)}'/>
+                                </t>
+                                <t t-else="">
+                                    <span t-esc="0.0"
+                                          t-options='{"widget": "monetary", "display_currency": (company.currency_id)}'/>
+                                </t>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- ================= CASHIER / RESPONSIBLE SIGNATURE ================= -->
+                <div class="row col-12 text-center" style=" margin-top: 14px; font-size: 18px; font-weight: bold;">
+                    <div class="col-8"/>
+                    <div class="col-4">
+                        Create By:<br/>
+                        <t t-if="o.user_id">
+                            <span t-field="o.user_id.name"/>
+                        </t>
+                        <t t-elif="o.create_uid">
+                            <span t-field="o.create_uid.name"/>
+                        </t>
+                    </div>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+
+    <!-- Wrapper that loops over all selected records (required entry template) -->
+    <template id="report_appointment_receipt">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="shaafici_appointment_receipt.report_appointment_receipt_document"
+                   t-lang="o.patient_id.partner_id.lang if o.patient_id and o.patient_id.partner_id and o.patient_id.partner_id.lang else 'en_US'"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

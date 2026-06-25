@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<odoo>
+    <!-- Procedure View -->
+    <record id="view_acs_patient_procedure_inherit_list" model="ir.ui.view">
+        <field name="name">acs.patient.procedure.views.list</field>
+        <field name="model">acs.patient.procedure</field>
+        <field name="inherit_id" ref="acs_hms.view_acs_patient_procedure_list"/>
+        <field name="arch" type="xml">
+            <field name="price_unit" position="attributes">
+                <attribute name="groups">acs_hms_pharmacy.group_show_amounts_on_prescription</attribute>
+            </field>
+        </field>
+    </record>
+    <record id="view_acs_patient_procedure_inherit_form" model="ir.ui.view">
+        <field name="name">acs.patient.procedure.views.form</field>
+        <field name="model">acs.patient.procedure</field>
+        <field name="inherit_id" ref="acs_hms.view_acs_patient_procedure_form"/>
+        <field name="arch" type="xml">
+            <field name="price_unit" position="attributes">
+                <attribute name="groups">acs_hms_pharmacy.group_show_amounts_on_prescription</attribute>
+            </field>
+            <xpath expr="//field[@name='consumable_line_ids']//field[@name='price_unit']" position="attributes">
+               <attribute name="groups">acs_hms_pharmacy.group_show_amounts_on_prescription</attribute>
+            </xpath>
+            <xpath expr="//field[@name='consumable_line_ids']//field[@name='subtotal']" position="attributes">
+               <attribute name="groups">acs_hms_pharmacy.group_show_amounts_on_prescription</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+

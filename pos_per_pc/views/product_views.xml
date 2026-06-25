@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Inherit the product template form. The product variant form
+        (product.product_normal_form_view) inherits this same view, so the
+        fields are rendered on BOTH the template and the variant forms,
+        right after the Sales Price row.
+    -->
+    <record id="product_template_form_view_per_pc" model="ir.ui.view">
+        <field name="name">product.template.form.per.pc</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='list_price_uom']" position="after">
+                <label for="sales_price_per_pc"/>
+                <div class="o_row" name="sales_price_per_pc_uom">
+                    <field name="sales_price_per_pc" class="oe_inline"
+                           widget="monetary"
+                           options="{'currency_field': 'currency_id'}"/>
+                    <span groups="uom.group_uom">
+                        per
+                        <field name="uom_for_per_pc" class="oe_inline"
+                               options="{'no_create': True}"/>
+                    </span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ============ Commission Rates ============ -->
+    <record id="view_commission_rate_list" model="ir.ui.view">
+        <field name="name">physician.commission.rate.list</field>
+        <field name="model">physician.commission.rate</field>
+        <field name="arch" type="xml">
+            <list string="Commission Rates" editable="bottom">
+                <field name="physician_id"/>
+                <field name="commission_percent"/>
+                <field name="override_expense"/>
+                <field name="expense_percent"
+                       readonly="not override_expense"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_commission_rate" model="ir.actions.act_window">
+        <field name="name">Commission Rates</field>
+        <field name="res_model">physician.commission.rate</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Set physician rates</p>
+            <p>Add each physician and the percentage they receive of the
+               post-expense base (e.g. Dr Kaahiye 25%, Dr Ifrah 10%).</p>
+        </field>
+    </record>
+
+    <!-- ============ Commission Report Wizard ============ -->
+    <record id="view_commission_wizard_form" model="ir.ui.view">
+        <field name="name">physician.commission.wizard.form</field>
+        <field name="model">physician.commission.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Physician Commission">
+                <div class="oe_title">
+                    <h2>Physician Commission</h2>
+                    <p>Deducts the expense rate from each physician's
+                       clinic-service revenue, then applies their
+                       commission % to the remaining base.</p>
+                </div>
+                <group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <group>
+                        <field name="expense_rate"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_compute" type="object"
+                            string="Compute" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_commission_wizard" model="ir.actions.act_window">
+        <field name="name">Commission Report</field>
+        <field name="res_model">physician.commission.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="view_commission_line_list" model="ir.ui.view">
+        <field name="name">physician.commission.line.list</field>
+        <field name="model">physician.commission.line</field>
+        <field name="arch" type="xml">
+            <list string="Physician Commission" create="false"
+                  edit="false" default_order="commission_amount desc">
+                <header>
+                    <button name="action_create_entries" type="object"
+                            string="Create Journal Entries"
+                            class="btn-primary"/>
+                </header>
+                <field name="physician_name"/>
+                <field name="revenue" sum="Revenue"/>
+                <field name="expense_rate_used"/>
+                <field name="expense_amount" sum="Expense"/>
+                <field name="base_amount" sum="Base"/>
+                <field name="commission_percent"/>
+                <field name="commission_amount" sum="Commission"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============ Settings ============ -->
+    <record id="view_commission_config_form" model="ir.ui.view">
+        <field name="name">physician.commission.config.form</field>
+        <field name="model">physician.commission.config</field>
+        <field name="arch" type="xml">
+            <form string="Physician Commission Settings">
+                <div class="oe_title">
+                    <h2>Commission Settings</h2>
+                    <p>The default expense rate is deducted from each
+                       physician's revenue before their commission is
+                       applied. A physician with a custom expense rate (on
+                       Commission Rates) uses theirs instead.</p>
+                </div>
+                <group>
+                    <field name="expense_rate"/>
+                </group>
+                <group string="Commission Journal Entries">
+                    <field name="journal_id"/>
+                    <field name="expense_account_id"/>
+                    <field name="payable_account_id"/>
+                </group>
+                <footer>
+                    <button name="action_save" type="object" string="Save"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_commission_config" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">physician.commission.config</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ============ Menus ============ -->
+    <menuitem id="menu_commission_root" name="Physician Commission"
+              sequence="56"
+              groups="account.group_account_manager"/>
+    <menuitem id="menu_commission_report" name="Commission Report"
+              parent="menu_commission_root"
+              action="action_commission_wizard" sequence="10"/>
+    <menuitem id="menu_commission_rates" name="Commission Rates"
+              parent="menu_commission_root"
+              action="action_commission_rate" sequence="20"/>
+    <menuitem id="menu_commission_config" name="Settings"
+              parent="menu_commission_root"
+              action="action_commission_config" sequence="30"/>
+
+</odoo>

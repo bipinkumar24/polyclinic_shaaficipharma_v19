@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Pivot: physician (rows) x service type (cols), revenue measure -->
+    <record id="view_phys_perf_pivot" model="ir.ui.view">
+        <field name="name">shafic.physician.performance.pivot</field>
+        <field name="model">shafic.physician.performance</field>
+        <field name="arch" type="xml">
+            <pivot string="Physician Performance" sample="1">
+                <field name="physician_id" type="row"/>
+                <field name="service_type" type="col"/>
+                <field name="revenue" type="measure"/>
+                <field name="line_count" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Graph: revenue by physician -->
+    <record id="view_phys_perf_graph" model="ir.ui.view">
+        <field name="name">shafic.physician.performance.graph</field>
+        <field name="model">shafic.physician.performance</field>
+        <field name="arch" type="xml">
+            <graph string="Physician Revenue" type="bar" sample="1">
+                <field name="physician_id"/>
+                <field name="service_type"/>
+                <field name="revenue" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- List: drill-down detail -->
+    <record id="view_phys_perf_list" model="ir.ui.view">
+        <field name="name">shafic.physician.performance.list</field>
+        <field name="model">shafic.physician.performance</field>
+        <field name="arch" type="xml">
+            <list string="Physician Performance" create="false" sample="1">
+                <field name="invoice_date"/>
+                <field name="physician_id"/>
+                <field name="patient_id" optional="show"/>
+                <field name="service_type"/>
+                <field name="product_id" optional="hide"/>
+                <field name="categ_id" optional="hide"/>
+                <field name="quantity" sum="Quantity"/>
+                <field name="revenue" sum="Total revenue"/>
+                <field name="payment_state" optional="show"/>
+                <field name="move_id" optional="hide"/>
+                <field name="company_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search + group-by -->
+    <record id="view_phys_perf_search" model="ir.ui.view">
+        <field name="name">shafic.physician.performance.search</field>
+        <field name="model">shafic.physician.performance</field>
+        <field name="arch" type="xml">
+            <search string="Physician Performance">
+                <field name="physician_id"/>
+                <field name="patient_id"/>
+                <field name="service_type"/>
+                <field name="categ_id"/>
+                <field name="product_id"/>
+                <filter name="today" string="Today"
+                        domain="[('invoice_date','=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="this_month" string="This Month"
+                        domain="[('invoice_date','&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="this_year" string="This Year"
+                        domain="[('invoice_date','&gt;=', (context_today() + relativedelta(month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="paid" string="Paid" domain="[('payment_state','=','paid')]"/>
+                <filter name="outstanding" string="Outstanding"
+                        domain="[('payment_state','in',('not_paid','partial'))]"/>
+                <group>
+                    <filter name="g_phys" string="Physician" context="{'group_by':'physician_id'}"/>
+                    <filter name="g_serv" string="Service Type" context="{'group_by':'service_type'}"/>
+                    <filter name="g_categ" string="Product Category" context="{'group_by':'categ_id'}"/>
+                    <filter name="g_pay" string="Payment Status" context="{'group_by':'payment_state'}"/>
+                    <filter name="g_patient" string="Patient" context="{'group_by':'patient_id'}"/>
+                    <filter name="g_date" string="Date" context="{'group_by':'invoice_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_phys_perf" model="ir.actions.act_window">
+        <field name="name">Physician Performance</field>
+        <field name="res_model">shafic.physician.performance</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="view_phys_perf_search"/>
+        <field name="context">{'search_default_this_month': 1, 'search_default_g_phys': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No physician revenue yet</p>
+            <p>Revenue is grouped by the physician set on each patient invoice.
+               Make sure invoices carry a physician (auto-filled from the linked
+               appointment / procedure), then it appears here.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_clinic_perf_root"
+              name="Clinic Performance"
+              groups="account.group_account_user"
+              sequence="6"/>
+    <menuitem id="menu_phys_perf"
+              name="Physician Performance"
+              parent="menu_clinic_perf_root"
+              action="action_phys_perf"
+              groups="account.group_account_user"
+              sequence="10"/>
+
+</odoo>

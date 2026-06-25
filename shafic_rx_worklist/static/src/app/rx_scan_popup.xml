@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="shafic_rx_worklist.RxScanPopup">
+        <Dialog title="'Prescription Handoff'" size="'md'">
+            <div class="p-2">
+                <div class="d-flex gap-2 mb-2">
+                    <input type="text" class="form-control"
+                           t-ref="codeInput"
+                           placeholder="Scan or type the prescription number"
+                           t-model="state.code"
+                           t-on-keydown="onKeydown"/>
+                    <button class="btn btn-secondary"
+                            t-on-click="search"
+                            t-att-disabled="state.loading">
+                        Search
+                    </button>
+                </div>
+
+                <div t-if="state.error" class="alert alert-warning py-2 mb-2">
+                    <t t-esc="state.error"/>
+                </div>
+
+                <div t-if="state.data and state.data.found">
+                    <div class="mb-2">
+                        <div><strong>Patient: </strong>
+                            <t t-esc="state.data.patient"/></div>
+                        <div><strong>Number: </strong>
+                            <t t-esc="state.data.name"/></div>
+                        <div t-if="state.data.member_tier">
+                            <strong>Member: </strong>
+                            <t t-esc="state.data.member_tier"/></div>
+                    </div>
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Medicine</th>
+                                <th class="text-end">Qty (pcs)</th>
+                                <th class="text-end">Unit Price</th>
+                                <th class="text-end">Value</th>
+                                <th class="text-end">On Hand</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="lines" t-as="line"
+                                t-key="line_index">
+                                <td><t t-esc="line.product_name"/></td>
+                                <td class="text-end">
+                                    <t t-esc="line.qty"/></td>
+                                <td class="text-end">
+                                    <t t-esc="line.unit_price.toFixed(2)"/></td>
+                                <td class="text-end">
+                                    <t t-esc="line.line_value.toFixed(2)"/></td>
+                                <td class="text-end">
+                                    <t t-esc="line.qty_available"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="text-end fw-bold">
+                        Estimated total:
+                        <t t-esc="state.data.est_value.toFixed(2)"/>
+                    </div>
+                </div>
+            </div>
+
+            <t t-set-slot="footer">
+                <button class="btn btn-primary"
+                        t-att-disabled="!(state.data and state.data.found)"
+                        t-on-click="addToOrder">
+                    Add to Order
+                </button>
+                <button class="btn btn-secondary" t-on-click="props.close">
+                    Cancel
+                </button>
+            </t>
+        </Dialog>
+    </t>
+
+</templates>

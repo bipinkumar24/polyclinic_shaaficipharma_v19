@@ -1,0 +1,19 @@
+<odoo>
+	 <!-- Prescription -->
+    <record id="view_hms_prescription_order_cardbalance_form" model="ir.ui.view">
+        <field name="name">prescription.order.from</field>
+        <field name="model">prescription.order</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_prescription_order_form"/>
+        <field name="arch" type="xml">
+            <field name="surgery_id" position="after">
+                <field name="available_insurancecard_balance_prescription" readonly="insurance_readonly"/>
+                <field name="new_insurance_company_id" required="available_insurancecard_balance_prescription" invisible="not available_insurancecard_balance_prescription" readonly="insurance_readonly"/>
+                <field name="card_insurance_company_id" invisible="1"/>
+                <field name="insurancecard_balance_amount" invisible="1" readonly="insurance_readonly"/>
+                <field name="insurancecard_total_amount" invisible="not available_insurancecard_balance_prescription" readonly="insurance_readonly" groups="acs_hms_pharmacy.group_show_amounts_on_prescription"/>
+                <field name="insurance_covers_amount" invisible="not available_insurancecard_balance_prescription" readonly="insurance_readonly"/>
+                <field name="patient_pay_amount" invisible="not available_insurancecard_balance_prescription" readonly="insurance_readonly" groups="acs_hms_pharmacy.group_show_amounts_on_prescription"/>
+            </field>
+        </field>
+    </record>
+</odoo>

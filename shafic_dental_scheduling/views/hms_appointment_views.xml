@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_dental_appointment_gantt" model="ir.ui.view">
+        <field name="name">dental.appointment.gantt</field>
+        <field name="model">hms.appointment</field>
+        <field name="arch" type="xml">
+            <gantt date_start="date" date_stop="date_to"
+                   default_group_by="cabin_id"
+                   color="physician_id"
+                   default_scale="day"
+                   scales="day,week,month"
+                   string="Dental Schedule">
+                <field name="patient_id"/>
+                <field name="physician_id"/>
+                <field name="cabin_id"/>
+                <field name="purpose_id"/>
+                <field name="state"/>
+                <templates>
+                    <div t-name="gantt-popover" class="o_dental_gantt_popover">
+                        <ul class="pb-0 mb-0">
+                            <li><strong>Patient: </strong>
+                                <t t-out="patient_id[1]"/></li>
+                            <li t-if="physician_id"><strong>Dentist: </strong>
+                                <t t-out="physician_id[1]"/></li>
+                            <li t-if="cabin_id"><strong>Chair: </strong>
+                                <t t-out="cabin_id[1]"/></li>
+                            <li t-if="purpose_id"><strong>Visit: </strong>
+                                <t t-out="purpose_id[1]"/></li>
+                        </ul>
+                    </div>
+                </templates>
+            </gantt>
+        </field>
+    </record>
+
+    <record id="action_dental_schedule" model="ir.actions.act_window">
+        <field name="name">Dental Schedule</field>
+        <field name="res_model">hms.appointment</field>
+        <field name="view_mode">gantt,calendar,list,form</field>
+        <field name="domain">[('department_type', '=', 'dental')]</field>
+        <field name="context">{'acs_department_type': 'dental'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Book a dental appointment</p>
+            <p>Drag on the Gantt to schedule and reschedule. Each row is a
+               chair; overlaps on the same chair or dentist are blocked.</p>
+        </field>
+    </record>
+
+</odoo>

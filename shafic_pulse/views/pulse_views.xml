@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_pulse_dashboard" model="ir.actions.client">
+        <field name="name">CEO Pulse</field>
+        <field name="tag">shafic_pulse_dashboard</field>
+    </record>
+
+    <menuitem id="menu_pulse_root"
+              name="Pulse"
+              web_icon="shafic_pulse,static/description/icon.png"
+              groups="group_pulse_viewer"
+              sequence="5"/>
+
+    <menuitem id="menu_pulse_dashboard"
+              name="CEO Pulse"
+              parent="menu_pulse_root"
+              action="action_pulse_dashboard"
+              groups="group_pulse_viewer"
+              sequence="10"/>
+</odoo>

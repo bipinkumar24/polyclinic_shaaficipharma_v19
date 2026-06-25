@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_pulse" model="ir.ui.view">
+        <field name="name">res.config.settings.form.shafic.pulse</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="Shafic Pulse" name="shafic_pulse"
+                     logo="/shafic_pulse/static/description/icon.png">
+                    <block title="Dashboard Thresholds" name="pulse_thresholds">
+                        <setting string="Open hours / physician / day"
+                                 help="Denominator for chair utilization.">
+                            <field name="pulse_hours_per_physician"/>
+                        </setting>
+                        <setting string="Chair utilization target (%)"
+                                 help="Colour and triage threshold for utilization.">
+                            <field name="pulse_target_util"/>
+                        </setting>
+                        <setting string="Cash variance tolerance"
+                                 help="Flag a POS session over/short beyond this amount.">
+                            <field name="pulse_cash_tolerance"/>
+                        </setting>
+                        <setting string="A-class top-seller count"
+                                 help="How many top sellers count as A-class for stockouts.">
+                            <field name="pulse_aclass_count"/>
+                        </setting>
+                        <setting string="Near-expiry window (days)"
+                                 help="Stock expiring within this many days is the headline figure.">
+                            <field name="pulse_expiry_days_near"/>
+                        </setting>
+                        <setting string="Expiry horizon (days)"
+                                 help="Wider window shown alongside the near-expiry figure.">
+                            <field name="pulse_expiry_days_window"/>
+                        </setting>
+                        <setting string="Dead-stock threshold (days)"
+                                 help="On-hand items with no sale in this many days are dead stock.">
+                            <field name="pulse_deadstock_days"/>
+                        </setting>
+                        <setting string="Appointment completion target (%)">
+                            <field name="pulse_appt_target"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_pulse_config" model="ir.actions.act_window">
+        <field name="name">Pulse Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <!-- <field name="target">inline</field> -->
+        <field name="context">{'module': 'shafic_pulse'}</field>
+    </record>
+
+    <menuitem id="menu_pulse_config" name="Configuration"
+              parent="menu_pulse_root" groups="base.group_system"
+              action="action_pulse_config" sequence="20"/>
+</odoo>

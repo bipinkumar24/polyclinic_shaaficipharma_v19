@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem id="menu_dental_root" name="Dental" sequence="50"/>
+
+    <menuitem id="menu_dental_schedule" name="Schedule"
+              parent="menu_dental_root"
+              action="action_dental_schedule" sequence="10"/>
+
+    <menuitem id="menu_dental_config" name="Configuration"
+              parent="menu_dental_root" sequence="90"/>
+
+    <menuitem id="menu_dental_chairs" name="Chairs"
+              parent="menu_dental_config"
+              action="action_dental_cabins" sequence="10"/>
+
+    <menuitem id="menu_dental_purposes" name="Visit Types"
+              parent="menu_dental_config"
+              action="action_dental_purposes" sequence="20"/>
+
+</odoo>

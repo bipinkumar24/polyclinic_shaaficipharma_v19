@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-inherit="point_of_sale.ControlButtons" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('control-buttons')]" position="inside">
+            <button class="btn btn-light btn-lg lh-lg control-button"
+                    t-on-click="onClickRxHandoff">
+                <i class="fa fa-qrcode me-1" role="img"/>
+                <span>Prescription</span>
+            </button>
+        </xpath>
+    </t>
+
+</templates>

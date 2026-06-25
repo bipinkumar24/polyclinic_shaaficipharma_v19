@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         Label Print Wizard – form view
+         ══════════════════════════════════════════════════════════════ -->
+    <record id="view_leeno_direct_print_label_wizard_form" model="ir.ui.view">
+        <field name="name">leeno.direct.print.label.wizard.form</field>
+        <field name="model">odoo.leeno.direct.print.label.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Print Labels">
+                <group>
+                    <field name="model" invisible="1"/>
+                    <field name="res_ids_json" invisible="1"/>
+                    <field name="print_format"/>
+                    <field name="quantity"/>
+                    <field name="product_count" string="Products selected"/>
+                    <field name="product_ids" widget="many2many_tags"
+                           invisible="product_tmpl_ids"
+                           options="{'no_create': True}"/>
+                    <field name="product_tmpl_ids" widget="many2many_tags"
+                           invisible="product_ids"
+                           options="{'no_create': True}"/>
+                </group>
+                <div class="alert alert-info" role="alert">
+                    <strong>Tip:</strong> Choose a label format, set the number
+                    of copies per product, then click <em>Print Labels</em> to
+                    open the browser print dialog. Use <em>Download</em> to save
+                    the PDF instead.
+                </div>
+                <footer>
+                    <button string="Print Labels"
+                            type="object"
+                            name="action_print_labels"
+                            class="btn-primary"
+                            icon="fa-print"/>
+                    <button string="Download PDF"
+                            type="object"
+                            name="action_download_labels"
+                            class="btn-secondary"
+                            icon="fa-download"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_leeno_direct_print_label_wizard" model="ir.actions.act_window">
+        <field name="name">Print Labels</field>
+        <field name="res_model">odoo.leeno.direct.print.label.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_leeno_direct_print_label_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         "Print Labels" buttons on document forms
+         ══════════════════════════════════════════════════════════════ -->
+
+    <!-- ── Product Template form (button_box — no header on product forms) ── -->
+    <record id="view_product_template_form_label_btn" model="ir.ui.view">
+        <field name="name">product.template.form.label.btn</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="%(action_leeno_direct_print_label_wizard)d"
+                        string="Print Labels"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-tags"
+                        context="{'default_model': 'product.template'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ── Invoice / Bill form ─────────────────────────────────────── -->
+    <record id="view_move_form_label_btn" model="ir.ui.view">
+        <field name="name">account.move.form.label.btn</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='button_draft']" position="after">
+                <button name="%(action_leeno_direct_print_label_wizard)d"
+                        string="Print Labels"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-tags"
+                        context="{'default_model': 'account.move'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ── Sale Order form ─────────────────────────────────────────── -->
+    <record id="view_sale_order_form_label_btn" model="ir.ui.view">
+        <field name="name">sale.order.form.label.btn</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_draft']" position="after">
+                <button name="%(action_leeno_direct_print_label_wizard)d"
+                        string="Print Labels"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-tags"
+                        context="{'default_model': 'sale.order'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ── Purchase Order form ─────────────────────────────────────── -->
+    <record id="view_purchase_order_form_label_btn" model="ir.ui.view">
+        <field name="name">purchase.order.form.label.btn</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='button_cancel']" position="after">
+                <button name="%(action_leeno_direct_print_label_wizard)d"
+                        string="Print Labels"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-tags"
+                        context="{'default_model': 'purchase.order'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ── Stock Picking form ──────────────────────────────────────── -->
+    <record id="view_picking_form_label_btn" model="ir.ui.view">
+        <field name="name">stock.picking.form.label.btn</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_cancel']" position="after">
+                <button name="%(action_leeno_direct_print_label_wizard)d"
+                        string="Print Labels"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-tags"
+                        context="{'default_model': 'stock.picking'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ── Prescription Order form ─────────────────────────────────────── -->
+    <record id="view_prescription_order_form_label_btn" model="ir.ui.view">
+        <field name="name">prescription.order.form.label.btn</field>
+        <field name="model">prescription.order</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_prescription_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(action_leeno_direct_print_label_wizard)d"
+                        string="Print Labels"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-tags"
+                        context="{'default_model': 'prescription.order'}"/>
+            </xpath>
+        </field>
+    </record>
+
+     <!-- ── Prescription Order form ─────────────────────────────────────── -->
+    <record id="view_pacs_radiology_request_form_label_btn" model="ir.ui.view">
+        <field name="name">pacs.radiology.request.form.label.btn</field>
+        <field name="model">acs.radiology.request</field>
+        <field name="inherit_id" ref="acs_radiology.patient_radiology_test_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(action_leeno_direct_print_label_wizard)d"
+                        string="Print Labels"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-tags"
+                        context="{'default_model': 'acs.radiology.request'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ── Laboratory Request form ─────────────────────────────────────── -->
+    <record id="view_acs_laboratory_request_form_label_btn" model="ir.ui.view">
+        <field name="name">acs.laboratory.request.form.label.btn</field>
+        <field name="model">acs.laboratory.request</field>
+        <field name="inherit_id" ref="acs_laboratory.patient_laboratory_test_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(action_leeno_direct_print_label_wizard)d"
+                        string="Print Labels"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-tags"
+                        context="{'default_model': 'acs.laboratory.request'}"/>
+            </xpath>
+        </field>
+    </record> 
+
+    <!-- ── Laboratory Request form ─────────────────────────────────────── -->
+    <record id="view_hms_appointment_form_label_btn" model="ir.ui.view">
+        <field name="name">hms.appointment.form.label.btn</field>
+        <field name="model">hms.appointment</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_appointment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(action_leeno_direct_print_label_wizard)d"
+                        string="Print Labels"
+                        type="action"
+                        class="btn-secondary"
+                        icon="fa-tags"
+                        context="{'default_model': 'hms.appointment'}"/>
+            </xpath>
+        </field>
+    </record> 
+
+</odoo>
