@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_acs_hms_appointment" model="ir.actions.act_window">
+        <field name="name">Appointment</field>
+        <field name="res_model">hms.appointment</field>
+        <field name="path">almightyhms-cashier-appointment</field>
+        <field name="view_mode">list,form,kanban,calendar,pivot,graph,activity</field>
+        <field name="context">
+            {
+                'delete': False
+            }
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+        </field>
+    </record>
+    <record id="action_acs_hms_appointment_to_invoice" model="ir.actions.act_window">
+        <field name="name">Appointment Invoices</field>
+        <field name="res_model">hms.appointment</field>
+        <field name="view_mode">list,form,kanban,calendar,pivot,graph,activity</field>
+        <field name="domain">[('invoice_id','=',False),('state','=','to_invoice')]</field>
+        <field name="context">
+            {
+                'create': False,
+                'edit': False,
+                'delete': False
+            }
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+        </field>
+    </record>
+
+    <!-- Patient Appointment Invoice Action -->
+    <!-- <record id="action_patient_appointment_invoice" model="ir.actions.act_window">
+        <field name="name">Appointment Invoices</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+
+        <field name="domain">
+            [
+                ('move_type', '=', 'out_invoice'),
+                ("hospital_invoice_type", "=", "appointment"),
+            ]
+        </field>
+    </record> -->
+
+    <!-- Lab Test Request Action -->
+    <record id="hms_action_lab_test_request_cashier" model="ir.actions.act_window">
+        <field name="name">Lab Requests</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">acs.laboratory.request</field>
+        <field name="view_mode">list,form,calendar,pivot</field>
+        <field name="context">{'create': False,
+                'edit': True,
+                'delete': False}</field>
+        <field name="domain">[('state', '=', 'accepted')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+            <p>
+                Click to add new Lab Request.
+            </p>
+        </field>
+    </record>
+    <record id="hms_action_lab_test_request_cashier_toinvoice" model="ir.actions.act_window">
+        <field name="name">Lab To Invoices</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">acs.laboratory.request</field>
+        <field name="view_mode">list,form,calendar,pivot</field>
+        <field name="domain">[('invoice_id','=',False),('state','=','to_invoice')]</field>
+        <field name="context">{'search_default_today': 1, 'create': False,
+                'edit': False,
+                'delete': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+            <p>
+                Click to add new Lab Request.
+            </p>
+        </field>
+    </record>
+
+    <!-- Lab Test Inoice Action -->
+    <!-- <record id="action_patient_lab_test_invoice" model="ir.actions.act_window">
+        <field name="name">Lab To Invoices</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">
+            [
+                ('move_type', '=', 'out_invoice'),
+                ("hospital_invoice_type", "=", "laboratory"),
+            ]
+        </field>
+    </record> -->
+
+    <!-- Radiology Request Action -->
+    <record id="hms_action_radiology_request_cashier" model="ir.actions.act_window">
+        <field name="name">Radiology Requests</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">acs.radiology.request</field>
+        <field name="view_mode">list,form,calendar,pivot</field>
+        <field name="context">{'create': False,
+                'edit': True,
+                'delete': False}</field>
+        <field name="domain">[('state', '=', 'accepted')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+            <p>
+                Click to add new Radiology Request.
+            </p>
+        </field>
+    </record>
+    <record id="hms_action_radiology_request_cashier_toinvoice" model="ir.actions.act_window">
+        <field name="name">Radiology To Invoice</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">acs.radiology.request</field>
+        <field name="view_mode">list,form,calendar,pivot</field>
+        <field name="domain">[('invoice_id','=',False),('state','=','to_invoice')]</field>
+        <field name="context">{'search_default_today': 1, 'create': False,
+                'edit': False,
+                'delete': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+            <p>
+                Click to add new Radiology Request.
+            </p>
+        </field>
+    </record>
+    <!-- 
+    <record id="action_radiology_request_cashier_invoice" model="ir.actions.act_window">
+        <field name="name">Radiology To Invoice</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">
+            [
+                ('move_type', '=', 'out_invoice'),
+                ("hospital_invoice_type", "=", "radiology"),
+            ]
+        </field>
+    </record> -->
+
+    <!-- Prescription Order Action -->
+    <record id="hms_action_open_hms_prescription_order_view" model="ir.actions.act_window">
+        <field name="name">Prescription Order</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">prescription.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'create': False,
+                'edit': False,
+                'delete': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+            <p>
+                Click to add new Radiology Request.
+            </p>
+        </field>
+    </record>
+     <record id="hms_action_open_hms_prescription_order_view_toinvoice" model="ir.actions.act_window">
+        <field name="name">Prescription To Invoice</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">prescription.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('invoice_id','=',False),('state','=','prescription')]</field>
+        <field name="context">{'search_default_today': 1, 'create': False,
+                'edit': False,
+                'delete': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+            <p>
+                Click to add new Radiology Request.
+            </p>
+        </field>
+    </record>
+
+   <!--  <record id="action_prescription_order_cashier_invoice" model="ir.actions.act_window">
+        <field name="name">Prescription To Invoice</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">
+            [
+                ('move_type', '=', 'out_invoice'),
+                ("hospital_invoice_type", "=", "pharmacy")
+            ]
+        </field>
+    </record>
+ -->
+    <record id="action_patient_invoice" model="ir.actions.act_window">
+        <field name="name">Patient Invoices</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+
+        <!-- Domain uses context -->
+        <field name="domain">
+            [
+                ('move_type', '=', 'out_invoice'),
+                ('patient_id', '!=', False)
+            ]
+        </field>
+
+        <!-- Context flag -->
+        <field name="context">
+            {
+                'default_move_type': 'out_invoice',
+                'patient_invoice_id': True
+            }
+        </field>
+    </record>
+
+    <record id="view_account_payment_register_form_inherit_cashier" model="ir.ui.view">
+        <field name="name">view.account.payment.register.form.inherit.cashier</field>
+        <field name="model">account.payment.register</field>
+        <field name="inherit_id" ref="account.view_account_payment_register_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='journal_id']" position="attributes">
+                <attribute name="domain">[('id', 'in', available_journal_ids)]</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+
+</odoo>

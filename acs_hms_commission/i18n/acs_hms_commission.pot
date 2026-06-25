@@ -1,0 +1,42 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* acs_hms_commission
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-03-14 06:05+0000\n"
+"PO-Revision-Date: 2022-03-14 06:05+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: acs_hms_commission
+#: model:ir.ui.menu,name:acs_hms_commission.menu_acs_hms_commission
+#: model_terms:ir.ui.view,arch_db:acs_hms_commission.view_physician_form
+msgid "Business Commissions"
+msgstr ""
+
+#. module: acs_hms_commission
+#: model:ir.model.fields.selection,name:acs_hms_commission.selection__account_move__hospital_invoice_type__commission
+msgid "Commission"
+msgstr ""
+
+#. module: acs_hms_commission
+#: model:ir.model,name:acs_hms_commission.model_acs_commission_rule
+msgid "Commission Rule"
+msgstr ""
+
+#. module: acs_hms_commission
+#: model_terms:ir.ui.view,arch_db:acs_hms_commission.view_physician_form
+msgid "Commissions"
+msgstr ""
+
+#. module: acs_hms_commission
+#: model:ir.model.fields,field_description:acs_hms_commission.field_acs_commission_rule__physician_id
+msgid "Physician"
+msgstr ""

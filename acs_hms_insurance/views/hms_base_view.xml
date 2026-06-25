@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<odoo>        
+
+    <record id="view_patient_form" model="ir.ui.view">
+        <field name="name">view.hms.patient</field>
+        <field name="model">hms.patient</field>
+        <field name="inherit_id" ref="acs_hms.view_patient_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="action_insurance_policy" type="object" class="oe_stat_button" icon="fa-medkit" title="Insurance Policy" groups="acs_hms_insurance.group_hms_insurance_officer">
+                    <field string="Insurance Policy" name="insurance_count" widget="statinfo"/>
+                </button>
+                <button name="action_claim_view" type="object" class="oe_stat_button" icon="fa-ticket" title="Claims" groups="acs_hms_insurance.group_hms_insurance_officer">
+                    <field string="Claims" name="claim_count" widget="statinfo"/>
+                </button>
+            </div>
+        </field>
+    </record>
+
+    <record id="patient_kanban_view" model="ir.ui.view">
+        <field name="name">hms.patient.insurance.kanban</field>
+        <field name="model">hms.patient</field>
+        <field name="inherit_id" ref="acs_hms_base.patient_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//footer/div" position="inside">
+                <a t-if="record.insurance_count.raw_value" class="btn btn-sm btn-link smaller" groups="acs_hms_insurance.group_hms_insurance_officer" name="action_insurance_policy" role="button" type="object">
+                    <i class="fa fa-medkit me-1" aria-label="Insurance Policy" role="img" title="Insurance Policy"/>
+                    <field name="insurance_count"/>
+                </a>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Invoice -->
+    <record id="view_move_form" model="ir.ui.view">
+        <field name="name">account.move.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="acs_hms_base.view_move_form"/>
+        <field name="arch" type="xml">
+            <group name="general_details" position="after">
+                <group string="Insurance Details" name="insurance">
+                    <field name="insurance_id" domain="[('patient_id','=', patient_id)]"/>
+                    <field name="claim_id" domain="[('patient_id','=', patient_id)]"/>
+                    <field name="insurance_company_id" invisible="not claim_id"/>
+                    <field name="patient_invoice_id" domain="[('patient_id','=', patient_id)]"/>
+                    <field name="patient_invoice_amount" readonly="1" invisible="not patient_invoice_id"/>
+                </group>
+            </group>
+        </field>
+    </record>
+
+    <!-- Payment -->
+    <record id="view_account_payment_form" model="ir.ui.view">
+        <field name="name">account.payment.form</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_bank_id" position="after">
+                <field name="claim_id" domain="[('patient_id.partner_id','=', partner_id)]"/>
+                <field name="insurance_company_id" invisible="not claim_id"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Product View -->
+    <record id="view_product_simple_list" model="ir.ui.view">
+        <field name="name">product.simple.list</field>
+        <field name="model">product.template</field>
+        <field name="priority">18</field>
+        <field name="arch" type="xml">
+            <list string="Product">
+                <field name="name"/>
+                <field name="list_price" class="oe_list_field_cell oe_list_field_char oe_required" string="Price"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Appointment View -->
+    <record id="view_hms_appointment_form" model="ir.ui.view">
+        <field name="name">hms.appointment.form</field>
+        <field name="model">hms.appointment</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_appointment_form"/>
+        <field name="arch" type="xml">
+            <field name='refer_reason' position="before">
+                <field name="insurance_id" domain="[('patient_id','=', patient_id), '|', ('patient_share_by_rule', '=', True), ('allow_appointment_insurance', '=', True)]"/>
+                <field name="insurance_company_id"/>
+                <label for="claim_id"/>
+                <div name='claim_id'>
+                    <field name='claim_id' class="oe_inline" nolabel="1"/>
+                    <button name="acs_create_claim_request" string="Create Claim" type="object" class="oe_inline fa fa-arrow-right oe_link" invisible="claim_id"/>
+                </div>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_hms_appointment_list" model="ir.ui.view">
+        <field name="name">hms.appointment.list</field>
+        <field name="model">hms.appointment</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_appointment_list"/>
+        <field name="arch" type="xml">
+            <field name='date_end' position="after">
+                <field name="insurance_id" optional="hide"/>
+                <field name="insurance_company_id" optional="hide"/>
+                <field name="claim_id" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_appointment_search" model="ir.ui.view">
+        <field name="name">ACS Appointment</field>
+        <field name="model">hms.appointment</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_appointment_search"/>
+        <field name="arch" type="xml">
+            <search>
+                <filter name="is_insured" string="Insured" domain="[('insurance_id','!=',False)]"/>
+                <field name="insurance_id"/>
+                <group>
+                    <filter string="Insurance Company" name="insurance_company_groupby" domain="[]" context="{'group_by':'insurance_company_id'}"/>
+                    <filter string="Insurance Policy" name="insurance_policy_groupby" domain="[]" context="{'group_by':'insurance_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Prescription -->
+    <record id="view_hms_prescription_order_form" model="ir.ui.view">
+        <field name="name">prescription.order.from</field>
+        <field name="model">prescription.order</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_prescription_order_form"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="insurance_id" domain="[('patient_id','=', patient_id), '|', ('patient_share_by_rule', '=', True), ('allow_pharmacy_insurance', '=', True)]"/>
+                <field name="insurance_company_id"/>
+                <field name="claim_id"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_hms_prescription_order_list" model="ir.ui.view">
+        <field name="name">prescription.order.list</field>
+        <field name="model">prescription.order</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_prescription_order_list"/>
+        <field name="arch" type="xml">
+            <field name='physician_id' position="after">
+                <field name="insurance_id" optional="hide"/>
+                <field name="insurance_company_id" optional="hide"/>
+                <field name="claim_id" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_hms_prescription_order_search" model="ir.ui.view">
+        <field name="name">prescription.order.search</field>
+        <field name="model">prescription.order</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_prescription_order_search"/>
+        <field name="arch" type="xml">
+            <search>
+                <filter name="is_insured" string="Insured" domain="[('insurance_id','!=',False)]"/>
+                <field name="insurance_id"/>
+                <group>
+                    <filter string="Insurance Company" name="insurance_company_groupby" domain="[]" context="{'group_by':'insurance_company_id'}"/>
+                    <filter string="Insurance Policy" name="insurance_policy_groupby" domain="[]" context="{'group_by':'insurance_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+</odoo>

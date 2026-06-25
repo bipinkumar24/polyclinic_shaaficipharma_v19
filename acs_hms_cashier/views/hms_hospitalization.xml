@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="acs_action_form_inpatient_cashier" model="ir.actions.act_window">
+        <field name="name">Hospitalization</field>
+        <field name="path">almightyhms-cashier-hospitalization</field>
+        <field name="res_model">acs.hospitalization</field>
+        <field name="view_mode">kanban,list,form,calendar,pivot</field>
+        <field name="domain">[('invoice_ids','=', False),('state','=','discharged')]</field>   
+        <field name="context">
+            {
+                'create': False,
+                'edit': False,
+                'delete': False
+            }
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+        </field>
+    </record>
+
+</odoo>

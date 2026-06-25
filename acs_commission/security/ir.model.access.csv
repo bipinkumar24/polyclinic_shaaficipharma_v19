@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_acs_commission,acs.commission,model_acs_commission,base.group_user,1,0,0,0
+access_acs_commission_sheet,acs.commission.sheet,model_acs_commission_sheet,base.group_user,1,0,0,0
+access_acs_commission_role,acs.commission.role,model_acs_commission_role,base.group_user,1,0,0,0
+access_acs_commission_rule,acs.commission.rule,model_acs_commission_rule,base.group_user,1,0,0,0
+access_acs_commission_target_rule,access_acs_commission_target_rule,model_acs_commission_target_rule,base.group_user,1,0,0,0
+access_acs_commission_account_user,acs.commission.manager,model_acs_commission,account.group_account_invoice,1,1,1,0
+access_acs_commission_user,acs.commission.user,model_acs_commission,acs_commission.group_acs_commission_user,1,1,1,1
+access_acs_commission_role_user,acs.commission.role,model_acs_commission_role,acs_commission.group_acs_commission_user,1,1,1,1
+access_acs_commission_rule_user,acs.commission.rule,model_acs_commission_rule,acs_commission.group_acs_commission_user,1,1,1,1
+access_acs_commission_target_rule_user,access_acs_commission_target_rule,model_acs_commission_target_rule,acs_commission.group_acs_commission_user,1,1,1,1
+access_acs_commission_sheet_user,acs.commission.sheet,model_acs_commission_sheet,acs_commission.group_acs_commission_user,1,1,1,1
+access_commission_bill,access_commission_bill,model_commission_bill,account.group_account_invoice,1,1,1,1
+access_acs_commission_sheet_wizard,access_acs_commission_sheet_wizard,model_acs_commission_sheet_wizard,acs_commission.group_acs_commission_user,1,1,1,1

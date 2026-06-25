@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="0">
+
+        <record id="group_acs_subscription" model="res.groups">
+            <field name="name">Manage Subscriptions</field>
+            <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+    </data>
+
+    <data noupdate="1">
+
+        <record id="acs_contract_comp_rule" model="ir.rule">
+            <field name="name">Contract multi-company</field>
+            <field name="model_id" ref="model_acs_contract"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+        <record id="acs_subscription_comp_rule" model="ir.rule">
+            <field name="name">Subscription multi-company</field>
+            <field name="model_id" ref="model_acs_subscription"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Patient View -->
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">res.partner.view.inherit.subscription</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button name="action_view_subscriptions"
+                    type="object" class="oe_stat_button" icon="fa-user-plus"
+                    invisible="not subscription_count">
+                    <field name="subscription_count" widget="statinfo" string="Subscriptions"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Invoice -->
+    <record id="view_move_form" model="ir.ui.view">
+        <field name="name">account.move.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@id='other_tab']//field[@name='delivery_date']" position="after">
+                <field name="subscription_id" domain="[('partner_id','=',partner_id)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

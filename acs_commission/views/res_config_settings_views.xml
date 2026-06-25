@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+ 
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.commission</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="10"/>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='companies']" position="after">
+                <block title="Commission" name="commission_setting_container">
+                    <setting help="Default product to manage commission" id="default_product_to_manage_commission_setting">
+                        <field name="commission_product_id" class="o_light_label"/>
+                    </setting>
+                    <setting string="Set Invoice amount as default Commission Amount" help="Create commission based on invoice amount by default" id="commission_on_invoice_amount_setting">
+                        <field name="commission_on_invoice_amount"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

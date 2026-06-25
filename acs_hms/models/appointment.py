@@ -483,8 +483,8 @@ class Appointment(models.Model):
         res = super(Appointment, self).default_get(fields)
         if (not res.get('date')) and (not res.get('date_to')):
             res['manual_planned_duration'] = self.env.company.acs_appointment_planned_duration
-        if self._context.get('acs_department_type'):
-            department = self.env['hr.department'].search([('department_type','=',self._context.get('acs_department_type'))], limit=1)
+        if self.env.context.get('acs_department_type'):
+            department = self.env['hr.department'].search([('department_type','=',self.env.context.get('acs_department_type'))], limit=1)
             if department:
                 res['department_id'] = department.id
         return res
@@ -643,7 +643,7 @@ class Appointment(models.Model):
 
         #ACS: Check if we need it or not as it is getting created in combined 
         #invoice call by default. related method is also commented.
-        if self._context.get('with_procedure'):
+        if self.env.context.get('with_procedure'):
             if self.procedure_to_invoice_ids:
                 product_data += self.procedure_to_invoice_ids.get_procedure_invoice_data()
 
@@ -712,7 +712,7 @@ class Appointment(models.Model):
         # if self.state == 'to_invoice':
         #     self.appointment_done()
 
-        # if self.state == 'draft' and not self._context.get('avoid_confirmation'):
+        # if self.state == 'draft' and not self.env.context.get('avoid_confirmation'):
         #     if self.invoice_ids and not self.company_id.acs_check_appo_payment:
         #         self.appointment_confirm()
         
@@ -847,14 +847,14 @@ class Appointment(models.Model):
             elif self.physician_id.consultation_service_id:
                 product_id = self.physician_id.consultation_service_id.id
 
-            if self.physician_id.appointment_duration and not self._context.get('acs_online_transaction'):
+            if self.physician_id.appointment_duration and not self.env.context.get('acs_online_transaction'):
                 self.planned_duration = self.physician_id.appointment_duration
             
         if product_id:
             self.product_id = product_id
 
     def appointment_confirm(self):
-        if (not self._context.get('acs_online_transaction')) and (not self.invoice_exempt):
+        if (not self.env.context.get('acs_online_transaction')) and (not self.invoice_exempt):
             if self.appointment_invoice_policy=='advance' and not self.invoice_id:
                 raise UserError(_('Invoice is not created yet'))
 
@@ -864,7 +864,7 @@ class Appointment(models.Model):
         if not self.user_id:
             self.user_id = self.env.user.id
 
-        if self.patient_id.email and (self.company_id.acs_auto_appo_confirmation_mail or self._context.get('acs_online_transaction')):
+        if self.patient_id.email and (self.company_id.acs_auto_appo_confirmation_mail or self.env.context.get('acs_online_transaction')):
             template = self.env.ref('acs_hms.acs_appointment_email')
             template.sudo().send_mail(self.id, raise_exception=False)
         self.state = 'confirm'

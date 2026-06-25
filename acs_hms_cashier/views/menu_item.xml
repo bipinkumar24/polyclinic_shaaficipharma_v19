@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem id="main_menu_cashier" name="Cashier" sequence="22" groups="acs_hms_cashier.group_acs_cashier" web_icon="acs_hms_cashier,static/description/icon.png"/>
+    <menuitem id="menu_all_invoice" name="All Invoice" parent="main_menu_cashier" sequence="19"/>
+    <menuitem id="menu_acs_hms_invoice" action="action_acs_hms_invoice" name="Patient Invoice" parent="menu_all_invoice" sequence="3"/>
+    
+    <!-- Receits Menu-->
+    <menuitem id="menu_all_receipts" name="Receipts" parent="main_menu_cashier" sequence="20"/>
+    <menuitem id="menu_patient_receipts" action="action_hms_account_payments" name="Receipts" parent="menu_all_receipts" sequence="19"/>
+    <menuitem id="menu_patient_invoice_all" action="action_patient_invoice" name="Patient All Invoice" parent="menu_all_invoice" sequence="1"/>
+
+    <!-- appointment Menu -->
+    <menuitem id="menu_all_acs_hms_appointment" name="Appointments" parent="main_menu_cashier" sequence="21"/>
+    <menuitem id="menu_acs_hms_appointment" action="action_acs_hms_appointment" name="All Appointments" parent="menu_all_acs_hms_appointment" sequence="1"/>
+    <menuitem id="menu_acs_invoice_appointment" action="action_acs_hms_appointment_to_invoice" name="To Invoice Appointments" parent="menu_all_acs_hms_appointment" sequence="2"/>
+
+    <!-- Lab Requests Menu -->
+    <menuitem id="menu_all_lab_request_cashier" name="Lab Requests" parent="main_menu_cashier" sequence="22"/>
+    <menuitem id="menu_acs_hms_lab_request_cashier" action="hms_action_lab_test_request_cashier" name="All Lab Requests" parent="menu_all_lab_request_cashier" sequence="1"/>
+    <menuitem id="menu_acs_hms_lab_in_invoice_cashier" action="hms_action_lab_test_request_cashier_toinvoice" name="Lab To Invoices" parent="menu_all_lab_request_cashier" sequence="2"/>
+
+    <!-- Radiology Requests Menu -->
+    <menuitem id="menu_all_acs_hms_radiology_cashier" name="Radiology Requests" parent="main_menu_cashier" sequence="23"/>
+    <menuitem id="menu_acs_hms_radiology_cashier" action="hms_action_radiology_request_cashier" name="All Radiology Requests" parent="menu_all_acs_hms_radiology_cashier" sequence="1"/>
+    <menuitem id="menu_acs_hms_radiology_invoice_cashier" action="hms_action_radiology_request_cashier_toinvoice" name="Radiology To Invoice" parent="menu_all_acs_hms_radiology_cashier" sequence="2"/>
+
+    <!-- Prescription Menu -->
+    <menuitem id="menu_all_acs_hms_prescriptions_cashier" name="Prescriptions" parent="main_menu_cashier" sequence="24"/>
+    <menuitem id="menu_acs_hms_prescriptions_cashier" action="hms_action_open_hms_prescription_order_view" name="All Prescriptions" parent="menu_all_acs_hms_prescriptions_cashier" sequence="1"/>
+    <menuitem id="menu_acs_hms_prescriptions_invoice_cashier" action="hms_action_open_hms_prescription_order_view_toinvoice" name="Prescriptions To Invoice" parent="menu_all_acs_hms_prescriptions_cashier" sequence="1"/>
+
+    <!-- Procedures menu -->
+    <menuitem id="menu_all_patient_procedure_cashier" name="Procedures" parent="main_menu_cashier" sequence="25"/>
+    <menuitem id="menu_patient_procedure" action="action_patient_procedure" name="All Patient Procedures" parent="acs_hms_cashier.menu_all_patient_procedure_cashier" sequence="1"/>
+    <menuitem id="menu_patient_procedure_invoice_cashier" action="action_patient_procedure_toinvoice" name="Procedures To Invoice" parent="menu_all_patient_procedure_cashier" sequence="2"/>
+
+    <!-- Surgery Action -->
+    <menuitem id="menu_all_acs_hms_surgery_cashier" name="Surgery" parent="main_menu_cashier" sequence="26"/>
+    <menuitem id="menu_acs_hms_surgery_cashier" action="action_hms_surgery" name="All Surgery" parent="menu_all_acs_hms_surgery_cashier" sequence="25"/>
+    <menuitem id="menu_acs_hms_surgery_invoice_cashier" action="action_hms_surgery_toinvoice" name="Surgery To Invoice" parent="menu_all_acs_hms_surgery_cashier" sequence="25"/>
+
+    <!-- Vaccination Action -->
+    <menuitem id="menu_all_patient_vaccination_cashier" name="Vaccination" parent="main_menu_cashier" sequence="26"/>
+    <menuitem id="menu_patient_vaccination_cashier" action="action_vaccination" name="All Vaccination" parent="menu_all_patient_vaccination_cashier" sequence="1"/>
+    <menuitem id="menu_patient_vaccination_invoice_cashier" action="action_vaccination_invoice" name="Vaccination To Invoice" parent="menu_all_patient_vaccination_cashier" sequence="2"/>
+    <menuitem id="menu_hospitalization" action="acs_action_form_inpatient_cashier" name="Hospitalization" parent="acs_hms_cashier.main_menu_cashier" sequence="30"/>
+
+</odoo>

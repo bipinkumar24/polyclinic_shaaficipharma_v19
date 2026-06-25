@@ -1,0 +1,22 @@
+<odoo>
+    <record id="action_hms_insurance_invoice" model="ir.actions.act_window">
+        <field name="name">Insurance Invoice</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+
+        <!-- Domain uses context -->
+        <field name="domain">
+            [
+                ('move_type', '=', 'out_invoice'),('patient_invoice_amount', '>', 0)
+            ]
+        </field>
+
+        <!-- Context flag -->
+        <field name="context">
+            {
+                'default_move_type': 'out_invoice',
+            }
+        </field>
+    </record>
+    <menuitem id="menu_acs_hms_insurance_invoice" action="action_hms_insurance_invoice" name="Insurance Invoice" parent="menu_all_invoice" sequence="2"/>
+</odoo>

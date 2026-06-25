@@ -11,8 +11,8 @@ class StockLocation(models.Model):
     def default_get(self, default_fields):
         res = super(StockLocation, self).default_get(default_fields)
         branch_id = False
-        if self._context.get('branch_id'):
-            branch_id = self._context.get('branch_id')
+        if self.env.context.get('branch_id'):
+            branch_id = self.env.context.get('branch_id')
         elif self.env.user.branch_id:
             branch_id = self.env.user.branch_id.id
 

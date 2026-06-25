@@ -17,7 +17,7 @@ class TransferAccommodation(models.TransientModel):
 
     @api.model
     def default_get(self,fields):
-        context = self._context or {}
+        context = self.env.context or {}
         res = super(TransferAccommodation, self).default_get(fields)
         hospitalization = self.env['acs.hospitalization'].browse(context.get('active_ids', []))
         res.update({

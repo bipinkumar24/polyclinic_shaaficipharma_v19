@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="view_acs_insurance_plan_form" model="ir.ui.view">
+        <field name="name">acs.insurance.plan.form</field>
+        <field name="model">acs.insurance.plan</field>
+        <field name="inherit_id" ref="acs_hms_insurance.view_acs_insurance_plan_form"/>
+        <field name="arch" type="xml">
+            <group name="pharmacy_insurance" position="after">
+                <group name="radiology_insurance">
+                    <separator string="Radiology"/>
+                    <field name="allow_radiology_insurance"/>
+                    <field name="radiology_insurance_type" invisible="not allow_radiology_insurance"/>
+                    <field name="radiology_insurance_percentage" invisible="not allow_radiology_insurance or radiology_insurance_type=='fix'"/>
+                    <field name="radiology_insurance_amount" invisible="not allow_radiology_insurance or radiology_insurance_type=='percentage'"/>
+                    <field name="radiology_insurance_limit" invisible="not allow_radiology_insurance"/>
+                    <field name="radiology_create_claim" invisible="not allow_radiology_insurance"/>
+                </group>
+            </group>
+        </field>
+    </record>
+
+    <record id="view_hms_patient_insurance_form" model="ir.ui.view">
+        <field name="name">hms.patient.insurance.form</field>
+        <field name="model">hms.patient.insurance</field>
+        <field name="inherit_id" ref="acs_hms_insurance.view_hms_patient_insurance_form"/>
+        <field name="arch" type="xml">
+            <group name="pharmacy_insurance" position="after">
+                <group name="radiology_insurance">
+                    <separator string="Radiology"/>
+                    <field name="allow_radiology_insurance"/>
+                    <field name="radiology_insurance_type" invisible="not allow_radiology_insurance"/>
+                    <field name="radiology_insurance_percentage" invisible="not allow_radiology_insurance or radiology_insurance_type=='fix'"/>
+                    <field name="radiology_insurance_amount" invisible="not allow_radiology_insurance or radiology_insurance_type=='percentage'"/>
+                    <field name="radiology_insurance_limit" invisible="not allow_radiology_insurance"/>
+                    <field name="radiology_create_claim" invisible="not allow_radiology_insurance"/>
+                </group>
+            </group>
+        </field>
+    </record>
+
+    <!-- Claim View -->
+    <record id="view_claim_list" model="ir.ui.view">
+        <field name="name">insurance.claim.list</field>
+        <field name="model">hms.insurance.claim</field>
+        <field name="inherit_id" ref="acs_hms_insurance.view_claim_list"/>
+        <field name="arch" type="xml">
+            <field name="appointment_id" position="before">
+                <field name="radiology_request_id"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_insurance_claim_form" model="ir.ui.view">
+        <field name="name">hms.insurance.claim.form</field>
+        <field name="model">hms.insurance.claim</field>
+        <field name="inherit_id" ref="acs_hms_insurance.view_insurance_claim_form"/>
+        <field name="arch" type="xml">
+            <field name="claim_for" position="after">
+                <field name="radiology_request_id" domain="[('patient_id', '=', patient_id)]" options="{'no_create': True}" invisible="claim_for!='radiology'" required="claim_for!='radiology'" readonly="state in ('cancel','done')"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_acs_insurance_claim_calendar" model="ir.ui.view">
+        <field name="name">hms.insurance.claim.calendar</field>
+        <field name="model">hms.insurance.claim</field>
+        <field name="inherit_id" ref="acs_hms_insurance.view_acs_insurance_claim_calendar"/>
+        <field name="type">calendar</field>
+        <field name="arch" type="xml">
+            <field name="appointment_id" position="before">
+                <field name="radiology_request_id"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

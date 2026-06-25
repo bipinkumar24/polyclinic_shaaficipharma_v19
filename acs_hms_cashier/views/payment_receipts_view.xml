@@ -1,0 +1,32 @@
+<odoo>
+
+    <record id="action_hms_account_payments" model="ir.actions.act_window">
+        <field name="name">Customer Payments</field>
+        <field name="res_model">account.payment</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('journal_id.is_cashier_receipts','=',True)]</field>
+        <field name="context">
+            { 
+                'default_payment_type': 'inbound',                
+                'default_partner_type': 'customer',                
+                'search_default_inbound_filter': 1,
+                'search_default_today': 1,               
+                'default_move_journal_types': ('bank', 'cash'),                
+                'display_account_trust': True,
+                'default_is_cashier_action': True,
+
+            }
+        </field>
+    </record>
+    <record id="view_account_payment_search_today" model="ir.ui.view">
+        <field name="name">account.payment.check.today</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='activities_overdue']" position="before">
+                <filter name="today" string="Today" domain="[('date','&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))), ('date','&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

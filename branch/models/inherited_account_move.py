@@ -11,7 +11,7 @@ class AccountMove(models.Model):
     @api.model
     def default_get(self, default_fields):
         res = super(AccountMove, self).default_get(default_fields)
-        branch_id = self._context.get('branch_id')
+        branch_id = self.env.context.get('branch_id')
         if branch_id:
             if 'branch_id' in default_fields:
                 res.update({'branch_id': branch_id})
@@ -72,7 +72,7 @@ class AccountMoveLine(models.Model):
     @api.model
     def default_get(self, default_fields):
         res = super(AccountMoveLine, self).default_get(default_fields)
-        branch_id = self._context.get('branch_id')
+        branch_id = self.env.context.get('branch_id')
         if branch_id:
             if 'branch_id' in default_fields:
                 res.update({'branch_id': branch_id})

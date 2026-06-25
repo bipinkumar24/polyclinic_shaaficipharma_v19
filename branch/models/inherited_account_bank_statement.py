@@ -45,8 +45,8 @@ class AccountBankStatement(models.Model):
                     moves |= aml.move_id
 
             if moves:
-                if self._context.get('session'):
-                    session = self._context.get('session')
+                if self.env.context.get('session'):
+                    session = self.env.context.get('session')
                     for move in moves:
                         move.branch_id =session.branch_id.id
                         for line in move.line_ids:

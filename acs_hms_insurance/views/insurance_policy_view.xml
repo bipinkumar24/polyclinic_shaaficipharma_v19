@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!-- Patient Policy View -->
+    <record id="view_hms_patient_insurance_list" model="ir.ui.view">
+        <field name="name">hms.patient.insurance.list</field>
+        <field name="model">hms.patient.insurance</field>
+        <field name="arch" type="xml">
+            <list string="Patient Insurance">
+                <field name="patient_id"/>
+                <field name="insurance_company_id"/>
+                <field name="policy_number"/>
+                <field name="insured_value"/>
+                <field name="validity"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hms_patient_insurance_form" model="ir.ui.view">
+        <field name="name">hms.patient.insurance.form</field>
+        <field name="model">hms.patient.insurance</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="patient_id" string="Patient"/>
+                        <h1>
+                            <field name="patient_id" options="{'no_create': True}"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="insurance_company_id"/>
+                            <field name="policy_number"/>
+                            <field name="insurance_plan_id" domain="[('insurance_company_id','=',insurance_company_id)]"/>
+                            <field name="pricelist_id" groups="product.group_product_pricelist" options="{'no_open':True,'no_create': True}"/>
+                            <field name="patient_share_by_rule"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="insured_value"/>
+                            <field name="validity"/>
+                            <field name="patient_share_in_invoice"/>
+                            <field name="company_id" groups="base.group_multi_company" string="Hospital" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page name="insurance_details" string="Coverage &amp; Deduction" invisible="patient_share_by_rule">
+                            <group>
+                                <group name="appointment_insurance">
+                                    <separator string="Appointment"/>
+                                    <field name="allow_appointment_insurance"/>
+                                    <field name="app_insurance_type" invisible="not allow_appointment_insurance"/>
+                                    <field name="app_insurance_percentage" invisible="not allow_appointment_insurance or app_insurance_type=='fix'"/>
+                                    <field name="app_insurance_amount" invisible="not allow_appointment_insurance or app_insurance_type=='percentage'"/>
+                                    <field name="app_insurance_limit" invisible="not allow_appointment_insurance"/>
+                                    <field name="create_claim" invisible="not allow_appointment_insurance"/>
+                                </group>
+
+                                <group name="pharmacy_insurance">
+                                    <separator string="Pharmacy"/>
+                                    <field name="allow_pharmacy_insurance"/>
+                                    <field name="pha_insurance_type" invisible="not allow_pharmacy_insurance"/>
+                                    <field name="pha_insurance_percentage" invisible="not allow_pharmacy_insurance or pha_insurance_type=='fix'"/>
+                                    <field name="pha_insurance_amount" invisible="not allow_pharmacy_insurance or pha_insurance_type=='percentage'"/>
+                                    <field name="pha_insurance_limit" invisible="not allow_pharmacy_insurance"/>
+                                    <field name="pha_create_claim" invisible="not allow_pharmacy_insurance"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page name="patient_share" string="Patient Share Rules" invisible="not patient_share_by_rule and not patient_share_in_invoice">
+                            <field name="policy_rule_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="rule_on"/>
+                                    <field name="product_category_id" invisible="rule_on!='product_category'" required="rule_on=='product_category'"/>
+                                    <field name="product_id" invisible="rule_on!='product'" required="rule_on=='product'"/>
+                                    <field name="rule_type"/>
+                                    <field name="percentage" invisible="rule_type!='percentage'" required="rule_type=='percentage'" readonly="full_cover" force_save="1"/>
+                                    <field name="amount" invisible="rule_type!='amount'" required="rule_type=='amount'"/>
+                                    <field name="full_cover" readonly="rule_type!='percentage'"/>
+                                </list>
+                            </field>
+
+                            <div>
+                                <p>
+                                    <i class="fa fa-info fa-3x text-info float-left" role="img" aria-label="Info" title="Info"/> The algorithm for patient share amount calculation:
+                                    <ol>
+                                        <li>Patient share calculation works with fix-amount option (If Patient Share is not Based on Rules).</li>
+                                        <li>If we have patient share rules configured on the policy it will have First priority.</li>
+                                        <li>Second Priority will be given to rules on the insurance company.</li>
+                                        <li>If 100% coverage is by insurance company set type to persentage and mark full cover true.</li>
+                                    </ol>
+                                    * From the list of rules first matching rule will be applied.
+                              </p>
+                            </div>
+                        </page>
+                        <page name="excluded_products" string="Excluded Products/Services">
+                            <field name="excluded_product_ids" placeholder="Excluded products" widget="many2many_tags"/>
+                        </page>
+                    </notebook>
+                    <field name="note" placeholder="Notes"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_patient_insurance_search" model="ir.ui.view">
+        <field name="name">hms.patient.insurance.search</field>
+        <field name="model">hms.patient.insurance</field>
+        <field name="arch" type="xml">
+            <search string="Insurance Policy">
+                <field name="patient_id"/>
+                <field name="insurance_company_id"/>
+                <field name="policy_number"/>
+                <filter name="active" string="Active Insurance" domain="[('active','=',1)]"/>
+                <filter name="inactive" string="Inactive Insurance" domain="[('active','!=',1)]"/>
+                <filter name="allow_appointment_insurance" string="Allow Appointment Insurance" domain="[('allow_appointment_insurance','=',1)]"/>
+                <group>
+                    <filter name="group_by_comp" string="Company" context="{'group_by':'company_id'}"/>
+                    <filter name="group_by_insurance_comp" string="Insurance Company" context="{'group_by':'insurance_company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_patient_insurance_pivot" model="ir.ui.view">
+        <field name="name">hms.patient.insurance.pivot</field>
+        <field name="model">hms.patient.insurance</field>
+        <field name="arch" type="xml">
+            <pivot string="Insurance Policy">
+                <field name="patient_id" type="row"/>
+                <field name="insurance_company_id" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_patient_insurance_graph" model="ir.ui.view">
+        <field name="name">hms.patient.insurance.graph</field>
+        <field name="model">hms.patient.insurance</field>
+        <field name="arch" type="xml">
+            <graph string="Insurance Policy">
+                <field name="patient_id"/>
+                <field name="insured_value" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_hms_patient_insurance" model="ir.actions.act_window">
+        <field name="name">Insurance Policy</field>
+        <field name="path">almightyhms-insurance-policy</field>
+        <field name="res_model">hms.patient.insurance</field>
+        <field name="view_mode">list,form,graph,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Click to add a new Patient Insurance Policy.
+            </p>
+        </field>
+    </record>
+
+</odoo>

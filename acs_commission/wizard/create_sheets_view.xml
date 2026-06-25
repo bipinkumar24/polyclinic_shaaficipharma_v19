@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_create_commission_sheet_wizard" model="ir.ui.view">
+        <field name="name">Create Commission Sheets</field>
+        <field name="model">acs.commission.sheet.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Commission Sheets">
+                <group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <group>
+                        <field name="user_id"/>
+                        <field name="all_partners"/>
+                    </group>
+                    <group>
+                        <field name="partner_ids" invisible="all_partners" required="not all_partners" widget="many2many_tags"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="create_sheets" type="object" string="Create Commission Sheets" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_create_commission_sheet_wizard" model="ir.actions.act_window">
+        <field name="name">Create Commission Sheets</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">acs.commission.sheet.wizard</field>
+        <field name="view_id" ref="view_create_commission_sheet_wizard"/>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

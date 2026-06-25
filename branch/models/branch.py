@@ -15,8 +15,8 @@ class ResBranch(models.Model):
     @api.model
     def _search_display_name(self, operator, value):
         domain = []
-        if self._context.get('allowed_company_ids'):
-            selected_company_ids = self.env['res.company'].browse(self._context.get('allowed_company_ids'))
+        if self.env.context.get('allowed_company_ids'):
+            selected_company_ids = self.env['res.company'].browse(self.env.context.get('allowed_company_ids'))
             if selected_company_ids:
                 branches_ids = self.env['res.branch'].search([('company_id','in',selected_company_ids.ids)])
                 domain = [('id', 'in', branches_ids.ids)]

@@ -168,9 +168,9 @@ class StockLot(models.Model):
     #canbe used for filtering lots in selection on procedures and consumed products
     def _search_product_qty(self, operator, value):
         valid_record = []
-        product_id = self._context.get('acs_product_id',False)
+        product_id = self.env.context.get('acs_product_id',False)
         domain =[('product_id','=',product_id)]
-        if self._context.get('acs_all_products',False):
+        if self.env.context.get('acs_all_products',False):
             domain =[]
         production_lots = self.search(domain)
         for production_lot in production_lots:

@@ -92,7 +92,7 @@ class ResUsers(models.Model):
 
     @api.constrains('branch_id', 'branch_ids', 'active')
     def _check_branch(self):
-        if self._context.get('params', {}).get('model') == 'res.users':
+        if self.env.context.get('params', {}).get('model') == 'res.users':
             for user in self.filtered(lambda u: u.active):
                 if user.branch_id not in user.branch_ids:
                     raise ValidationError(

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   
+    <record model="ir.module.category" id="certificate_category">
+        <field name="name">Certificate</field>
+        <field name="description">Manage your Certificates</field>
+        <field name="sequence">11</field>
+    </record>
+
+    <!-- Odoo 19: res.groups.category_id replaced by privilege_id (res.groups.privilege). -->
+    <record id="privilege_certificate" model="res.groups.privilege">
+        <field name="name">Certificate</field>
+        <field name="category_id" ref="certificate_category"/>
+    </record>
+
+    <record id="group_certificate_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="privilege_id" ref="privilege_certificate"/>
+    </record>
+
+    <record id="group_certificate_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="privilege_id" ref="privilege_certificate"/>
+        <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="implied_ids" eval="[(4, ref('acs_certification.group_certificate_user'))]"/>
+    </record>
+
+    <data noupdate="1">
+        <record model="ir.rule" id="certificate_company_rule">
+            <field name="name">Certificate multi-company</field>
+            <field name="model_id" ref="model_certificate_management"/>
+            <field name="domain_force">['|',('company_id','=',False),('company_id', 'in', company_ids)]</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem id="main_menu_acs_commission" name="Commissions" sequence="72" groups="acs_commission.group_acs_commission_user" web_icon="acs_commission,static/description/icon.png"/>
+
+     <menuitem id="menu_acs_commission_sheet_parent" name="Commission Sheets" parent="main_menu_acs_commission" sequence="10"/>
+
+    <menuitem id="menu_acs_commission_sheet" name="Sheets" sequence="20" parent="menu_acs_commission_sheet_parent" action="action_acs_commission_sheet"/>
+
+    <menuitem id="menu_acs_create_commission_sheet" name="Create Sheets" sequence="20" parent="menu_acs_commission_sheet_parent" action="action_create_commission_sheet_wizard"/>
+
+    <menuitem id="menu_acs_invoice_commission" name="Business Commissions" sequence="20" parent="main_menu_acs_commission" action="acs_commission_action"/>
+
+    <menuitem id="menu_contacts" name="Contact" sequence="30" parent="main_menu_acs_commission" action="action_partner_commission"/>
+
+    <menuitem id="menu_acs_commission_configuration" name="Configuration" sequence="100" parent="main_menu_acs_commission"/>
+
+    <menuitem id="menu_acs_invoice_commission_role" name="Commission Role" sequence="10" parent="menu_acs_commission_configuration" action="action_acs_commission_role"/>
+
+</odoo>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Commission Role-->
+    <record id="view_acs_commission_role_list" model="ir.ui.view">
+        <field name="name">acs.commission.role.list</field>
+        <field name="model">acs.commission.role</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="description"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_acs_commission_role_form" model="ir.ui.view">
+        <field name="name">acs.commission.role.form</field>
+        <field name="model">acs.commission.role</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <field name="commission_rule_ids" context="{'default_rule_type': 'role', 'default_rule_id': id}">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="rule_type" column_invisible="1"/>
+                            <field name="role_id" column_invisible="1"/>
+                            <field name="rule_on"/>
+                            <field name="product_category_id" invisible="rule_on!='product_category'" required="rule_on=='product_category'"/>
+                            <field name="product_id" invisible="rule_on!='product'" required="rule_on=='product'"/>
+                            <field name="type"/>
+                            <field name="percentage" invisible="type!='percentage'" required="type=='percentage'"/>
+                            <field name="amount" invisible="type!='amount'" required="type=='amount'"/>
+                        </list>
+                    </field>
+
+                    <separator string="Target Rules"/>
+                    <field name="commission_target_rule_ids" context="{'default_rule_type': 'role', 'default_rule_id': id}">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="rule_type" column_invisible="1"/>
+                            <field name="role_id" column_invisible="1"/>
+                            <field name="target_amount"/>
+                            <field name="percentage"/>
+                            <field name="description"/>
+                        </list>
+                    </field>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_acs_commission_role" model="ir.actions.act_window">
+        <field name="name">Commission Role</field>
+        <field name="path">almightycs-commission-role</field>
+        <field name="res_model">acs.commission.role</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Click to add a new Commission Role.
+            </p>
+        </field>
+    </record>
+
+    <!-- Commission Rules-->
+    <record id="view_acs_commission_rule_form" model="ir.ui.view">
+        <field name="name">acs.commission.rule.form</field>
+        <field name="model">acs.commission.rule</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="rule_type"/>
+                            <field name="role_id" invisible="rule_type!='role'" required="rule_type=='role'"/>
+                            <field name="user_id" invisible="rule_type!='user'"/>
+                            <field name="partner_id" invisible="rule_type!='user'"/>
+                        </group>
+                        <group>
+                            <field name="rule_on"/>
+                            <field name="product_category_id" invisible="rule_on!='product_category'" required="rule_on=='product_category'"/>
+                            <field name="product_id" invisible="rule_on!='product'" required="rule_on=='product'"/>
+                            <field name="percentage"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Commission -->
+    <record id="acs_commission_search_view" model="ir.ui.view">
+        <field name="name">acs.commission.search</field>
+        <field name="model">acs.commission</field>
+        <field name="arch" type="xml">
+            <search string="Business Commission">
+                <field name="name" string="Business Commissions"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="commission_sheet_id"/>
+                <filter name="not_invoiced" string="Not Invoiced" domain="[('invoice_line_id','=',False)]"/>
+                <separator/>
+                <group>
+                    <filter name="group_by_partner" string="Customer" domain="[]" context="{'group_by':'partner_id'}"/>
+                    <filter name="group_by_state" string="State" domain="[]" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="acs_commission_form_view" model="ir.ui.view">
+        <field name="name">acs.commission.form</field>
+        <field name="model">acs.commission</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_done" string="Done" type="object" class="btn-primary" invisible="state!='draft'"/>
+                    <button name="action_draft" string="Set to Draft" type="object"  invisible="state not in ('cancel','done')"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state!='draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Business Commission"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" readonly="state in ('done','cancel')"/>
+                            <field name="commission_on" readonly="state in ('done','cancel')"/>
+                            <field name="commission_amount" readonly="state in ('done','cancel')"/>
+                            <field name="payable_amount" readonly="state in ('done','cancel')"/>
+                            <field name="invoice_id" readonly="state in ('done','cancel')"/>
+                            <field name="date" readonly="state in ('done','cancel')"/>
+                        </group>
+                        <group>
+                            <field name="commission_sheet_id" readonly="state in ('done','cancel')"/>
+                            <field name="invoice_line_id" readonly="state in ('done','cancel')"/>
+                            <field name="payment_invoice_id"/>
+                            <field name="acs_invoice_line_ids" widget="many2many_tags"/>
+                            <field name="payment_status" readonly="state in ('done','cancel')"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="state in ('done','cancel')"/>
+                        </group>
+                    </group>
+                    <field name="note"/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="acs_commission_list_view" model="ir.ui.view">
+        <field name="name">acs.commission.list</field>
+        <field name="model">acs.commission</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <list string="Business Commissions" decoration-info="state=='draft'" decoration-muted="state=='canceled'" decoration-warning="target_based_commission and payable_amount &lt;commission_amount" decoration-danger="target_based_commission and not payable_amount">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="invoice_partner_id" optional="hide"/>
+                <field name="commission_on" optional="hide"/>
+                <field name="commission_amount"/>
+                <field name="payable_amount"/>
+                <field name="commission_sheet_id" optional="hide"/>
+                <field name="state"/>
+                <field name="invoice_id" optional="hide"/>
+                <field name="payment_invoice_id" optional="hide"/>
+                <field name="payment_status"/>
+                <field name="target_based_commission" optional="hide"/>
+                <field name="invoice_journal_id" optional="hide"/>
+                <field name="payment_invoice_journal_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="acs_commission_action" model="ir.actions.act_window">
+        <field name="name">Business Commission</field>
+        <field name="path">almightycs-commission</field>
+        <field name="res_model">acs.commission</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record Found
+            </p>
+            <p>
+                Click to add new Business Commission.
+            </p>
+        </field>
+    </record>
+
+</odoo>

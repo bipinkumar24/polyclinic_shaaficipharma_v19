@@ -114,7 +114,7 @@ class StockMoveLine(models.Model):
         # Reset the reserved quantity as we just moved it to the destination location.
         mls_todo.write({
             'date': fields.Datetime.now(),
-            'branch_id':self._context.get('branch')
+            'branch_id':self.env.context.get('branch')
         })
 
 
@@ -181,7 +181,7 @@ class StockMove(models.Model):
 
         move_lines = self._prepare_account_move_line(qty, cost, credit_account_id, debit_account_id, description)
         if move_lines:
-            date = self._context.get('force_period_date', fields.Date.context_today(self))
+            date = self.env.context.get('force_period_date', fields.Date.context_today(self))
             new_account_move = AccountMove.sudo().create({
                 'journal_id': journal_id,
                 'line_ids': move_lines,

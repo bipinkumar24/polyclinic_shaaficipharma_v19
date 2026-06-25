@@ -15,8 +15,8 @@ class PosConfig(models.Model):
     def default_get(self, default_fields):
         res = super(PosConfig, self).default_get(default_fields)
         branch_id = False
-        if self._context.get('branch_id'):
-            branch_id = self._context.get('branch_id')
+        if self.env.context.get('branch_id'):
+            branch_id = self.env.context.get('branch_id')
         elif self.env.user.branch_id:
             branch_id = self.env.user.branch_id.id
 

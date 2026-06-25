@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="acs_consent_form_email" model="mail.template">
+            <field name="name">Consent Form</field>
+            <field name="email_from">{{ user.email_formatted }}</field>
+            <field name="email_to">{{ object.partner_id.email }}</field>
+            <field name="subject">{{ object.partner_id.name }} {{ object.get_subject() }}</field>
+            <field name="model_id" ref="acs_consent_form.model_acs_consent_form"/>
+            <field name="report_template_ids" eval="[(4, ref('acs_consent_form.report_acs_consent_form'))]"/>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+<div style="margin:auto;background: #FFFFFF;color:#777777">
+    <p>Hello <t t-out="object.partner_id.name"/>,</p>
+    <p>Your Consent Forms details.</p>
+    <ul> 
+        <li>
+            Reference Number: <t t-out="object.name"/>
+        </li>
+        <li>
+            Subject: <t t-out="object.subject"/>
+        </li>
+        <li>
+            Portal Access Link:  <a t-attf-href="{{ object.acs_access_url }}"><t t-out="object.acs_access_url"/></a>
+        </li>
+    </ul>
+    <p>Please feel free to call anytime for further information or any query.</p>
+
+    <p>Best regards.</p><br/>
+</div>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

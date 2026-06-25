@@ -23,7 +23,7 @@ class StockQuant(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if not self._context.get('branch'):
+            if not self.env.context.get('branch'):
                 vals.update({'branch_id':self.env.user.branch_id.id})
         return super(StockQuant, self).create(vals_list)
 
@@ -87,7 +87,7 @@ class StockQuant(models.Model):
     def action_apply_inventory(self):
         res = super(StockQuant, self).action_apply_inventory()
         for quant in self:
-            if not self._context.get('branch'):
+            if not self.env.context.get('branch'):
                 quant.branch_id = self.env.user.branch_id.id or False
         return res
 
@@ -137,9 +137,9 @@ class StockQuant(models.Model):
             if stock_quant_result:
                 quant = self.browse(stock_quant_result[0])
         
-        if self._context.get('branch'):
+        if self.env.context.get('branch'):
             if quant:
-                vals = {'in_date': in_date,'branch_id':self._context.get('branch')}
+                vals = {'in_date': in_date,'branch_id':self.env.context.get('branch')}
                 if quantity:
                     vals['quantity'] = quant.quantity + quantity
                 if reserved_quantity:
@@ -153,7 +153,7 @@ class StockQuant(models.Model):
                     'package_id': package_id and package_id.id,
                     'owner_id': owner_id and owner_id.id,
                     'in_date': in_date,
-                    'branch_id':self._context.get('branch')
+                    'branch_id':self.env.context.get('branch')
                 }
                 if quantity:
                     vals['quantity'] = quantity

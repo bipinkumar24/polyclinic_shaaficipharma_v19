@@ -30,7 +30,7 @@ class AccountPaymentRegisterInv(models.TransientModel):
     @api.model
     def default_get(self, fields):
         rec = super(AccountPaymentRegisterInv, self).default_get(fields)
-        invoice_defaults = self.env['account.move'].browse(self._context.get('active_id', []))
+        invoice_defaults = self.env['account.move'].browse(self.env.context.get('active_id', []))
         if 'branch_id' in fields:
             if invoice_defaults and len(invoice_defaults) == 1:
                 rec['branch_id'] = invoice_defaults.branch_id.id

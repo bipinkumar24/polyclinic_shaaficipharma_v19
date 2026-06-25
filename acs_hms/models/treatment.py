@@ -98,8 +98,8 @@ class ACSTreatment(models.Model):
     @api.model
     def default_get(self, fields):
         res = super(ACSTreatment, self).default_get(fields)
-        if self._context.get('acs_department_type'):
-            department = self.env['hr.department'].search([('department_type','=',self._context.get('acs_department_type'))], limit=1)
+        if self.env.context.get('acs_department_type'):
+            department = self.env['hr.department'].search([('department_type','=',self.env.context.get('acs_department_type'))], limit=1)
             if department:
                 res['department_id'] = department.id
         return res
@@ -245,9 +245,9 @@ class ACSTreatment(models.Model):
         return action
 
     def acs_select_treatment_for_appointment(self):
-        if self._context.get('acs_current_appointment'):
+        if self.env.context.get('acs_current_appointment'):
             #Check if we can get back to appointment in breadcrumb.
-            appointment = self.env['hms.appointment'].search([('id','=',self._context.get('acs_current_appointment'))])
+            appointment = self.env['hms.appointment'].search([('id','=',self.env.context.get('acs_current_appointment'))])
             appointment.treatment_id = self.id
             action = self.env["ir.actions.actions"]._for_xml_id("acs_hms.action_appointment")
             action['res_id'] = appointment.id

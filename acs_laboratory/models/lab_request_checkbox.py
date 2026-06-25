@@ -226,7 +226,7 @@ class AcsLabTestView(models.Model):
         if not (view and view._name == 'ir.ui.view'):
             return
 
-        if self._context.get('install_filename') or self._context.get(MODULE_UNINSTALL_FLAG):
+        if self.env.context.get('install_filename') or self.env.context.get(MODULE_UNINSTALL_FLAG):
             # use a dummy view during install/upgrade/uninstall
             xml = E.field(name="line_ids", position="after")
 
@@ -262,7 +262,7 @@ class AcsLabTestView(models.Model):
         # serialize and update the view
         xml_content = etree.tostring(xml, pretty_print=True, encoding="unicode")
         if xml_content != view.arch:  # avoid useless xml validation if no change
-            new_context = dict(view._context)
+            new_context = dict(view.env.context)
             new_context.pop('install_filename', None)  # don't set arch_fs for this computed view
             new_context['lang'] = None
             view.with_context(new_context).write({'arch': xml_content})

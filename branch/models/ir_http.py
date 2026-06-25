@@ -24,7 +24,7 @@ class Http(models.AbstractModel):
                         } for branch in user.branch_ids
                     },
                 },
-                "currencies": self.get_currencies(),
+                "currencies": self.env['res.currency'].get_all_currencies(),
                 "show_effect": True,
                 "display_switch_company_menu": user.has_group('base.group_multi_company') and len(user.company_ids) > 1,
                 "display_switch_branch_menu": user.has_group('branch.group_multi_branch') and len(user.branch_ids) > 1,

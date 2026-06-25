@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!-- Claim View -->
+    <record id="view_claim_list" model="ir.ui.view">
+        <field name="name">insurance.claim.list</field>
+        <field name="model">hms.insurance.claim</field>
+        <field name="arch" type="xml">
+            <list string="Claim">
+                <field name="name"/>
+                <field name="appointment_id"/>
+                <field name="patient_id"/>
+                <field name="insurance_id"/>
+                <field name="insurance_company_id"/>
+                <field name="tpa_id"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_claim_search" model="ir.ui.view">
+        <field name="name">hms.insurance.claim.search</field>
+        <field name="model">hms.insurance.claim</field>
+        <field name="arch" type="xml">
+            <search string="Claim">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="insurance_company_id"/>
+                <separator/>
+                <filter name="confirmed" string="Confirm" domain="[('state', '=','confirm')]"/>
+                <filter name="sent" string="Sent For Approval" domain="[('state', '=','sent')]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=','approved')]"/>
+                <filter name="received" string="Received" domain="[('state', '=','received')]"/>
+                <filter name="done" string="Done" domain="[('state', '=','done')]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_insurance_claim_form" model="ir.ui.view">
+        <field name="name">hms.insurance.claim.form</field>
+        <field name="model">hms.insurance.claim</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" invisible="state!='draft'" type="object" string="Confirm" class="oe_highlight"/>
+                    <button name="action_sent" invisible="state!='confirm'" type="object" string="Send For Approval" class="oe_highlight"/>
+                    <button name="action_approve" invisible="state!='sent'" type="object" string="Approved" class="oe_highlight"/>
+                    <button name="action_received" invisible="state!='approve'" type="object" string="Received" class="oe_highlight"/>
+                    <button name="action_done" invisible="state!='received'" type="object" string="Done" class="oe_highlight"/>
+                    <button name="action_cancel" invisible="state!='draft'" readonly="state in ['draft','approve','received','confirm']" type="object" string="Cancel" class="oe_highlight"/>
+                    <button name="action_draft" invisible="state!='cancel'" type="object" string="Set to Draft" class="oe_highlight"/>
+                    <button name="action_send_claim" invisible="state=='cancel'" type="object" string="Send by mail"/>
+                    <field name="state" statusbar_visible="confirm,sent,approve,received,done" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box" groups="acs_hms.group_hms_receptionist">
+                        <button type="object" class="oe_stat_button" icon="fa-money" name="action_view_invoice" groups="account.group_account_invoice" invisible="state=='draft'">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="total_invoice_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </span>
+                                <span class="o_stat_text">Claim Invoice</span>
+                            </div>
+                        </button>
+                        <button name="action_view_record_invoice" string="Inpatient/Appointment Invoice" groups="account.group_account_invoice" invisible="state=='draft' or 'claim_for'=='other'" type="object" class="oe_stat_button" icon="fa-money"/>
+                        <button type="object" class="oe_stat_button" icon="fa-money" name="action_payments" groups="account.group_account_invoice" invisible="state not in ['received', 'done']">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="total_payment_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                </span>
+                                <span class="o_stat_text">Claim Payments</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" string="Name" class="oe_edit_only" />
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id" readonly="state in ['done','cancel']"/>
+                            <field name="insurance_id" domain="[('patient_id','=', patient_id)]" readonly="state in ['done','cancel']"/>
+                            <field name="insurance_company_id" readonly="state in ['done','cancel']"/>
+                            <field name="tpa_id" readonly="state in ['done','cancel']"/>
+                            <field name="date" readonly="state in ['done','cancel']"/>
+                            <field name="authorized_number" readonly="state in ['done','cancel']"/>                            
+                        </group>
+                        <group>
+                            <field name="claim_for" required="1" readonly="state in ['done','cancel']"/>
+                            <field name="appointment_id" domain="[('patient_id', '=', patient_id)]" options="{'no_create': True}" required="claim_for=='appointment'" invisible="claim_for!='appointment'" readonly="state in ['done','cancel']"/>
+                            <field name="currency_id" invisible="1" readonly="state in ['done','cancel']"/>
+                            <field name="req_document_ids" widget="many2many_tags" readonly="state in ['done','cancel']"/>
+                            <field name="company_id" groups="base.group_multi_company" string="Hospital" options="{'no_create': True}" readonly="state in ['done','cancel']"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="general_info" string="General Information">
+                            <group>
+                                <group>
+                                    <field name="amount_requested" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="state in ['done','cancel']"/>
+                                    <field name="amount_pass" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="state in ['done','cancel']"/>
+                                    <field name="amount_difference" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="state in ['done','cancel']"/>
+                                    <field name="amount_deductible" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="state in ['done','cancel']"/>
+                                </group>
+                                <group>
+                                    <field name="date_received" readonly="state in ['done','cancel']"/>
+                                    <field name="amount_received" widget="monetary" options="{'currency_field': 'currency_id'}" readonly="state in ['done','cancel']"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="question" string="If any Query" readonly="state in ['done','cancel']"/>
+                                <field name="answer" readonly="state in ['done','cancel']"/>
+                            </group>
+                        </page>
+                        <page name="documents" string="Documents">
+                            <field name="doc_ids" mode="kanban" nolabel="1" readonly="state in ['done','cancel']"/>
+                        </page>
+                        <page name="checklist" string="Checklist">
+                            <field name="checklist_marked" widget="percentpie" nolabel="1" readonly="state in ['done','cancel']"/>
+                            <saprator string="Checklist"/>
+                            <field name="checklist_ids" nolabel="1" readonly="state in ['done','cancel']">
+                                <list editable="bottom">
+                                    <field name="name" />
+                                    <field name="is_done" />
+                                    <field name="remark" />
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_acs_insurance_claim_calendar" model="ir.ui.view">
+        <field name="name">hms.insurance.claim.calendar</field>
+        <field name="model">hms.insurance.claim</field>
+        <field name="type">calendar</field>
+        <field name="arch" type="xml">
+            <calendar string="Claim" color="patient_id" date_start="date" date_stop="date_received">
+                <field name="appointment_id"/>
+                <field name="patient_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_insurance_claim_pivot" model="ir.ui.view">
+        <field name="name">hms.insurance.claim.pivot</field>
+        <field name="model">hms.insurance.claim</field>
+        <field name="arch" type="xml">
+            <pivot string="Claim">
+                <field name="insurance_company_id" type="row"/>
+                <field name="tpa_id" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_insurance_claim" model="ir.actions.act_window">
+        <field name="name">Claim</field>
+        <field name="path">almightyhms-claim</field>
+        <field name="res_model">hms.insurance.claim</field>
+        <field name="view_mode">list,form,calendar,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Click to add a new Insurance Claim.
+            </p>
+        </field>
+    </record>
+
+</odoo>

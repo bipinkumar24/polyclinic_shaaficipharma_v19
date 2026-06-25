@@ -79,7 +79,7 @@ class PatientRadiologyTestLine(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         res = super().create(vals_list)
-        if not self._context.get('avoid_subsequent_test'):
+        if not self.env.context.get('avoid_subsequent_test'):
             for record in res:
                 for sub_seq_test in record.test_id.subsequent_test_ids:
                     sub_line = self.with_context(avoid_subsequent_test=True).create({

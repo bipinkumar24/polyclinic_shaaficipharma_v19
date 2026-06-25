@@ -89,8 +89,8 @@ class AcsPatientProcedure(models.Model):
     @api.model
     def default_get(self, fields):
         res = super(AcsPatientProcedure, self).default_get(fields)
-        if self._context.get('acs_department_type'):
-            department = self.env['hr.department'].search([('department_type','=',self._context.get('acs_department_type'))], limit=1)
+        if self.env.context.get('acs_department_type'):
+            department = self.env['hr.department'].search([('department_type','=',self.env.context.get('acs_department_type'))], limit=1)
             if department:
                 res['department_id'] = department.id
         return res

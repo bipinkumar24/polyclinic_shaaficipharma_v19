@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_acs_contract,access_acs_contract_user,model_acs_contract,base.group_user,1,0,0,0
+access_acs_subscription,access_acs_subscription,model_acs_subscription,base.group_user,1,0,0,0
+access_acs_contract_user,access_acs_contract_subscription,model_acs_contract,acs_subscription.group_acs_subscription,1,1,1,1
+access_acs_subscriptio_user,access_acs_subscription_subscription,model_acs_subscription,acs_subscription.group_acs_subscription,1,1,1,1
+access_acs_subscription_model,access_acs_subscription_model,base.model_ir_model,acs_subscription.group_acs_subscription,1,0,0,0
+access_acs_ir_model_fields,access_acs_ir_model_fields,base.model_ir_model_fields,acs_subscription.group_acs_subscription,1,0,0,0

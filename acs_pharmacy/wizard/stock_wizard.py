@@ -33,7 +33,7 @@ class StockReturnPicking(models.TransientModel):
     def default_get(self,fields):
         res = super(StockReturnPicking, self).default_get(fields)
         lines = []
-        context = self._context or {}
+        context = self.env.context or {}
         if context and context.get('active_ids', False):
             if len(context.get('active_ids')) > 1:
                 raise UserError(_("You may only return one picking at a time!"))

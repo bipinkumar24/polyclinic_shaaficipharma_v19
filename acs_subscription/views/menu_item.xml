@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<odoo>
+
+    <menuitem name="Subscription" id="menu_root_acs_subscription" sequence="70" groups="acs_subscription.group_acs_subscription" web_icon="acs_subscription,static/description/icon.png"/>
+
+    <menuitem id="menu_acs_subscription" name="Subscriptions" action="acs_subscription_action" parent="menu_root_acs_subscription" sequence="5"/>
+
+    <menuitem id="menu_acs_contract" name="Contracts" parent="menu_root_acs_subscription" action="action_acs_contract" sequence="20"/>
+
+</odoo>
