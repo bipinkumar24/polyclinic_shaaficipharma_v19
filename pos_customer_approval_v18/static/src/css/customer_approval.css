@@ -1,0 +1,211 @@
+/* ── POS Customer Activation Popup – Odoo 18 ────────────────────────── */
+
+.cap-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2000; padding: 16px;
+}
+.cap-modal {
+  background: #1a1f30;
+  border: 1px solid #2a3050;
+  border-radius: 16px;
+  width: min(820px, 96vw);
+  max-height: 92vh;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+}
+
+/* Header */
+.cap-header {
+  background: linear-gradient(135deg, #0f3460, #1a4a8a);
+  padding: 16px 22px;
+  display: flex; align-items: center; gap: 14px;
+  flex-shrink: 0;
+}
+.cap-header-icon { font-size: 26px; }
+.cap-header h3  { font-size: 16px; font-weight: 700; color: #fff; margin: 0; }
+.cap-header p   { font-size: 11px; color: rgba(255,255,255,0.65); margin: 2px 0 0; }
+.cap-close {
+  margin-left: auto;
+  background: rgba(255,255,255,0.1);
+  border: none; border-radius: 50%;
+  width: 28px; height: 28px;
+  color: #fff; font-size: 13px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.cap-close:hover { background: rgba(255,255,255,0.2); }
+
+/* Body layout */
+.cap-body {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  flex: 1; overflow: hidden;
+}
+
+/* Left list */
+.cap-list {
+  background: #13182a;
+  border-right: 1px solid #2a3050;
+  overflow-y: auto; padding: 12px 0;
+}
+.cap-list-title {
+  font-size: 10px; font-family: monospace;
+  color: #555e7a; text-transform: uppercase; letter-spacing: 1px;
+  padding: 0 14px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cap-count {
+  background: #e84545; color: #fff;
+  font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 99px;
+}
+.cap-list-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+}
+.cap-list-item:hover { background: rgba(255,255,255,0.04); }
+.cap-list-item.active {
+  background: rgba(59,130,246,0.1);
+  border-left-color: #3b82f6;
+}
+.cap-item-av {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.cap-item-name { font-size: 13px; color: #e8eaf2; margin-bottom: 2px; }
+.cap-item-meta { font-size: 10px; color: #555e7a; }
+
+.cap-empty {
+  text-align: center; padding: 32px 16px; color: #22c97a;
+}
+.cap-empty span { font-size: 32px; display: block; margin-bottom: 8px; }
+.cap-empty p    { font-size: 13px; }
+
+/* Right panel */
+.cap-panel {
+  padding: 20px 22px;
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.cap-panel-empty {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  height: 100%; color: #22c97a;
+  text-align: center; gap: 10px;
+}
+.cap-panel-empty span { font-size: 40px; }
+.cap-panel-empty p    { font-size: 14px; }
+
+/* Customer card */
+.cap-cust-card {
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px; padding: 14px;
+}
+.cap-cust-av {
+  width: 46px; height: 46px; border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.cap-cust-name { font-size: 15px; font-weight: 600; color: #e8eaf2; margin-bottom: 3px; }
+.cap-cust-sub  { font-size: 12px; color: #7a84a8; }
+
+/* Mode bar */
+.cap-mode-bar {
+  display: flex;
+  border: 1px solid #2a3050;
+  border-radius: 8px; overflow: hidden;
+}
+.cap-mode-btn {
+  flex: 1; padding: 9px;
+  background: transparent; border: none;
+  color: #7a84a8; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+}
+.cap-mode-approve { background: rgba(34,201,122,0.15); color: #22c97a; }
+.cap-mode-reject  { background: rgba(232,69,69,0.15);  color: #e84545; }
+
+/* Fields */
+.cap-field { display: flex; flex-direction: column; gap: 5px; }
+.cap-field label {
+  font-size: 10px; font-family: monospace;
+  color: #555e7a; text-transform: uppercase; letter-spacing: 1px;
+}
+.cap-input, .cap-textarea {
+  background: #0f1117;
+  border: 1.5px solid #2a3050;
+  border-radius: 8px; padding: 9px 12px;
+  font-size: 13px; color: #e8eaf2;
+  outline: none; width: 100%;
+  font-family: system-ui, sans-serif;
+  transition: border-color 0.2s;
+}
+.cap-input:focus, .cap-textarea:focus { border-color: #3b82f6; }
+.cap-textarea { resize: vertical; }
+
+.cap-cred-sep {
+  font-size: 10px; font-family: monospace;
+  color: #555e7a; text-transform: uppercase; letter-spacing: 1px;
+  padding-top: 4px; border-top: 1px solid #2a3050;
+}
+.cap-error {
+  background: rgba(232,69,69,0.1);
+  border: 1px solid rgba(232,69,69,0.25);
+  border-radius: 7px; padding: 8px 12px;
+  color: #f87171; font-size: 12px;
+}
+.cap-success {
+  background: rgba(34,201,122,0.1);
+  border: 1px solid rgba(34,201,122,0.25);
+  border-radius: 7px; padding: 8px 12px;
+  color: #22c97a; font-size: 12px;
+}
+
+/* Submit button */
+.cap-submit {
+  width: 100%; padding: 12px;
+  border: none; border-radius: 9px;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; transition: all 0.2s; margin-top: 4px;
+}
+.cap-submit-approve { background: #22c97a; color: #fff; }
+.cap-submit-approve:hover:not(:disabled) { background: #1aaf6a; }
+.cap-submit-reject  { background: #e84545; color: #fff; }
+.cap-submit-reject:hover:not(:disabled)  { background: #c0392b; }
+.cap-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.cap-btn-sec {
+  padding: 9px 18px; border-radius: 7px;
+  background: rgba(255,255,255,0.08);
+  border: none; color: #8890aa;
+  font-size: 13px; cursor: pointer;
+}
+
+/* Spinner */
+.cap-spinner {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff; border-radius: 50%;
+  animation: cap-spin 0.7s linear infinite;
+  display: inline-block;
+}
+@keyframes cap-spin { to { transform: rotate(360deg); } }
+
+/* Approve Customers button in POS partner list */
+.pos-partner-list .approve-customers-btn {
+  background: rgba(59,130,246,0.15);
+  border: 1px solid rgba(59,130,246,0.3);
+  color: #93c5fd; border-radius: 8px;
+  padding: 8px 14px; font-size: 13px;
+  font-weight: 600; cursor: pointer;
+}

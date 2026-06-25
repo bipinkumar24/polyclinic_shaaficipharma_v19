@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── List view ─────────────────────────────────────────────────── -->
+    <record id="view_pos_customer_activation_tree" model="ir.ui.view">
+        <field name="name">pos.customer.activation.tree</field>
+        <field name="model">pos.customer.activation</field>
+        <field name="arch" type="xml">
+            <!-- Odoo 18: list (not tree) tag is preferred but tree still works -->
+            <list string="POS Customer Activations"
+                  decoration-warning="state == 'pending'"
+                  decoration-success="state == 'approved'"
+                  decoration-danger="state == 'rejected'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="create_date" string="Requested On"/>
+                <field name="partner_id"/>
+                <field name="credit_limit"/>
+                <field name="requested_by"/>
+                <field name="state"
+                       widget="badge"
+                       decoration-warning="state == 'pending'"
+                       decoration-success="state == 'approved'"
+                       decoration-danger="state == 'rejected'"/>
+                <field name="approved_by" string="Decided By"/>
+                <field name="approval_date" string="Decision Date"/>
+                <button name="action_approve"
+                        string="Approve"
+                        type="object"
+                        icon="fa-check"
+                        class="btn-success"
+                        invisible="state != 'pending'"
+                        groups="account.group_account_user"/>
+                <button name="action_reject"
+                        string="Reject"
+                        type="object"
+                        icon="fa-times"
+                        class="btn-danger"
+                        invisible="state != 'pending'"
+                        groups="account.group_account_user"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Form view ─────────────────────────────────────────────────── -->
+    <record id="view_pos_customer_activation_form" model="ir.ui.view">
+        <field name="name">pos.customer.activation.form</field>
+        <field name="model">pos.customer.activation</field>
+        <field name="arch" type="xml">
+            <form string="POS Customer Activation">
+                <header>
+                    <button name="action_approve"
+                            string="Approve"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="state != 'pending'"
+                            groups="account.group_account_user"/>
+                    <button name="action_reject"
+                            string="Reject"
+                            type="object"
+                            invisible="state != 'pending'"
+                            groups="account.group_account_user"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="pending,approved,rejected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Customer">
+                            <field name="partner_id"/>
+                            <field name="requested_by"/>
+                            <field name="create_date" string="Requested On"/>
+                        </group>
+                        <group string="POS Settings">
+                            <field name="credit_limit"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Decision" invisible="state == 'pending'">
+                        <field name="approved_by" readonly="1"/>
+                        <field name="approval_date" readonly="1"/>
+                        <field name="rejection_reason"
+                               invisible="state != 'rejected'"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Search view ───────────────────────────────────────────────── -->
+    <record id="view_pos_customer_activation_search" model="ir.ui.view">
+        <field name="name">pos.customer.activation.search</field>
+        <field name="model">pos.customer.activation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="requested_by"/>
+                <filter name="pending"  string="Pending"  domain="[('state','=','pending')]"/>
+                <filter name="approved" string="Approved" domain="[('state','=','approved')]"/>
+                <filter name="rejected" string="Rejected" domain="[('state','=','rejected')]"/>
+                <separator/>
+                <filter name="group_state" string="Group by Status" context="{'group_by':'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Rejection wizard ──────────────────────────────────────────── -->
+    <record id="view_pos_activation_reject_wizard" model="ir.ui.view">
+        <field name="name">pos.customer.activation.reject.wizard.form</field>
+        <field name="model">pos.customer.activation.reject.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Reject Activation Request">
+                <group>
+                    <field name="activation_id" invisible="1"/>
+                    <field name="reason"
+                           placeholder="Enter reason for rejection…"
+                           required="1"/>
+                </group>
+                <footer>
+                    <button name="action_confirm_reject"
+                            string="Confirm Rejection"
+                            type="object"
+                            class="btn-danger"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Window action ─────────────────────────────────────────────── -->
+    <record id="action_pos_customer_activations" model="ir.actions.act_window">
+        <field name="name">POS Customer Activations</field>
+        <field name="res_model">pos.customer.activation</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_pending': 1}</field>
+    </record>
+
+    <!-- ── Menu ─────────────────────────────────────────────────────── -->
+    <menuitem id="menu_pos_customer_activations"
+              name="Customer Activations"
+              parent="point_of_sale.menu_point_root"
+              action="action_pos_customer_activations"
+              groups="account.group_account_user"
+              sequence="98"/>
+
+</odoo>

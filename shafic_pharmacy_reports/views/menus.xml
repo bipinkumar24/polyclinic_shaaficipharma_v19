@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Root menu                                                     -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_pharmacy_reports_root"
+              name="Pharmacy POS Reports"
+              web_icon="shafic_pharmacy_reports,static/description/icon.png"
+              sequence="55"/>
+
+    <!-- ============================================================ -->
+    <!-- Executive Dashboard                                           -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_pharmacy_dashboard"
+              name="Executive Dashboard"
+              parent="menu_pharmacy_reports_root"
+              action="action_pharmacy_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_pharmacy_bonus_scorecard"
+              name="Bonus Scorecard"
+              parent="menu_pharmacy_reports_root"
+              action="action_pharmacy_bonus_scorecard"
+              sequence="15"/>
+
+    <menuitem id="menu_pharmacy_bonus_history"
+              name="Bonus History"
+              parent="menu_pharmacy_reports_root"
+              action="action_pharmacy_bonus_snapshot"
+              sequence="16"/>
+
+    <menuitem id="menu_pharmacy_expiry_exclusion"
+              name="Bonus Exclusions"
+              parent="menu_pharmacy_reports_root"
+              action="action_pharmacy_expiry_exclusion"
+              sequence="17"/>
+
+    <menuitem id="menu_pharmacy_expiry_action"
+              name="Catch Actions"
+              parent="menu_pharmacy_reports_root"
+              action="action_pharmacy_expiry_action"
+              sequence="18"/>
+
+    <menuitem id="menu_pharmacy_data_completeness"
+              name="Data Completeness"
+              parent="menu_pharmacy_reports_root"
+              action="action_pharmacy_data_completeness"
+              sequence="19"/>
+
+    <!-- ============================================================ -->
+    <!-- Sales Reports                                                 -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_pharmacy_sales_reports"
+              name="Sales Reports"
+              parent="menu_pharmacy_reports_root"
+              sequence="20"/>
+    <menuitem id="menu_sales_report_wizard"
+              name="Sales Report"
+              parent="menu_pharmacy_sales_reports"
+              action="action_sales_report_wizard"
+              sequence="10"/>
+    <menuitem id="menu_report_sales"
+              name="POS Sales Analysis"
+              parent="menu_pharmacy_sales_reports"
+              action="action_report_sales"
+              sequence="20"/>
+    <menuitem id="menu_report_product_sales"
+              name="Product Sales"
+              parent="menu_pharmacy_sales_reports"
+              action="action_report_product_sales"
+              sequence="30"/>
+    <menuitem id="menu_report_category_sales"
+              name="Category Sales"
+              parent="menu_pharmacy_sales_reports"
+              action="action_report_category_sales"
+              sequence="40"/>
+    <menuitem id="menu_report_branch_performance"
+              name="Branch Performance"
+              parent="menu_pharmacy_sales_reports"
+              action="action_report_branch_performance"
+              sequence="50"/>
+    <menuitem id="menu_report_cashier_performance"
+              name="Cashier Performance"
+              parent="menu_pharmacy_sales_reports"
+              action="action_report_cashier_performance"
+              sequence="60"/>
+
+    <!-- ============================================================ -->
+    <!-- Inventory Reports                                             -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_pharmacy_inventory_reports"
+              name="Inventory Reports"
+              parent="menu_pharmacy_reports_root"
+              sequence="30"/>
+    <menuitem id="menu_stock_report_wizard"
+              name="Inventory Report"
+              parent="menu_pharmacy_inventory_reports"
+              action="action_stock_report_wizard"
+              sequence="10"/>
+    <menuitem id="menu_report_stock_position"
+              name="Stock Position"
+              parent="menu_pharmacy_inventory_reports"
+              action="action_report_stock_position"
+              sequence="20"/>
+    <menuitem id="menu_report_stock_valuation"
+              name="Stock Valuation"
+              parent="menu_pharmacy_inventory_reports"
+              action="action_report_stock_valuation"
+              sequence="30"/>
+    <menuitem id="menu_report_stock_card"
+              name="Stock Card"
+              parent="menu_pharmacy_inventory_reports"
+              action="action_report_stock_card"
+              sequence="32"/>
+    <menuitem id="menu_pharmacy_stock_card_wizard"
+              name="Stock Card (Statement)"
+              parent="menu_pharmacy_inventory_reports"
+              action="action_pharmacy_stock_card_wizard"
+              sequence="33"/>
+    <menuitem id="menu_pharmacy_stock_status_wizard"
+              name="Stock Status (as of date)"
+              parent="menu_pharmacy_inventory_reports"
+              action="action_pharmacy_stock_status_wizard"
+              sequence="34"/>
+    <menuitem id="menu_report_stock_movement"
+              name="Stock Movement Analysis"
+              parent="menu_pharmacy_inventory_reports"
+              action="action_report_stock_movement"
+              sequence="40"/>
+    <menuitem id="menu_report_reorder"
+              name="Reorder Level Report"
+              parent="menu_pharmacy_inventory_reports"
+              action="action_report_pharmacy_reorder"
+              sequence="50"/>
+    <menuitem id="menu_report_batch_tracking"
+              name="Batch / Lot Tracking"
+              parent="menu_pharmacy_inventory_reports"
+              action="action_report_batch_tracking"
+              sequence="60"/>
+    <menuitem id="menu_report_data_completeness"
+              name="Product Data Completeness"
+              parent="menu_pharmacy_inventory_reports"
+              action="action_report_data_completeness"
+              sequence="70"/>
+    <menuitem id="menu_pharmacy_stock_count"
+              name="Stock Counts"
+              parent="menu_pharmacy_inventory_reports"
+              action="action_pharmacy_stock_count"
+              sequence="80"/>
+
+    <!-- ============================================================ -->
+    <!-- Expiry Reports                                                -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_pharmacy_expiry_reports"
+              name="Expiry Reports"
+              parent="menu_pharmacy_reports_root"
+              sequence="40"/>
+    <menuitem id="menu_expiry_report_wizard"
+              name="Expiry Report"
+              parent="menu_pharmacy_expiry_reports"
+              action="action_expiry_report_wizard"
+              sequence="10"/>
+    <menuitem id="menu_report_expiry_window"
+              name="Expiry Dashboard"
+              parent="menu_pharmacy_expiry_reports"
+              action="action_report_pharmacy_expiry_window"
+              sequence="20"/>
+    <menuitem id="menu_product_recall"
+              name="Product Recalls"
+              parent="menu_pharmacy_expiry_reports"
+              action="action_product_recall"
+              sequence="30"/>
+
+    <!-- ============================================================ -->
+    <!-- Prescription Reports                                          -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_pharmacy_prescription_reports"
+              name="Prescription Reports"
+              parent="menu_pharmacy_reports_root"
+              sequence="50"/>
+    <menuitem id="menu_prescription"
+              name="Prescriptions"
+              parent="menu_pharmacy_prescription_reports"
+              action="action_prescription"
+              sequence="10"/>
+    <menuitem id="menu_report_prescription_sales"
+              name="Prescription Sales"
+              parent="menu_pharmacy_prescription_reports"
+              action="action_report_prescription_sales"
+              sequence="20"/>
+    <menuitem id="menu_report_controlled_drug"
+              name="Controlled Drug Analysis"
+              parent="menu_pharmacy_prescription_reports"
+              action="action_report_controlled_drug"
+              sequence="30"/>
+
+    <!-- ============================================================ -->
+    <!-- Procurement Reports                                           -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_pharmacy_procurement_reports"
+              name="Procurement Reports"
+              parent="menu_pharmacy_reports_root"
+              sequence="60"/>
+    <menuitem id="menu_report_supplier_performance"
+              name="Supplier Performance"
+              parent="menu_pharmacy_procurement_reports"
+              action="action_report_supplier_performance"
+              sequence="10"/>
+    <menuitem id="menu_report_purchase_sales"
+              name="Purchase vs Sales"
+              parent="menu_pharmacy_procurement_reports"
+              action="action_report_purchase_sales"
+              sequence="20"/>
+    <menuitem id="menu_pharmacy_auto_prepared_order"
+              name="Auto-Prepared Orders"
+              parent="menu_pharmacy_procurement_reports"
+              action="action_pharmacy_auto_prepared_order"
+              sequence="30"/>
+
+    <!-- ============================================================ -->
+    <!-- Customer Reports                                              -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_pharmacy_customer_reports"
+              name="Customer Reports"
+              parent="menu_pharmacy_reports_root"
+              sequence="70"/>
+    <menuitem id="menu_report_customer"
+              name="Customer Analytics"
+              parent="menu_pharmacy_customer_reports"
+              action="action_report_customer"
+              sequence="10"/>
+    <menuitem id="menu_report_loyalty"
+              name="Loyalty Analytics"
+              parent="menu_pharmacy_customer_reports"
+              action="action_report_loyalty"
+              sequence="20"/>
+
+    <!-- ============================================================ -->
+    <!-- Financial Reports                                             -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_pharmacy_financial_reports"
+              name="Financial Reports"
+              parent="menu_pharmacy_reports_root"
+              sequence="80"/>
+    <menuitem id="menu_report_profitability"
+              name="Profitability Analysis"
+              parent="menu_pharmacy_financial_reports"
+              action="action_report_profitability"
+              sequence="10"/>
+    <menuitem id="menu_report_pos_control"
+              name="POS Session Control"
+              parent="menu_pharmacy_financial_reports"
+              action="action_report_pos_control"
+              sequence="20"/>
+    <menuitem id="menu_report_payment"
+              name="Payment Analysis"
+              parent="menu_pharmacy_financial_reports"
+              action="action_report_payment"
+              sequence="30"/>
+    <menuitem id="menu_report_refund"
+              name="Refund Analysis"
+              parent="menu_pharmacy_financial_reports"
+              action="action_report_refund"
+              sequence="40"/>
+    <menuitem id="menu_report_insurance"
+              name="Insurance Billing"
+              parent="menu_pharmacy_financial_reports"
+              action="action_report_insurance"
+              sequence="50"/>
+    <menuitem id="menu_report_cost_price_anomaly"
+              name="Cost / Price Anomalies"
+              parent="menu_pharmacy_financial_reports"
+              action="action_report_cost_price_anomaly"
+              sequence="60"/>
+    <menuitem id="menu_cost_anomaly_snapshot"
+              name="Anomaly History"
+              parent="menu_pharmacy_financial_reports"
+              action="action_cost_anomaly_snapshot"
+              sequence="65"/>
+    <menuitem id="menu_products_to_fix"
+              name="Products to Fix"
+              parent="menu_pharmacy_financial_reports"
+              action="action_products_to_fix"
+              sequence="67"/>
+
+    <!-- ============================================================ -->
+    <!-- Compliance Reports                                            -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_pharmacy_compliance_reports"
+              name="Compliance Reports"
+              parent="menu_pharmacy_reports_root"
+              sequence="90"/>
+    <menuitem id="menu_controlled_drug_log"
+              name="Controlled Drug Register"
+              parent="menu_pharmacy_compliance_reports"
+              action="action_controlled_drug_log"
+              sequence="10"/>
+    <menuitem id="menu_insurance_claim"
+              name="Insurance Claims"
+              parent="menu_pharmacy_compliance_reports"
+              action="action_insurance_claim"
+              sequence="20"/>
+    <menuitem id="menu_pharmacy_audit_log"
+              name="Audit Trail"
+              parent="menu_pharmacy_compliance_reports"
+              action="action_pharmacy_audit_log"
+              sequence="30"/>
+
+    <!-- ============================================================ -->
+    <!-- Configuration                                                 -->
+    <!-- ============================================================ -->
+    <menuitem id="menu_pharmacy_configuration"
+              name="Configuration"
+              parent="menu_pharmacy_reports_root"
+              sequence="100"
+              groups="group_pharmacy_admin"/>
+    <menuitem id="menu_pharmacy_branch"
+              name="Branches"
+              parent="menu_pharmacy_configuration"
+              action="action_pharmacy_branch"
+              sequence="10"/>
+    <menuitem id="menu_pharmacy_product_category"
+              name="Pharmacy Categories"
+              parent="menu_pharmacy_configuration"
+              action="action_pharmacy_product_category"
+              sequence="15"/>
+    <menuitem id="menu_pharmacy_config_settings"
+              name="Settings"
+              parent="menu_pharmacy_configuration"
+              action="action_pharmacy_config_settings"
+              sequence="20"/>
+    <menuitem id="menu_pharmacy_data_rule"
+              name="Data Quality Rules"
+              parent="menu_pharmacy_configuration"
+              action="action_pharmacy_data_rule"
+              sequence="30"/>
+
+</odoo>

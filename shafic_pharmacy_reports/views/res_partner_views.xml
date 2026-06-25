@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_pharmacy" model="ir.ui.view">
+        <field name="name">res.partner.form.pharmacy</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Pharmacy" name="pharmacy">
+                    <group>
+                        <group string="Patient">
+                            <field name="is_patient"/>
+                            <field name="patient_code"
+                                   invisible="not is_patient"/>
+                            <field name="insurance_provider_id"
+                                   invisible="not is_patient"/>
+                            <field name="customer_segment" readonly="1"/>
+                        </group>
+                        <group string="Roles">
+                            <field name="is_doctor"/>
+                            <field name="doctor_license"
+                                   invisible="not is_doctor"/>
+                            <field name="is_insurance_provider"/>
+                        </group>
+                        <group string="Pharmacy History">
+                            <field name="pharmacy_total_spend"/>
+                            <field name="pharmacy_visit_count"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_search_pharmacy" model="ir.ui.view">
+        <field name="name">res.partner.search.pharmacy</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <filter name="type_company" position="after">
+                <separator/>
+                <filter name="patients" string="Patients"
+                        domain="[('is_patient', '=', True)]"/>
+                <filter name="doctors" string="Doctors"
+                        domain="[('is_doctor', '=', True)]"/>
+                <filter name="insurers" string="Insurance Providers"
+                        domain="[('is_insurance_provider', '=', True)]"/>
+                <separator/>
+                <filter name="group_segment" string="Customer Segment"
+                        context="{'group_by': 'customer_segment'}"/>
+            </filter>
+        </field>
+    </record>
+
+</odoo>

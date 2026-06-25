@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_pharmacy_stock_count_list" model="ir.ui.view">
+        <field name="name">pharmacy.stock.count.list</field>
+        <field name="model">pharmacy.stock.count</field>
+        <field name="arch" type="xml">
+            <list string="Stock Counts"
+                  decoration-info="state == 'draft'"
+                  decoration-warning="state == 'done'"
+                  decoration-success="state == 'approved'">
+                <field name="name"/>
+                <field name="count_date"/>
+                <field name="counted_by"/>
+                <field name="line_count"/>
+                <field name="variance_value_abs" sum="Total Variance ($, abs)"/>
+                <field name="variance_value_net" sum="Net Variance ($)"/>
+                <field name="state" widget="badge"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_stock_count_form" model="ir.ui.view">
+        <field name="name">pharmacy.stock.count.form</field>
+        <field name="model">pharmacy.stock.count</field>
+        <field name="arch" type="xml">
+            <form string="Stock Count">
+                <header>
+                    <button name="action_capture_system_qty" type="object"
+                            string="Capture System Qty"
+                            invisible="state != 'draft'"
+                            help="Snapshot Odoo's current on-hand quantity onto each line."/>
+                    <button name="action_submit" type="object"
+                            string="Submit Count" class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_approve" type="object"
+                            string="Approve" class="oe_highlight"
+                            invisible="state != 'done'"
+                            groups="shafic_pharmacy_reports.group_pharmacy_admin"/>
+                    <button name="action_reset_to_draft" type="object"
+                            string="Reset to Draft"
+                            invisible="state == 'draft'"
+                            groups="shafic_pharmacy_reports.group_pharmacy_admin"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,done,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="count_date"
+                                   readonly="state != 'draft'"/>
+                            <field name="counted_by"
+                                   readonly="state != 'draft'"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="line_count"/>
+                            <field name="variance_value_abs"/>
+                            <field name="variance_value_net"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Counted Items">
+                            <field name="line_ids"
+                                   readonly="state == 'approved'">
+                                <list editable="bottom"
+                                      decoration-danger="variance &lt; 0"
+                                      decoration-success="variance &gt; 0">
+                                    <field name="product_id"/>
+                                    <field name="lot_id"/>
+                                    <field name="counted_qty"/>
+                                    <field name="system_qty"/>
+                                    <field name="variance" readonly="1"/>
+                                    <field name="unit_cost" readonly="1"
+                                           optional="hide"/>
+                                    <field name="variance_value" readonly="1"
+                                           sum="Variance Value"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes">
+                            <field name="note" nolabel="1"
+                                   readonly="state == 'approved'"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_stock_count_search" model="ir.ui.view">
+        <field name="name">pharmacy.stock.count.search</field>
+        <field name="model">pharmacy.stock.count</field>
+        <field name="arch" type="xml">
+            <search string="Stock Counts">
+                <field name="name"/>
+                <field name="counted_by"/>
+                <filter name="draft" string="Draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="submitted" string="Submitted"
+                        domain="[('state', '=', 'done')]"/>
+                <filter name="approved" string="Approved"
+                        domain="[('state', '=', 'approved')]"/>
+                <separator/>
+                <filter name="this_month" string="This Month"
+                        domain="[('count_date', '&gt;=',
+                                  (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                <group name="group_by">
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_user" string="Counted By"
+                            context="{'group_by': 'counted_by'}"/>
+                    <filter name="group_month" string="Month"
+                            context="{'group_by': 'count_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pharmacy_stock_count" model="ir.actions.act_window">
+        <field name="name">Stock Counts</field>
+        <field name="res_model">pharmacy.stock.count</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id"
+               ref="view_pharmacy_stock_count_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Record a physical stock count
+            </p>
+            <p>
+                Use this to capture what was physically counted against
+                Odoo's on-hand quantity. Variances are computed
+                automatically. Approving a count records the
+                reconciliation; Odoo's inventory is not auto-adjusted —
+                a manager investigates large variances and follows up
+                separately.
+            </p>
+        </field>
+    </record>
+
+</odoo>

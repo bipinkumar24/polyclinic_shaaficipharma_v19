@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+<t t-name="pos_customer_approval_v18.ApproveCustomerPopup" owl="1">
+  <div class="cap-overlay">
+    <div class="cap-modal">
+
+      <!-- Header -->
+      <div class="cap-header">
+        <span class="cap-header-icon">👤</span>
+        <div>
+          <h3>Customer POS Activation</h3>
+          <p>Approve or reject pending customer access requests</p>
+        </div>
+        <button class="cap-close" t-on-click="cancel">✕</button>
+      </div>
+
+      <div class="cap-body">
+
+        <!-- Left: pending list -->
+        <div class="cap-list">
+          <div class="cap-list-title">
+            Pending
+            <span class="cap-count" t-esc="remaining.length"/>
+          </div>
+
+          <t t-if="remaining.length === 0">
+            <div class="cap-empty">
+              <span>✓</span>
+              <p>All requests processed</p>
+            </div>
+          </t>
+
+          <t t-foreach="remaining" t-as="req" t-key="req.id">
+            <div class="cap-list-item"
+                 t-att-class="state.selectedId === req.id ? 'active' : ''"
+                 t-on-click="() => selectRequest(req.id)">
+              <div class="cap-item-av"
+                   t-att-style="'background:' + (req.color || '#3b82f6')">
+                <t t-esc="req.partner_name ? req.partner_name[0].toUpperCase() : '?'"/>
+              </div>
+              <div>
+                <div class="cap-item-name" t-esc="req.partner_name"/>
+                <div class="cap-item-meta">
+                  Limit: <t t-esc="req.currency_symbol"/><t t-esc="req.credit_limit.toLocaleString()"/>
+                </div>
+                <div class="cap-item-meta">
+                  By: <t t-esc="req.requested_by"/> · <t t-esc="req.create_date"/>
+                </div>
+              </div>
+            </div>
+          </t>
+        </div>
+
+        <!-- Right: action panel -->
+        <div class="cap-panel">
+
+          <t t-if="!selected">
+            <div class="cap-panel-empty">
+              <span>✓</span>
+              <p>All requests have been processed</p>
+              <button class="cap-btn-sec" t-on-click="cancel">Close</button>
+            </div>
+          </t>
+
+          <t t-if="selected">
+            <!-- Customer summary card -->
+            <div class="cap-cust-card">
+              <div class="cap-cust-av">
+                <t t-esc="selected.partner_name ? selected.partner_name[0].toUpperCase() : '?'"/>
+              </div>
+              <div>
+                <div class="cap-cust-name" t-esc="selected.partner_name"/>
+                <div class="cap-cust-sub">
+                  Requested credit limit:
+                  <b><t t-esc="selected.currency_symbol"/><t t-esc="selected.credit_limit.toLocaleString()"/></b>
+                </div>
+                <div class="cap-cust-sub">
+                  Requested by: <b t-esc="selected.requested_by"/>
+                </div>
+              </div>
+            </div>
+
+            <!-- Approve / Reject toggle -->
+            <div class="cap-mode-bar">
+              <button t-att-class="'cap-mode-btn' + (state.mode === 'approve' ? ' cap-mode-approve' : '')"
+                      t-on-click="() => setMode('approve')">
+                ✓ Approve
+              </button>
+              <button t-att-class="'cap-mode-btn' + (state.mode === 'reject' ? ' cap-mode-reject' : '')"
+                      t-on-click="() => setMode('reject')">
+                ✕ Reject
+              </button>
+            </div>
+
+            <!-- Rejection reason -->
+            <t t-if="state.mode === 'reject'">
+              <div class="cap-field">
+                <label>Rejection Reason <span style="color:#e84545">*</span></label>
+                <textarea class="cap-textarea" rows="2"
+                          t-model="state.rejectReason"
+                          placeholder="Enter reason for rejection…"/>
+              </div>
+            </t>
+
+            <!-- Credentials section -->
+            <div class="cap-cred-sep">Accountant Credentials Required</div>
+
+            <t t-if="state.error">
+              <div class="cap-error">✗ <t t-esc="state.error"/></div>
+            </t>
+            <t t-if="state.successMsg">
+              <div class="cap-success"><t t-esc="state.successMsg"/></div>
+            </t>
+
+            <div class="cap-field">
+              <label>Username / Email</label>
+              <input type="text"
+                     class="cap-input"
+                     t-model="state.login"
+                     placeholder="accountant@company.com"
+                     autocomplete="off"/>
+            </div>
+            <div class="cap-field">
+              <label>Password</label>
+              <input type="password"
+                     class="cap-input"
+                     t-model="state.password"
+                     placeholder="••••••••"
+                     autocomplete="off"/>
+            </div>
+
+            <button t-att-class="'cap-submit ' + (state.mode === 'reject' ? 'cap-submit-reject' : 'cap-submit-approve')"
+                    t-on-click="onSubmit"
+                    t-att-disabled="state.loading or !canSubmit">
+              <t t-if="state.loading">
+                <span class="cap-spinner"/> Processing…
+              </t>
+              <t t-elif="state.mode === 'approve'">
+                ✓ Approve &amp; Activate in POS
+              </t>
+              <t t-else="">
+                ✕ Confirm Rejection
+              </t>
+            </button>
+
+          </t>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</t>
+
+</templates>

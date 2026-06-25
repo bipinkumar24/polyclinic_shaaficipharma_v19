@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="seq_pharmacy_prescription" model="ir.sequence">
+        <field name="name">Pharmacy Prescription</field>
+        <field name="code">pharmacy.prescription</field>
+        <field name="prefix">RX/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_pharmacy_controlled_drug_log" model="ir.sequence">
+        <field name="name">Controlled Drug Register Entry</field>
+        <field name="code">pharmacy.controlled.drug.log</field>
+        <field name="prefix">CDR/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_pharmacy_insurance_claim" model="ir.sequence">
+        <field name="name">Pharmacy Insurance Claim</field>
+        <field name="code">pharmacy.insurance.claim</field>
+        <field name="prefix">INS/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_pharmacy_product_recall" model="ir.sequence">
+        <field name="name">Pharmacy Product Recall</field>
+        <field name="code">pharmacy.product.recall</field>
+        <field name="prefix">RCL/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_pharmacy_expiry_exclusion" model="ir.sequence">
+        <field name="name">Pharmacy Expiry Exclusion</field>
+        <field name="code">pharmacy.expiry.exclusion</field>
+        <field name="prefix">EXCL/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_pharmacy_stock_count" model="ir.sequence">
+        <field name="name">Pharmacy Stock Count</field>
+        <field name="code">pharmacy.stock.count</field>
+        <field name="prefix">COUNT/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+</odoo>

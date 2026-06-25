@@ -1,0 +1,43 @@
+<odoo>
+    <record id="view_account_ledger_wizard_form" model="ir.ui.view">
+        <field name="name">account.ledger.wizard.form</field>
+        <field name="model">account.ledger.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="account_id" options="{'no_create_edit': True}"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="output_format" widget="radio" options="{'horizontal': True}"/>
+                    </group>
+                    <group>
+                        <field name="company_id" options="{'no_create_edit': True}"/>
+                        <field name="partner_id" options="{'no_create_edit': True}"/>
+                        <field name="product_id" options="{'no_create_edit': True}"/>
+                        <field name="doc_status"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="generate_report" string="Generate Report" type="object" class="btn-primary"
+                            data-hotkey="q"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_ledger_wizard" model="ir.actions.act_window">
+        <field name="name">Detailed Account Ledger</field>
+        <field name="res_model">account.ledger.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem
+            id="menu_detailed_account_ledger"
+            name="Detailed Account Ledger"
+            parent="account.menu_finance_reports"
+            action="action_account_ledger_wizard"
+            sequence="100"/>
+</odoo>

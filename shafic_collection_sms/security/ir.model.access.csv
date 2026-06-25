@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_collection_sms_batch_user,collection.sms.batch.user,model_collection_sms_batch,group_collection_user,1,1,1,1
+access_collection_sms_line_user,collection.sms.line.user,model_collection_sms_line,group_collection_user,1,1,1,1
+access_bonus_config_user,bonus.config.user,model_collection_bonus_config,group_collection_user,1,0,0,0
+access_bonus_config_mgr,bonus.config.mgr,model_collection_bonus_config,group_collection_manager,1,1,1,1
+access_bonus_tier_user,bonus.tier.user,model_collection_bonus_tier,group_collection_user,1,0,0,0
+access_bonus_tier_mgr,bonus.tier.mgr,model_collection_bonus_tier,group_collection_manager,1,1,1,1
+access_bonus_period_user,bonus.period.user,model_collection_bonus_period,group_collection_user,1,0,0,0
+access_bonus_period_mgr,bonus.period.mgr,model_collection_bonus_period,group_collection_manager,1,1,1,1
+access_bonus_payline_user,bonus.payline.user,model_collection_bonus_payment_line,group_collection_user,1,0,0,0
+access_bonus_payline_mgr,bonus.payline.mgr,model_collection_bonus_payment_line,group_collection_manager,1,1,1,1
+access_bonus_restier_user,bonus.restier.user,model_collection_bonus_result_tier,group_collection_user,1,0,0,0
+access_bonus_restier_mgr,bonus.restier.mgr,model_collection_bonus_result_tier,group_collection_manager,1,1,1,1
+access_bonus_cashier_user,bonus.cashier.user,model_collection_bonus_cashier,group_collection_user,1,0,0,0
+access_bonus_cashier_mgr,bonus.cashier.mgr,model_collection_bonus_cashier,group_collection_manager,1,1,1,1
+access_bonus_cashier_result_user,bonus.cashier.result.user,model_collection_bonus_cashier_result,group_collection_user,1,0,0,0
+access_bonus_cashier_result_mgr,bonus.cashier.result.mgr,model_collection_bonus_cashier_result,group_collection_manager,1,1,1,1

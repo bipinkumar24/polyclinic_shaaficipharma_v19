@@ -1,0 +1,61 @@
+/* Shafic Pharmacy Reports — POS expiry notification popup */
+
+.o_expiry_popup {
+    padding: 8px 4px;
+}
+
+.o_expiry_product {
+    font-size: 1.15em;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.o_expiry_note {
+    color: #555;
+    margin-bottom: 14px;
+    line-height: 1.4;
+}
+
+.o_expiry_table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+}
+
+.o_expiry_table th,
+.o_expiry_table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e5e5e5;
+    text-align: left;
+}
+
+.o_expiry_table th {
+    background: #f6f6f6;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.o_expiry_table tr.o_expiry_urgent td {
+    background: #fdecea;
+    color: #b00020;
+    font-weight: 500;
+}
+
+.o_expiry_table .text-end {
+    text-align: right;
+}
+
+.o_expiry_footer {
+    text-align: right;
+    margin-top: 8px;
+}
+
+/* Badge styling, applied when the orderline template extension renders
+ * the on-screen-only lot warning. Kept here so styling is consistent
+ * once we wire the template extension to the correct xpath. */
+.o_shafic_expiry_badge {
+    color: #b00020;
+    font-size: 0.85em;
+    font-weight: 500;
+    margin-top: 2px;
+}

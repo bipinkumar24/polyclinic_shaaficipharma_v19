@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="account_view_move_form_kbsn">
+            <field name="name">account.view_move_form_kbsn</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="model">account.move</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="is_expense" invisible="1" force_save="1"/>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="hide_hide_gm" invisible="1"/>
+                    <field name="next_is_reject" invisible="1"/>
+                    <field name="is_last_level" invisible="1"/>
+                    <field name="is_expense" invisible="1" force_save="1"/>
+                    <field name="state_2" invisible="1"/>
+                    <field name="require_hr" invisible="1"/>
+                    <field name="not_finance" invisible="1"/>
+                    <field name="is_first" invisible="1"/>
+                    <field name="next_approval_id" widget="statusbar"
+                        invisible="is_last_level or not is_expense or require_hr"
+                        context="{'rejected': next_is_reject}"/>
+                    <!-- <field name="next_approval_id" widget="statusbar"
+                        invisible="is_last_level or (not is_expense) or (require_hr and state_2 == 'finance')"
+                        context="{'rejected' : next_is_reject}"/> -->
+                </xpath>
+                <xpath expr="//field[@name='partner_bank_id']" position="after">
+                    <field name="require_custom_gm" invisible="hide_hide_gm or not is_expense or move_type == 'out_invoice'"/>
+                    <field name="level" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='state']" position="attributes">
+                    <attribute name="invisible">is_expense and not is_last_level</attribute>
+                </xpath>
+                <xpath expr="//field[@name='invoice_date'][2]" position="attributes">
+                    <attribute name="required">0</attribute>
+                </xpath>
+                <xpath expr="//group[1]" position="attributes">
+                    <attribute name="invisible">not_finance and is_expense</attribute>
+                </xpath>
+                <xpath expr="//header/button[2]" position="attributes">
+                    <attribute name="invisible">state not in ('draft') or (is_expense and not is_last_level)</attribute>
+                </xpath>
+                <xpath expr="//header/button[3]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//header/button[@name='button_cancel'][2]" position="attributes">
+                    <attribute name="invisible">state not in ('draft') or (is_expense and not is_last_level) or state_2 == 'finance'</attribute>
+                </xpath>
+                <xpath expr="//header/button[@name='button_cancel'][2]" position="attributes">
+                    <attribute name="invisible">state not in ('draft') or (is_expense and not is_last_level) or state_2 == 'finance'</attribute>
+                </xpath>
+                <xpath expr="//group[1]" position="before">
+                    <group>
+                        <field name="department_id" invisible="1"/>
+                        <field name="is_expense"
+                            invisible="move_type in ('out_invoice','entry') or context.get('hide_expense')"
+                            readonly="is_last_level or state not in ('draft')"/>
+                        <field name="require_hr"
+                            invisible="not is_expense or move_type == 'out_invoice' or not not_finance"
+                            readonly="is_last_level or not is_first or state not in ('draft') or state_2 not in ('new')"
+                            groups="base.group_system" />
+                        <field name="require_gm"
+                            invisible="not is_expense or move_type == 'out_invoice' or state_2 not in ('hr')"
+                            readonly="is_last_level or not is_first or state not in ('draft') or state_2 not in ('hr')"/>
+                        <field name="department_approved" invisible="1"/>
+                        <field name="not_finance" invisible="1"/>
+                    </group>
+                </xpath>
+                <xpath expr="//header" position="inside">
+                    <field name="is_first" invisible="1"/>
+                    <field name="is_last_level" invisible="1"/>
+                    <field name="is_button" invisible="1"/>
+                    <field name="is_customer_doc_required" invisible="1"/>
+                    <button name="action_approve" type="object"
+                            string="Next Stage / Reject" class="oe_highlight" invisible="not is_button or require_hr or not is_expense or move_type == 'out_invoice' or is_last_level or require_custom_gm or level == 3"/>
+
+
+
+                </xpath>
+                <xpath expr="//header" position="inside">
+                    <button name="cancel_it" type="object" string="Reject" class="oe_highlight"
+                        invisible="not require_hr or state_2 in ('reject') or is_last_level"
+                        groups="expense_requests.hr_approver,expense_requests.hr_approver,expense_requests.Finance_approver"/>
+                    <button name="department_approve" type="object" groups="expense_requests.department_approver"
+                        string="Site/Dep Approval?" class="oe_highlight"
+                        invisible="state_2 not in ('new') or (not require_hr and state_2 in ('new'))"/>
+                    <button name="hr_approve" type="object" groups="expense_requests.hr_approver"
+                        string="HR Approval?" class="oe_highlight"
+                        invisible="not require_hr or state_2 not in ('depapproved')"/>
+                    <button name="finance_approve" type="object" groups="expense_requests.Finance_approver"
+                        string="Finance Approval?" class="oe_highlight"
+                        invisible="not require_hr or require_gm or state_2 not in ('hr')"/>
+                    <button name="gm_approve" type="object" groups="expense_requests.GM_approver"
+                        string="GM Approval?" class="oe_highlight"
+                        invisible="not require_gm or state_2 not in ('togm')"/>
+                    <button name="submit_to_gm" type="object" groups="expense_requests.Finance_approver"
+                        string="Submit to GM?" class="oe_highlight"
+                        invisible="not require_gm or state_2 not in ('hr')"/>
+                    <button name="submit_to_gm_dynamic" type="object" groups="expense_requests.Finance_approver"
+                        string="Submit to GM?" class="oe_highlight"
+                        invisible="not require_custom_gm or require_hr"/>
+
+                    
+                    <button name="gm_approve_custom" type="object" groups="expense_requests.GM_approver"
+                        string="GM Approval?" class="oe_highlight"
+                        invisible="require_gm or state_2 not in ('togm')"/>
+                    <button name="gm_approve_reject" type="object" groups="expense_requests.GM_approver"
+                        string="Reject" class="oe_highlight"
+                        invisible="level != 3 or require_hr"/>
+                    <field name="state_2" widget="statusbar"
+                        statusbar_visible="new,depapproved,hr,finance,reject"
+                        invisible="not require_hr or state_2 == 'finance'"/>
+
+                        <!-- invisible="not require_hr or (require_hr and state_2 == 'finance') or state not in ('new','depapproved','hr','finance','reject')"/> -->
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']//field[@name='account_id']" position="attributes">
+                    <attribute name="context">
+                        {
+                            'partner_id': partner_id,
+                            'move_type': parent.move_type,
+                            'search_default_type_expense_direct_cost': 'in_' in parent.move_type,
+                            'search_default_type_asset_fixed': 'in_' in parent.move_type,
+                            'search_default_type_expense': 'in_' in parent.move_type,
+                            'search_default_account_type': 'out_' in parent.move_type and 'income',
+                            'preferred_account_type': 'out_' in parent.move_type and 'income' or 'in_' in parent.move_type and 'expense',
+                        }
+                    </attribute>
+                </xpath>
+                <xpath expr="//notebook" position="inside">
+                    <page name="remarks" string="Remarks"
+                        invisible="move_type == 'out_invoice' or not is_expense or require_hr">
+                        <field name="remark_ids" readonly="1">
+                            <list>
+                                <field name="user_id" readonly="1"/>
+                                <field name="name" readonly="1"/>
+                                <field name="remark_datettime" readonly="1"/>
+                                <field name="consumed_hours" readonly="1"/>
+                                <field name="from_stage_id" readonly="1"/>
+                                <field name="to_stage_id" readonly="1"/>
+                                <field name="remark_type" readonly="1"/>
+                            </list>
+                        </field>
+                    </page>
+                    <page name="Disbursement Detail" string="Disbursement Detail"
+                        invisible="move_type == 'out_invoice' or not is_expense or not require_hr">
+                        <field name="employees_fee_ids" editable="bottom" style="margin-left: 0px;">
+                            <list editable="bottom">
+                                <field name="employees_id"/>
+                                <field name="phone"/>
+                                <field name="scheduled_date"/>
+                                <field name="Amount"/>
+                                <field name="description"/>
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="hr_view_employee_filter">
+            <field name="name">account.view_move_form_kbsn</field>
+            <field name="inherit_id" ref="hr.view_employee_filter"/>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='job_id']" position="after">
+                    <field name="mobile_phone"/>
+                </xpath>
+            </field>
+        </record>
+        
+        <!-- <record model="ir.ui.view" id="sale1_view_quotation_tree_with_onboardingt">
+            <field name="name">sale.view_quotation_tree_with_onboarding</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+            <field name="model">sale.order</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='create_date']" position="replace">
+                     <field name="date_order"/>
+                </xpath>
+            </field>
+        </record> -->
+
+    </data>
+</odoo>

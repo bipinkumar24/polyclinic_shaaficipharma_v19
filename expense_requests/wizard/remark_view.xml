@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="account_remark_wizard_view" model="ir.ui.view">
+            <field name="name">Account Approval flow wizard</field>
+            <field name="model">account.remark.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Voucher">
+                    <field name="move_id" invisible="1"/>
+                    <field name="is_first_level" invisible="1"/>
+                    <field name="display_message" readonly="1" force_save="1"/>
+                    <group>
+                        <div class="o_td_label">
+                            <label for="name" string="Remarks" class="oe_inline"/>
+                            <label for="name" string="*" class="text-danger oe_inline"/>
+                        </div>
+                        <div>
+                            <field name="name" required="1" nolable="1"/>
+                        </div>
+                    </group>
+                    <div name="mail_form" invisible="not is_send_email">
+                        <div>
+                            <group>
+                                <label for="partner_ids" string="Recipients" groups="base.group_user"/>
+                                <div groups="base.group_user">
+                                    <field name="partner_ids" widget="many2many_tags_email"
+                                        placeholder="Add contacts to notify..."
+                                        required="is_send_email"
+                                        context="{'force_email':True, 'show_email':True}"/>
+                                </div>
+                                <field name="subject" placeholder="Subject..."
+                                    required="is_send_email"/>
+                                <field name="body" placeholder="Type '/' for commands"  widget="html" class="oe-bordered-editor" options="{'style-inline': true, 'codeview': true }" required="is_send_email" string="Body"/>
+                            </group>
+                        </div>
+                        <group>
+                            <field name="attachment_ids" widget="many2many_binary" string="Attach a file" nolabel="1"/>
+                            <field name="is_send_email" invisible="1"/>
+                        </group>
+                    </div>
+                    <footer>
+                        <button name="approve" string="Next Stage" type="object" default_focus="1"
+                                class="oe_highlight"/>
+                        <button name="previous" string="Previous Stage" type="object"
+                            invisible="is_first_level" default_focus="1" class="oe_highlight"/>
+                        <button name="reject" string="Reject" type="object" default_focus="1" class="oe_highlight"/>
+                        <button string="Cancel" class="btn btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

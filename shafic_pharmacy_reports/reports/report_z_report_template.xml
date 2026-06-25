@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_z_report_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center">POS Session Z-Report</h2>
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Session</strong></td>
+                                        <td><span t-field="doc.session_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>POS Point</strong></td>
+                                        <td><span t-field="doc.config_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Branch</strong></td>
+                                        <td><span t-field="doc.branch_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Responsible</strong></td>
+                                        <td><span t-field="doc.user_id"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Opened</strong></td>
+                                        <td><span t-field="doc.start_at"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Closed</strong></td>
+                                        <td><span t-field="doc.stop_at"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Status</strong></td>
+                                        <td><span t-field="doc.state"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Orders</strong></td>
+                                        <td>
+                                            <span t-field="doc.order_count"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <h4 class="mt-3">Cash Reconciliation</h4>
+                        <table class="table table-sm o_main_table">
+                            <tbody>
+                                <tr>
+                                    <td>Session Revenue</td>
+                                    <td class="text-end">
+                                        <span t-field="doc.session_revenue"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Opening Cash</td>
+                                    <td class="text-end">
+                                        <span t-field="doc.opening_cash"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Expected Closing Cash</td>
+                                    <td class="text-end">
+                                        <span
+                                          t-field="doc.closing_cash_expected"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Counted Closing Cash</td>
+                                    <td class="text-end">
+                                        <span t-field="doc.closing_cash_real"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Cash Difference</strong></td>
+                                    <td class="text-end">
+                                        <strong
+                                          t-field="doc.cash_difference"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="mt-4 text-muted">
+                            This Z-Report is a system-generated summary of the
+                            POS session and forms part of the daily cash
+                            control records.
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

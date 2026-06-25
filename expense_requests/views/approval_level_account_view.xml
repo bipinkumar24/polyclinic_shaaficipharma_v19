@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="approval_level_tree_view_crm">
+            <field name="name">approval.level.list.crm</field>
+            <field name="model">approval.level.account</field>
+            <field name="arch" type="xml">
+                <list string="Approval Level Form" editable="bottom">
+                    <field name="name"/>
+                    <field name="level"/>
+                    <field name="maximum_amount"/>
+                    <field name="is_last_approval"/>
+                    <field name="is_reject"/>
+                    <field name="is_customer_doc_required"/>
+                    <field name="is_send_email"/>
+                    <field name="approval_user_ids" widget="many2many_tags"
+                        required="not is_reject"/>
+                    <field name="fields_ids" widget="many2many_tags" domain="[('model', '=', 'account.move')]"/>
+                    <field name="display_message"/>
+                    <field name="email_template_id" domain="[('model_id', '=', 'account.move')]"/>
+                </list>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="approval_level_form_view_crm">
+            <field name="name">approval.level.form.account</field>
+            <field name="model">approval.level.account</field>
+            <field name="arch" type="xml">
+                <form string="Approval Level Form">
+                    <sheet>
+                        <group>
+                            <field name="name" required="1"/>
+                            <field name="level" required="1"/>
+                            <field name="is_last_approval"/>
+                            <field name="is_reject"/>
+                            <field name="approval_user_ids" required="not is_reject"/>
+                            <field name="display_message"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_approval_level_account" model="ir.actions.act_window">
+            <field name="name">Approval Level</field>
+            <field name="res_model">approval.level.account</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">list,form</field>
+        </record>
+        <record id="action_expense_requests" model="ir.actions.act_window">
+            <field name="name">Expense Requests</field>
+            <field name="res_model">account.move</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('is_expense', '=', True),('move_type', '=', 'in_invoice')]</field>
+             <field name="context">{'default_move_type': 'in_invoice', 'default_is_expense': True,'hide_expense':1 }</field>
+        </record>
+
+        <record id="expense_reques" model="ir.ui.menu">
+            <field name="name">Expense Request</field>
+        </record>
+
+        <menuitem id="expense_reques"
+                  name="Expense Requests"
+                  groups="expense_requests.expensess_manager,expense_requests.can_request_expenses,expense_requests.all_expensess_manager" sequence="4"/>
+
+        <menuitem id="menu_request_expenses" parent="expense_requests.expense_reques"
+                  name="Expense Requests" action="action_expense_requests"
+                  groups="expense_requests.can_request_expenses,expense_requests.all_expensess_manager," sequence="4"/>
+
+        <menuitem id="Expense_onfiguration" parent="expense_requests.expense_reques"
+                  name="Configurations"
+                  groups="expense_requests.expensess_manager,expense_requests.all_expensess_manager" sequence="4"/>
+
+        <menuitem id="menu_approval_level_account" parent="expense_requests.Expense_onfiguration"
+                  name="Expenses Approval Level" action="action_approval_level_account"
+                  groups="expense_requests.expensess_manager,expense_requests.can_request_expenses,expense_requests.all_expensess_manager" sequence="10"/>
+    </data>
+</odoo>

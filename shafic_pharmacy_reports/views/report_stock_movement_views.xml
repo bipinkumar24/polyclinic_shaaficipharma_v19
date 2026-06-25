@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Stock movement analysis (fast / slow / dead stock)            -->
+    <!-- ============================================================ -->
+    <record id="view_report_stock_movement_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.stock.movement.list</field>
+        <field name="model">report.pharmacy.stock.movement</field>
+        <field name="arch" type="xml">
+            <list string="Stock Movement Analysis" create="false" edit="false"
+                  decoration-danger="movement_class == 'dead' or velocity_class == 'dead'"
+                  decoration-warning="movement_class == 'slow' or velocity_class == 'slow'"
+                  decoration-success="movement_class == 'fast' and velocity_class == 'fast'">
+                <field name="product_id"/>
+                <field name="categ_id" optional="hide"/>
+                <field name="pharmacy_category_id"/>
+                <field name="movement_class" widget="badge"
+                       decoration-danger="movement_class == 'dead'"
+                       decoration-warning="movement_class == 'slow'"
+                       decoration-success="movement_class == 'fast'"/>
+                <field name="velocity_class" widget="badge"
+                       decoration-danger="velocity_class == 'dead'"
+                       decoration-warning="velocity_class == 'slow'"
+                       decoration-success="velocity_class == 'fast'"/>
+                <field name="qty_on_hand" sum="Qty On Hand"/>
+                <field name="oldest_stock_date" optional="show"/>
+                <field name="days_on_hand" optional="show"/>
+                <field name="qty_sold_period" sum="Qty Sold"
+                       optional="show"/>
+                <field name="days_of_cover" optional="show"/>
+                <field name="last_sale_date" optional="hide"/>
+                <field name="days_since_sale" optional="hide"/>
+                <field name="stock_value" sum="Value At Risk"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_stock_movement_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.stock.movement.pivot</field>
+        <field name="model">report.pharmacy.stock.movement</field>
+        <field name="arch" type="xml">
+            <pivot string="Stock Movement Analysis">
+                <field name="movement_class" type="row"/>
+                <field name="stock_value" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_stock_movement_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.stock.movement.search</field>
+        <field name="model">report.pharmacy.stock.movement</field>
+        <field name="arch" type="xml">
+            <search string="Stock Movement Analysis">
+                <field name="product_id"/>
+                <field name="categ_id"/>
+                <filter name="fast" string="Fast Moving (Age)"
+                        domain="[('movement_class', '=', 'fast')]"/>
+                <filter name="slow" string="Slow Moving (Age)"
+                        domain="[('movement_class', '=', 'slow')]"/>
+                <filter name="dead" string="Dead Stock (Age)"
+                        domain="[('movement_class', '=', 'dead')]"/>
+                <separator/>
+                <filter name="velocity_fast" string="Fast Velocity"
+                        domain="[('velocity_class', '=', 'fast')]"/>
+                <filter name="velocity_slow" string="Slow Velocity"
+                        domain="[('velocity_class', '=', 'slow')]"/>
+                <filter name="velocity_dead" string="Dead Velocity"
+                        domain="[('velocity_class', '=', 'dead')]"/>
+                <separator/>
+                <filter name="both_dead" string="Dead Both (Age + Velocity)"
+                        domain="[('movement_class', '=', 'dead'),
+                                 ('velocity_class', '=', 'dead')]"/>
+                <filter name="young_overstocked"
+                        string="Young but Over-Stocked"
+                        domain="[('movement_class', '!=', 'dead'),
+                                 ('velocity_class', '=', 'dead')]"/>
+                <group name="group_by">
+                    <filter name="group_class" string="Movement Class (Age)"
+                            context="{'group_by': 'movement_class'}"/>
+                    <filter name="group_velocity" string="Velocity Class"
+                            context="{'group_by': 'velocity_class'}"/>
+                    <filter name="group_category" string="Pharmacy Category"
+                            context="{'group_by': 'pharmacy_category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_stock_movement" model="ir.actions.act_window">
+        <field name="name">Stock Movement Analysis</field>
+        <field name="res_model">report.pharmacy.stock.movement</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="search_view_id"
+               ref="view_report_stock_movement_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No movement analysis available yet
+            </p>
+            <p>
+                The fast / slow / dead stock classification is refreshed
+                automatically every few hours, or on demand from the
+                Inventory Reports wizard.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Batch / lot tracking                                          -->
+    <!-- ============================================================ -->
+    <record id="view_report_batch_tracking_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.batch.tracking.list</field>
+        <field name="model">report.pharmacy.batch.tracking</field>
+        <field name="arch" type="xml">
+            <list string="Batch Tracking" create="false" edit="false">
+                <field name="lot_name"/>
+                <field name="product_id"/>
+                <field name="expiration_date"/>
+                <field name="on_hand_qty" sum="Remaining Balance"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_batch_tracking_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.batch.tracking.search</field>
+        <field name="model">report.pharmacy.batch.tracking</field>
+        <field name="arch" type="xml">
+            <search string="Batch Tracking">
+                <field name="lot_name" string="Batch ID"/>
+                <field name="product_id"/>
+                <group name="group_by">
+                    <filter name="group_product" string="Product"
+                            context="{'group_by': 'product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_batch_tracking" model="ir.actions.act_window">
+        <field name="name">Batch / Lot Tracking</field>
+        <field name="res_model">report.pharmacy.batch.tracking</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id"
+               ref="view_report_batch_tracking_search"/>
+    </record>
+
+</odoo>

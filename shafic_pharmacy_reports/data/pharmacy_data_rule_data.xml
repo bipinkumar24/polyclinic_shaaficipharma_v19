@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="data_rule_barcode" model="pharmacy.data.rule">
+        <field name="field_key">barcode</field>
+        <field name="active" eval="True"/>
+        <field name="min_length">8</field>
+        <field name="regex_pattern">^[0-9]+$</field>
+        <field name="enforce_checksum" eval="False"/>
+        <field name="description">Barcode must be at least 8 digits and contain only digits. Enable the checksum check once your barcode data is cleaner — a strict GTIN check digit applied to bad data will collapse the score overnight.</field>
+    </record>
+
+    <record id="data_rule_default_code" model="pharmacy.data.rule">
+        <field name="field_key">default_code</field>
+        <field name="active" eval="True"/>
+        <field name="min_length">2</field>
+        <field name="regex_pattern"></field>
+        <field name="description">Internal reference (SKU) must be at least 2 characters. Set a regex to enforce a house format if you have one.</field>
+    </record>
+
+    <record id="data_rule_lot_name" model="pharmacy.data.rule">
+        <field name="field_key">lot_name</field>
+        <field name="active" eval="True"/>
+        <field name="min_length">3</field>
+        <field name="regex_pattern"></field>
+        <field name="description">Lot or batch number must be at least 3 characters. Tighten with a regex once your supplier batch format stabilises.</field>
+    </record>
+
+</odoo>

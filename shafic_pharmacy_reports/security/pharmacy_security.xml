@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Application category -->
+    <record id="module_category_pharmacy" model="ir.module.category">
+        <field name="name">Pharmacy Reports</field>
+        <field name="description">Pharmacy POS reporting and analytics
+            access levels.</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Pharmacy Cashier -->
+    <record id="group_pharmacy_cashier" model="res.groups">
+        <field name="name">Pharmacy Cashier</field>
+        <!-- <field name="category_id" ref="module_category_pharmacy"/> -->
+        <field name="comment">Operates POS and views basic sales
+            reports.</field>
+    </record>
+
+    <!-- Pharmacist -->
+    <record id="group_pharmacist" model="res.groups">
+        <field name="name">Pharmacist</field>
+        <!-- <field name="category_id" ref="module_category_pharmacy"/> -->
+        <field name="implied_ids" eval="[(4, ref('group_pharmacy_cashier'))]"/>
+        <field name="comment">Dispenses medication and manages
+            prescriptions and the controlled drugs register.</field>
+    </record>
+
+    <!-- Inventory Officer -->
+    <record id="group_inventory_officer" model="res.groups">
+        <field name="name">Pharmacy Inventory Officer</field>
+        <!-- <field name="category_id" ref="module_category_pharmacy"/> -->
+        <field name="implied_ids" eval="[(4, ref('group_pharmacy_cashier'))]"/>
+        <field name="comment">Manages stock, expiry, reorder and batch
+            reporting.</field>
+    </record>
+
+    <!-- Branch Manager -->
+    <record id="group_branch_manager" model="res.groups">
+        <field name="name">Pharmacy Branch Manager</field>
+        <!-- <field name="category_id" ref="module_category_pharmacy"/> -->
+        <field name="implied_ids" eval="[
+            (4, ref('group_pharmacist')),
+            (4, ref('group_inventory_officer'))]"/>
+        <field name="comment">Oversees a branch; access to all operational
+            reports for assigned branches.</field>
+    </record>
+
+    <!-- Finance Team -->
+    <record id="group_finance_team" model="res.groups">
+        <field name="name">Pharmacy Finance Team</field>
+        <!-- <field name="category_id" ref="module_category_pharmacy"/> -->
+        <field name="implied_ids" eval="[(4, ref('group_pharmacy_cashier'))]"/>
+        <field name="comment">Access to financial, profitability and
+            insurance reporting.</field>
+    </record>
+
+    <!-- System Admin -->
+    <record id="group_pharmacy_admin" model="res.groups">
+        <field name="name">Pharmacy System Admin</field>
+        <!-- <field name="category_id" ref="module_category_pharmacy"/> -->
+        <field name="implied_ids" eval="[
+            (4, ref('group_branch_manager')),
+            (4, ref('group_finance_team'))]"/>
+        <field name="comment">Full configuration and reporting access.</field>
+    </record>
+
+</odoo>

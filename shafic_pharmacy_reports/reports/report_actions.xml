@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Expiry report (referenced by expiry report wizard)            -->
+    <!-- ============================================================ -->
+    <record id="action_report_pharmacy_expiry" model="ir.actions.report">
+        <field name="name">Expiry Report</field>
+        <field name="model">report.pharmacy.expiry</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">
+            shafic_pharmacy_reports.report_expiry_document</field>
+        <field name="report_file">
+            shafic_pharmacy_reports.report_expiry_document</field>
+        <field name="paperformat_id"
+               ref="paperformat_pharmacy_report_landscape"/>
+        <field name="print_report_name">'Expiry Report'</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- POS session Z-report                                          -->
+    <!-- ============================================================ -->
+    <record id="action_report_pharmacy_z_report" model="ir.actions.report">
+        <field name="name">POS Z-Report</field>
+        <field name="model">report.pharmacy.pos.control</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">
+            shafic_pharmacy_reports.report_z_report_document</field>
+        <field name="report_file">
+            shafic_pharmacy_reports.report_z_report_document</field>
+        <field name="paperformat_id" ref="paperformat_pharmacy_report"/>
+        <field name="binding_model_id" ref="model_report_pharmacy_pos_control"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">
+            "'Z-Report - %s' % (object.session_id.name or '')"</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Controlled drug register report                               -->
+    <!-- ============================================================ -->
+    <record id="action_report_pharmacy_controlled_drug"
+            model="ir.actions.report">
+        <field name="name">Controlled Drug Register</field>
+        <field name="model">pharmacy.controlled.drug.log</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">
+            shafic_pharmacy_reports.report_controlled_drug_document</field>
+        <field name="report_file">
+            shafic_pharmacy_reports.report_controlled_drug_document</field>
+        <field name="paperformat_id"
+               ref="paperformat_pharmacy_report_landscape"/>
+        <field name="binding_model_id"
+               ref="model_pharmacy_controlled_drug_log"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Controlled Drug Register'</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Prescription document                                         -->
+    <!-- ============================================================ -->
+    <record id="action_report_pharmacy_prescription"
+            model="ir.actions.report">
+        <field name="name">Prescription</field>
+        <field name="model">pharmacy.prescription</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">
+            shafic_pharmacy_reports.report_prescription_document</field>
+        <field name="report_file">
+            shafic_pharmacy_reports.report_prescription_document</field>
+        <field name="paperformat_id" ref="paperformat_pharmacy_report"/>
+        <field name="binding_model_id" ref="model_pharmacy_prescription"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">
+            "'Prescription - %s' % (object.name or '')"</field>
+    </record>
+
+</odoo>

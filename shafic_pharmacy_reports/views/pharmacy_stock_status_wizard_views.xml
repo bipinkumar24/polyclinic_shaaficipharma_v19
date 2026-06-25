@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Wizard: choose as-of date, then Generate -->
+    <record id="view_pharmacy_stock_status_wizard_form" model="ir.ui.view">
+        <field name="name">pharmacy.stock.status.wizard.form</field>
+        <field name="model">pharmacy.stock.status.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Inventory Stock Status">
+                <div class="oe_title">
+                    <h2>Inventory Stock Status</h2>
+                    <p>Reconstruct on-hand quantity and value for every
+                       product as of any past date.</p>
+                </div>
+                <group>
+                    <group>
+                        <field name="as_of_date"/>
+                        <field name="pharmacy_category_id"/>
+                    </group>
+                    <group>
+                        <field name="hide_zero"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_generate" type="object"
+                            string="Generate" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pharmacy_stock_status_wizard"
+            model="ir.actions.act_window">
+        <field name="name">Stock Status (as of date)</field>
+        <field name="res_model">pharmacy.stock.status.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Result lines -->
+    <record id="view_pharmacy_stock_status_line_list" model="ir.ui.view">
+        <field name="name">pharmacy.stock.status.line.list</field>
+        <field name="model">pharmacy.stock.status.line</field>
+        <field name="arch" type="xml">
+            <list string="Stock Status" create="false" edit="false"
+                  default_order="value_booked desc">
+                <field name="as_of_date" optional="show"/>
+                <field name="product_id"/>
+                <field name="pharmacy_category_id" optional="show"/>
+                <field name="qty_on_hand" sum="Total Qty"/>
+                <field name="avg_unit_cost"/>
+                <field name="value_booked" sum="Total Booked"/>
+                <field name="moving_avg_cost"/>
+                <field name="value_moving_avg" sum="Total Moving-Avg"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <button name="action_open_card" type="object"
+                        string="Stock Card" icon="fa-list-alt"
+                        help="Open this product's stock card"/>
+                <button name="action_open_product" type="object"
+                        string="Product" icon="fa-cube"
+                        help="Open the product"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_stock_status_line_pivot" model="ir.ui.view">
+        <field name="name">pharmacy.stock.status.line.pivot</field>
+        <field name="model">pharmacy.stock.status.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Stock Status">
+                <field name="pharmacy_category_id" type="row"/>
+                <field name="value_booked" type="measure"/>
+                <field name="value_moving_avg" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_stock_status_line_search" model="ir.ui.view">
+        <field name="name">pharmacy.stock.status.line.search</field>
+        <field name="model">pharmacy.stock.status.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id"/>
+                <field name="pharmacy_category_id"/>
+                <group name="group_by">
+                    <filter name="group_category" string="Pharmacy Category"
+                            context="{'group_by': 'pharmacy_category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+</odoo>

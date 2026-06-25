@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_report_stock_position_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.stock.position.list</field>
+        <field name="model">report.pharmacy.stock.position</field>
+        <field name="arch" type="xml">
+            <list string="Stock Position" create="false" edit="false">
+                <field name="product_id"/>
+                <field name="default_code" optional="show"/>
+                <field name="categ_id" optional="hide"/>
+                <field name="pharmacy_category_id"/>
+                <field name="lot_name" optional="show"/>
+                <field name="expiration_date" optional="show"/>
+                <field name="warehouse_id"/>
+                <field name="location_id" optional="hide"/>
+                <field name="quantity" sum="Available"/>
+                <field name="reserved_quantity" sum="Reserved" optional="hide"/>
+                <field name="unit_cost" optional="hide"/>
+                <field name="stock_value" sum="Stock Value"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_stock_position_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.stock.position.pivot</field>
+        <field name="model">report.pharmacy.stock.position</field>
+        <field name="arch" type="xml">
+            <pivot string="Stock Position Analysis">
+                <field name="pharmacy_category_id" type="row"/>
+                <field name="warehouse_id" type="col"/>
+                <field name="stock_value" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_stock_position_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.stock.position.search</field>
+        <field name="model">report.pharmacy.stock.position</field>
+        <field name="arch" type="xml">
+            <search string="Stock Position">
+                <field name="product_id"/>
+                <field name="lot_name" string="Batch Number"/>
+                <field name="warehouse_id"/>
+                <field name="categ_id"/>
+                <filter name="in_stock" string="In Stock"
+                        domain="[('quantity', '&gt;', 0)]"/>
+                <group name="group_by">
+                    <filter name="group_category" string="Pharmacy Category"
+                            context="{'group_by': 'pharmacy_category_id'}"/>
+                    <filter name="group_warehouse" string="Warehouse"
+                            context="{'group_by': 'warehouse_id'}"/>
+                    <filter name="group_product" string="Product"
+                            context="{'group_by': 'product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_stock_position" model="ir.actions.act_window">
+        <field name="name">Stock Position</field>
+        <field name="res_model">report.pharmacy.stock.position</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="search_view_id" ref="view_report_stock_position_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_pharmacy_auto_prepared_order_list" model="ir.ui.view">
+        <field name="name">pharmacy.auto.prepared.order.list</field>
+        <field name="model">pharmacy.auto.prepared.order</field>
+        <field name="arch" type="xml">
+            <list string="Auto-Prepared Orders"
+                  create="false" edit="false"
+                  decoration-success="po_state == 'purchase'"
+                  decoration-info="po_state == 'draft'"
+                  decoration-muted="po_state == 'cancel'">
+                <field name="name"/>
+                <field name="prepared_on"/>
+                <field name="supplier_id"/>
+                <field name="line_count"/>
+                <field name="total_amount" sum="Total"/>
+                <field name="po_state" widget="badge"/>
+                <field name="purchase_order_id" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <button name="action_open_purchase_order"
+                        type="object" string="Open PO"
+                        class="btn-link" icon="fa-external-link"
+                        invisible="not purchase_order_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_auto_prepared_order_form" model="ir.ui.view">
+        <field name="name">pharmacy.auto.prepared.order.form</field>
+        <field name="model">pharmacy.auto.prepared.order</field>
+        <field name="arch" type="xml">
+            <form string="Auto-Prepared Order" create="false">
+                <header>
+                    <button name="action_open_purchase_order"
+                            type="object" string="Open Draft PO"
+                            class="oe_highlight"
+                            invisible="not purchase_order_id"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="prepared_on" readonly="1"/>
+                            <field name="supplier_id" readonly="1"/>
+                            <field name="purchase_order_id" readonly="1"/>
+                            <field name="po_state" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="line_count" readonly="1"/>
+                            <field name="total_amount" readonly="1"/>
+                            <field name="company_id"
+                                   readonly="1"
+                                   groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Reasoning">
+                        <field name="reason" nolabel="1" readonly="1"
+                               widget="text"
+                               style="font-family: monospace;"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_auto_prepared_order_search" model="ir.ui.view">
+        <field name="name">pharmacy.auto.prepared.order.search</field>
+        <field name="model">pharmacy.auto.prepared.order</field>
+        <field name="arch" type="xml">
+            <search string="Auto-Prepared Orders">
+                <field name="supplier_id"/>
+                <field name="purchase_order_id"/>
+                <filter name="draft_po" string="Draft (awaiting review)"
+                        domain="[('po_state', '=', 'draft')]"/>
+                <filter name="confirmed_po" string="Confirmed"
+                        domain="[('po_state', '=', 'purchase')]"/>
+                <filter name="cancelled_po" string="Cancelled"
+                        domain="[('po_state', '=', 'cancel')]"/>
+                <separator/>
+                <filter name="last_7" string="Last 7 Days"
+                        domain="[('prepared_on', '&gt;=',
+                                 (context_today() + relativedelta(days=-7))
+                                 .strftime('%Y-%m-%d'))]"/>
+                <group name="group_by">
+                    <filter name="group_supplier" string="Supplier"
+                            context="{'group_by': 'supplier_id'}"/>
+                    <filter name="group_state" string="PO Status"
+                            context="{'group_by': 'po_state'}"/>
+                    <filter name="group_day" string="Prepared On (Day)"
+                            context="{'group_by': 'prepared_on:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pharmacy_auto_prepared_order"
+            model="ir.actions.act_window">
+        <field name="name">Auto-Prepared Orders</field>
+        <field name="res_model">pharmacy.auto.prepared.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id"
+               ref="view_pharmacy_auto_prepared_order_search"/>
+        <field name="context">{'search_default_draft_po': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Drafts will appear here once the daily cron runs
+            </p>
+            <p>
+                Each row records a draft purchase order that was
+                auto-prepared for a hot, low-cover product. The system
+                identifies candidates from POS sales velocity and
+                stock cover, groups them by supplier, and creates one
+                draft purchase order per supplier — capped at the
+                amount set in Configuration → Settings.
+            </p>
+            <p>
+                Drafts wait for a Finance team member to review and
+                confirm. Nothing is sent to the supplier automatically.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_pharmacy_config_settings" model="ir.ui.view">
+        <field name="name">res.config.settings.pharmacy</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Pharmacy Reports" string="Pharmacy Reports"
+                     name="shafic_pharmacy_reports"
+                     logo="/shafic_pharmacy_reports/static/description/icon.png">
+                    <block title="Expiry Management"
+                           name="pharmacy_expiry_block">
+                        <setting string="Expiry Alert Window"
+                                 help="Days ahead used for near-expiry alerts">
+                            <field name="pharmacy_expiry_alert_days"/>
+                        </setting>
+                        <setting string="Near-Expiry Discount"
+                                 help="Suggested discount % for near-expiry stock">
+                            <field name="pharmacy_near_expiry_discount"/>
+                        </setting>
+                        <setting string="Expiry Notification Users"
+                                 help="Users notified by the expiry scheduled job">
+                            <field name="pharmacy_expiry_notify_user_ids"
+                                   widget="many2many_tags"/>
+                        </setting>
+                    </block>
+                    <block title="Stock Movement Thresholds"
+                           name="pharmacy_movement_block">
+                        <setting string="Slow Stock Threshold (Age)"
+                                 help="Days the oldest unit must be on the shelf before stock is slow-moving">
+                            <field name="pharmacy_slow_stock_days"/>
+                        </setting>
+                        <setting string="Dead Stock Threshold (Age)"
+                                 help="Days the oldest unit must be on the shelf before stock is dead">
+                            <field name="pharmacy_dead_stock_days"/>
+                        </setting>
+                        <setting string="Slow Velocity Threshold (Days of Cover)"
+                                 help="If on-hand stock would last more than this many days at the current sales rate, flag as slow velocity. Independent of age.">
+                            <field name="pharmacy_velocity_slow_days_of_cover"/>
+                        </setting>
+                        <setting string="Dead Velocity Threshold (Days of Cover)"
+                                 help="If on-hand stock would last more than this many days at the current sales rate, flag as dead velocity. Catches young products that are heavily over-stocked relative to actual demand.">
+                            <field name="pharmacy_velocity_dead_days_of_cover"/>
+                        </setting>
+                    </block>
+                    <block title="Inventory Bonus Scheme"
+                           name="pharmacy_bonus_block">
+                        <setting string="Monthly Team Bonus Pool"
+                                 help="Total monthly pool shared by the inventory team">
+                            <field name="pharmacy_bonus_pool"/>
+                        </setting>
+                        <setting string="Expiry Write-off Target / Baseline (%)"
+                                 help="Full payout at or below target; zero at or above baseline">
+                            <div class="content-group">
+                                <div class="row">
+                                    <label class="col-lg-4" string="Target %"
+                                           for="pharmacy_bonus_expiry_target"/>
+                                    <field name="pharmacy_bonus_expiry_target"/>
+                                </div>
+                                <div class="row">
+                                    <label class="col-lg-4" string="Baseline %"
+                                           for="pharmacy_bonus_expiry_baseline"/>
+                                    <field name="pharmacy_bonus_expiry_baseline"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Near-Expiry Caught Target (%)"
+                                 help="Share of near-expiry value cleared before expiry for full payout">
+                            <field name="pharmacy_bonus_catch_target"/>
+                        </setting>
+                        <setting string="Data Completeness Target / Floor (%)"
+                                 help="Full payout at or above target; zero at or below floor">
+                            <div class="content-group">
+                                <div class="row">
+                                    <label class="col-lg-4" string="Target %"
+                                           for="pharmacy_bonus_data_target"/>
+                                    <field name="pharmacy_bonus_data_target"/>
+                                </div>
+                                <div class="row">
+                                    <label class="col-lg-4" string="Floor %"
+                                           for="pharmacy_bonus_data_floor"/>
+                                    <field name="pharmacy_bonus_data_floor"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="KPI Pool Weights"
+                                 help="How the team pool is divided across the three KPIs">
+                            <div class="content-group">
+                                <div class="row">
+                                    <label class="col-lg-4" string="Expiry"
+                                           for="pharmacy_bonus_weight_expiry"/>
+                                    <field name="pharmacy_bonus_weight_expiry"/>
+                                </div>
+                                <div class="row">
+                                    <label class="col-lg-4" string="Caught Early"
+                                           for="pharmacy_bonus_weight_catch"/>
+                                    <field name="pharmacy_bonus_weight_catch"/>
+                                </div>
+                                <div class="row">
+                                    <label class="col-lg-4" string="Data"
+                                           for="pharmacy_bonus_weight_data"/>
+                                    <field name="pharmacy_bonus_weight_data"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Receiving Checklist"
+                           name="pharmacy_receiving_block_block">
+                        <setting string="Block Receipts with Missing Data"
+                                 help="Refuse to confirm a goods receipt when products are missing required data. Leave off for warn-only mode.">
+                            <field name="pharmacy_receiving_block"/>
+                        </setting>
+                        <setting string="Require Barcode at Receiving">
+                            <field name="pharmacy_receiving_require_barcode"/>
+                        </setting>
+                        <setting string="Require Internal Reference at Receiving">
+                            <field name="pharmacy_receiving_require_ref"/>
+                        </setting>
+                        <setting string="Require Expiry Date at Receiving"
+                                 help="For lot/serial-tracked products: each lot on a receipt must have an expiry date.">
+                            <field name="pharmacy_receiving_require_expiry"/>
+                        </setting>
+                        <setting string="Require Lot/Batch at Receiving"
+                                 help="For lot/serial-tracked products: each receipt line must have a lot or serial number.">
+                            <field name="pharmacy_receiving_require_lot"/>
+                        </setting>
+                    </block>
+                    <block title="Weekly Digest"
+                           name="pharmacy_digest_block">
+                        <setting string="Send Test Digest"
+                                 help="Send a digest email right now to the configured recipients. Useful to confirm the email looks right before Monday.">
+                            <button name="action_send_test_digest"
+                                    type="object"
+                                    string="Send Test Digest Now"
+                                    class="oe_highlight"/>
+                        </setting>
+                    </block>
+                    <block title="Auto-Reorder Preparation"
+                           name="pharmacy_auto_reorder_block">
+                        <setting string="Cap per Auto-Prepared Draft"
+                                 help="Maximum total cost of a single auto-prepared draft purchase order. Drafts exceeding this cap are not created — an alert is sent to digest recipients instead so a person can split the order manually.">
+                            <field name="pharmacy_auto_reorder_cap"/>
+                        </setting>
+                        <setting string="Velocity Threshold (top %)"
+                                 help="What counts as a hot product: top N% by trailing-90-day POS sales velocity. Default 20%.">
+                            <field name="pharmacy_auto_reorder_velocity_pct"/>
+                        </setting>
+                        <setting string="Cover Threshold (days)"
+                                 help="How low days-of-cover has to drop before the system prepares a draft. Default 14 days.">
+                            <field name="pharmacy_auto_reorder_cover_days"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_pharmacy_config_settings" model="ir.actions.act_window">
+        <field name="name">Pharmacy Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <!-- <field name="target">inline</field> -->
+        <field name="context">{'module': 'shafic_pharmacy_reports'}</field>
+    </record>
+
+</odoo>

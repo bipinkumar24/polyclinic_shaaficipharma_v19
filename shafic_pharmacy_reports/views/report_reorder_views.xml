@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_report_reorder_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.reorder.list</field>
+        <field name="model">report.pharmacy.reorder</field>
+        <field name="arch" type="xml">
+            <list string="Reorder Level Report" create="false" edit="false"
+                  decoration-danger="needs_reorder == True"
+                  decoration-warning="days_of_cover &gt; 0 and days_of_cover &lt; 14">
+                <field name="product_id"/>
+                <field name="categ_id" optional="hide"/>
+                <field name="pharmacy_category_id"/>
+                <field name="qty_available" sum="Available"/>
+                <field name="avg_daily_demand" optional="show"/>
+                <field name="days_of_cover" optional="show"/>
+                <field name="lead_time_days" optional="hide"/>
+                <field name="reorder_min"/>
+                <field name="reorder_max" optional="hide"/>
+                <field name="shortage" sum="Shortage" optional="hide"/>
+                <field name="suggested_qty" sum="Suggested Order"/>
+                <field name="needs_reorder" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_reorder_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.reorder.search</field>
+        <field name="model">report.pharmacy.reorder</field>
+        <field name="arch" type="xml">
+            <search string="Reorder Level Report">
+                <field name="product_id"/>
+                <field name="categ_id"/>
+                <filter name="needs_reorder" string="Needs Reorder"
+                        domain="[('needs_reorder', '=', True)]"/>
+                <group name="group_by">
+                    <filter name="group_category" string="Pharmacy Category"
+                            context="{'group_by': 'pharmacy_category_id'}"/>
+                    <filter name="group_categ" string="Product Category"
+                            context="{'group_by': 'categ_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_pharmacy_reorder" model="ir.actions.act_window">
+        <field name="name">Reorder Level Report</field>
+        <field name="res_model">report.pharmacy.reorder</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_report_reorder_search"/>
+        <field name="context">{'search_default_needs_reorder': 1}</field>
+    </record>
+
+</odoo>

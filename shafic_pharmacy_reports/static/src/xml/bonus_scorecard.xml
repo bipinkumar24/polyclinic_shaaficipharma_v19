@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="shafic_pharmacy_reports.PharmacyBonusScorecard">
+        <div class="o_pharmacy_scorecard p-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="mb-0">Inventory Bonus Scorecard</h2>
+                <div class="d-flex align-items-center gap-2">
+                    <button t-if="isCurrentMonth and !state.loading"
+                            class="btn btn-sm btn-outline-primary"
+                            t-on-click="captureMonth">
+                        Capture this month
+                    </button>
+                    <input type="month" class="form-control w-auto"
+                           t-att-value="monthValue"
+                           t-on-change="onMonthChange"/>
+                </div>
+            </div>
+
+            <div t-if="!state.loading" class="mb-3">
+                <span t-att-class="sourceClass" t-esc="sourceLabel"/>
+            </div>
+
+            <div t-if="state.loading" class="text-center text-muted py-5">
+                Loading scorecard...
+            </div>
+
+            <div t-else="">
+                <!-- Summary tiles -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3 col-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="text-muted small">Total Earned</div>
+                                <div class="h3 mb-0 text-success">
+                                    <t t-esc="money(state.data.total_earned)"/>
+                                </div>
+                                <div class="text-muted small">
+                                    of <t t-esc="money(state.data.total_possible)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="text-muted small">Avg Stock Value</div>
+                                <div class="h4 mb-0">
+                                    <t t-esc="money(state.data.average_stock_value)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="text-muted small">Expired Value</div>
+                                <div class="h4 mb-0 text-danger">
+                                    <t t-esc="money(state.data.expired_value)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="text-muted small">Near-Expiry Value</div>
+                                <div class="h4 mb-0 text-warning">
+                                    <t t-esc="money(state.data.near_expiry_value)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div t-if="state.data.exclusion_total" class="col-md-3 col-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="text-muted small">Approved Exclusions</div>
+                                <div class="h4 mb-0 text-info">
+                                    <t t-esc="money(state.data.exclusion_total)"/>
+                                </div>
+                                <div class="text-muted small">
+                                    Deducted from expiry rate
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI table -->
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>KPI</th>
+                            <th class="text-end">Result</th>
+                            <th class="text-end">Target</th>
+                            <th class="text-center">Direction</th>
+                            <th class="text-end">Score</th>
+                            <th class="text-end">Earned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="state.data.kpis" t-as="kpi"
+                            t-key="kpi.name">
+                            <td><t t-esc="kpi.name"/></td>
+                            <td class="text-end">
+                                <t t-esc="kpi.value"/><t t-esc="kpi.unit"/>
+                            </td>
+                            <td class="text-end">
+                                <t t-esc="kpi.target"/><t t-esc="kpi.unit"/>
+                            </td>
+                            <td class="text-center text-muted small">
+                                <t t-esc="kpi.direction"/>
+                            </td>
+                            <td class="text-end"
+                                t-att-class="scoreClass(kpi.score)">
+                                <t t-esc="kpi.score"/>%
+                            </td>
+                            <td class="text-end fw-bold">
+                                <t t-esc="money(kpi.earned)"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-light fw-bold">
+                            <td colspan="5" class="text-end">Team Pool Earned</td>
+                            <td class="text-end text-success">
+                                <t t-esc="money(state.data.total_earned)"/>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <p class="text-muted small mt-3">
+                    The current month shows live figures. Past months
+                    show a stored month-end snapshot when one exists; a
+                    snapshot is captured automatically on the 1st of each
+                    month for the previous month. Click <i>Capture this
+                    month</i> on the current month to take an early
+                    snapshot. Past-month captures are also available from
+                    Bonus History.
+                </p>
+                <p class="text-muted small">
+                    Team pool is shared equally among the inventory team.
+                    Individual clean-data recognition bonuses are paid
+                    separately. Expiry write-off rate = expired stock value
+                    divided by average stock value. Targets are configured
+                    under Configuration &#8594; Settings.
+                </p>
+            </div>
+        </div>
+    </t>
+
+</templates>

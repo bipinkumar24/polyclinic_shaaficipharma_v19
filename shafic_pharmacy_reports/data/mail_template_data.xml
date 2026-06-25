@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="mail_template_product_recall" model="mail.template">
+        <field name="name">Pharmacy: Product Recall Notification</field>
+        <field name="model_id" ref="model_pharmacy_product_recall"/>
+        <field name="subject">Important Product Recall Notice - {{ object.product_id.name }}</field>
+        <field name="email_from">{{ (object.company_id.email or user.email_formatted) }}</field>
+        <field name="lang">{{ object.company_id.partner_id.lang }}</field>
+        <field name="body_html" type="html">
+            <div style="margin:0px;padding:0px;font-size:13px;">
+                <p>Dear Customer,</p>
+                <p>
+                    This is an important safety notice from
+                    <strong t-out="object.company_id.name or ''">Shafic Pharmacy</strong>.
+                </p>
+                <p>
+                    Our records indicate that you may have purchased a product
+                    that is now subject to a recall:
+                </p>
+                <ul>
+                    <li>Recall Reference: <strong t-out="object.name or ''">RCL/0001</strong></li>
+                    <li>Product: <strong t-out="object.product_id.name or ''">Product</strong></li>
+                    <li>Recall Date: <span t-out="object.recall_date or ''">2026-01-01</span></li>
+                    <li>Severity: <span t-out="object.severity or ''">Medium</span></li>
+                </ul>
+                <p><strong>Reason for recall:</strong></p>
+                <p t-out="object.reason or ''">Reason details.</p>
+                <p>
+                    Please stop using this product immediately and return it to
+                    your nearest branch. Our pharmacy team will assist you with
+                    a replacement or refund and answer any questions.
+                </p>
+                <p>
+                    We apologise for any inconvenience and thank you for your
+                    cooperation in keeping our patients safe.
+                </p>
+                <p>Kind regards,<br/>
+                    <span t-out="object.company_id.name or ''">Shafic Pharmacy</span>
+                </p>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_pharmacy_product_category_list" model="ir.ui.view">
+        <field name="name">pharmacy.product.category.list</field>
+        <field name="model">pharmacy.product.category</field>
+        <field name="arch" type="xml">
+            <list string="Pharmacy Categories" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="product_count"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_product_category_form" model="ir.ui.view">
+        <field name="name">pharmacy.product.category.form</field>
+        <field name="model">pharmacy.product.category</field>
+        <field name="arch" type="xml">
+            <form string="Pharmacy Category">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_products" type="object"
+                                class="oe_stat_button" icon="fa-cubes">
+                            <field name="product_count" widget="statinfo"
+                                   string="Products"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"
+                                   placeholder="auto-generated if left blank"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_product_category_search" model="ir.ui.view">
+        <field name="name">pharmacy.product.category.search</field>
+        <field name="model">pharmacy.product.category</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <filter name="archived" string="Archived"
+                        domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pharmacy_product_category" model="ir.actions.act_window">
+        <field name="name">Pharmacy Categories</field>
+        <field name="res_model">pharmacy.product.category</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first pharmacy category
+            </p>
+            <p>
+                Categories classify products for the pharmacy reports
+                (sales by category, expiry by category, and so on). Add,
+                rename, reorder, or archive them freely — changes take
+                effect immediately, no technical work required.
+            </p>
+        </field>
+    </record>
+
+</odoo>

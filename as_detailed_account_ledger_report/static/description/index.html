@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Account Ledger Report - Odoo Module</title>
+    <!-- Ubuntu Font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #4CAF50; /* A pleasant green for headings */
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        h1 {
+            font-size: 2.5em;
+            text-align: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 1.8em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .highlight {
+            background-color: #e0f2f7; /* Light blue highlight */
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 5px solid #2196F3; /* Blue border */
+            margin-bottom: 20px;
+        }
+        .contact-info {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .contact-info h3 {
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .contact-link {
+            display: inline-block;
+            margin: 0 10px;
+            font-size: 1.2em;
+            color: #337ab7; /* Bootstrap primary blue */
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .contact-link:hover {
+            color: #23527c;
+        }
+        .contact-link i {
+            margin-right: 5px;
+        }
+        .version-badge {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 1.9em;
+            margin-bottom: 10px;
+        }
+        .odoo-version {
+            color: #888;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="text-center">
+        <h1>Detailed Account Ledger Report</h1>
+    </div>
+    <p class="lead text-center odoo-version">A comprehensive and beautifully designed financial report for Odoo 18.</p>
+
+    <section>
+        <h2>Overview</h2>
+        <p>The <strong>Detailed Account Ledger Report</strong> module for Odoo 18 provides a powerful and customizable
+            tool for tracking financial transactions. Designed with a clean interface and robust filtering options, it
+            allows businesses to gain deep insights into their account activities.</p>
+        <div class="highlight">
+            <p>This report offers a clear, chronological view of all movements within a selected account, making
+                auditing and financial analysis seamless.</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Screenshots</h2>
+        <div class="screenshot-gallery">
+            <div class="col-md-12">
+                <img src="images/s1.png" alt="Report Wizard Form" class="oe_screenshot" width="84%"/>
+                <br><span class="screenshot-caption">Powerful and flexible report wizard with multiple filter options.</span>
+            </div>
+            <br>
+            <div class="col-md-12">
+                <img src="images/s2.png" alt="Final Report Output" class="oe_screenshot" width="84%"/>
+                <br><span class="screenshot-caption">Clean, professional, and easy-to-read PDF/HTML report output.</span>
+            </div>
+        </div>
+    </section>
+    <br>
+    <section>
+        <h2>Key Features</h2>
+        <ul>
+            <li><strong>Flexible Report Wizard:</strong> Easily select your desired Account, Date Range, specific
+                Company (for multi-company environments), optional Partner, and optional Product.
+            </li>
+            <li><strong>Multiple Output Formats:</strong> Generate your report in HTML (for quick viewing in Odoo), PDF
+                (for professional printing), or Excel (for further analysis).
+            </li>
+            <li><strong>Accurate Balance Calculation:</strong> Displays precise Opening and Closing Balances,
+                automatically adjusting for account types (Debit - Credit for Assets/Expenses; Credit - Debit for
+                Liabilities/Equity/Income).
+            </li>
+            <li><strong>Grouped Transactions:</strong> Transactions are clearly grouped by date, with daily subtotals
+                for both Debit and Credit values, providing a granular view of daily activity.
+            </li>
+            <li><strong>Professional Design:</strong> Features a clean, black-and-white aesthetic with custom headers,
+                strong borders, and the modern Ubuntu font for excellent readability.
+            </li>
+            <li><strong>Accounting Number Formatting:</strong> All monetary values are formatted in standard accounting
+                style, showing negative numbers in parentheses (e.g., (1,234.56)) and zero values as 0.00.
+            </li>
+            <li><strong>Branded Reports:</strong> Reports automatically include your company's logo, name, and address
+                in the header for a consistent and professional brand image.
+            </li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Installation</h2>
+        <ol>
+            <li>Ensure you have Odoo 18 installed and running.</li>
+            <li>Clone this module repository into your Odoo custom addons path.</li>
+            <li>Restart your Odoo server to load the new module.</li>
+            <li>Go to the Apps menu in Odoo, click "Update Apps List".</li>
+            <li>Search for "Detailed Account Ledger Report" and click "Install".</li>
+        </ol>
+        <p>Once installed, navigate to <code>Accounting &gt; Reporting &gt; Detailed Account Ledger</code> to generate
+            your report.</p>
+    </section>
+
+    <div class="contact-info">
+        <h3>Connect with the Author</h3>
+        <p>Developed by Ayesha Siddika Suchi.</p>
+        <p>
+            <a href="mailto:suchiayeshasiddika@gmail.com" class="contact-link" target="_blank">
+                <i class="fa fa-envelope"></i> suchiayeshasiddika@gmail.com
+            </a>
+            <a href="https://www.facebook.com/ayeshasiddikasuchi9" class="contact-link" target="_blank">
+                <i class="fa fa-facebook-square"></i> Facebook
+            </a>
+            <a href="https://www.linkedin.com/in/ayesha-siddika-suchi-71230a110/" class="contact-link" target="_blank">
+                <i class="fa fa-linkedin-square"></i> LinkedIn
+            </a>
+        </p>
+    </div>
+</div>
+</body>
+</html>

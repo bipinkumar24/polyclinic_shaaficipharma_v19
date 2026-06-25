@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Multi-company rule on pharmacy branch -->
+        <record id="rule_pharmacy_branch_company" model="ir.rule">
+            <field name="name">Pharmacy Branch: multi-company</field>
+            <field name="model_id" ref="model_pharmacy_branch"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+                ['|', ('company_id', '=', False),
+                       ('company_id', 'in', company_ids)]
+            </field>
+        </record>
+
+        <!-- Multi-company rule on prescription -->
+        <record id="rule_prescription_company" model="ir.rule">
+            <field name="name">Prescription: multi-company</field>
+            <field name="model_id" ref="model_pharmacy_prescription"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+                [('company_id', 'in', company_ids)]
+            </field>
+        </record>
+
+        <!-- Multi-company rule on controlled drug log -->
+        <record id="rule_controlled_drug_company" model="ir.rule">
+            <field name="name">Controlled Drug Log: multi-company</field>
+            <field name="model_id" ref="model_pharmacy_controlled_drug_log"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+                [('company_id', 'in', company_ids)]
+            </field>
+        </record>
+
+        <!-- Multi-company rule on insurance claim -->
+        <record id="rule_insurance_claim_company" model="ir.rule">
+            <field name="name">Insurance Claim: multi-company</field>
+            <field name="model_id" ref="model_pharmacy_insurance_claim"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+                [('company_id', 'in', company_ids)]
+            </field>
+        </record>
+
+        <!-- Multi-company rule on product recall -->
+        <record id="rule_product_recall_company" model="ir.rule">
+            <field name="name">Product Recall: multi-company</field>
+            <field name="model_id" ref="model_pharmacy_product_recall"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+                [('company_id', 'in', company_ids)]
+            </field>
+        </record>
+
+        <!-- Multi-company rule on audit log -->
+        <record id="rule_audit_log_company" model="ir.rule">
+            <field name="name">Audit Log: multi-company</field>
+            <field name="model_id" ref="model_pharmacy_audit_log"/>
+            <field name="global" eval="True"/>
+            <field name="domain_force">
+                [('company_id', 'in', company_ids)]
+            </field>
+        </record>
+
+        <!-- Cashier only sees own sales report rows -->
+        <record id="rule_sales_report_cashier" model="ir.rule">
+            <field name="name">Sales Report: cashier sees own rows</field>
+            <field name="model_id" ref="model_report_pharmacy_sales"/>
+            <field name="groups"
+                   eval="[(4, ref('group_pharmacy_cashier'))]"/>
+            <field name="domain_force">
+                [('cashier_id', '=', user.id)]
+            </field>
+        </record>
+
+        <!-- Managers and above see all sales report rows -->
+        <record id="rule_sales_report_manager" model="ir.rule">
+            <field name="name">Sales Report: manager sees all rows</field>
+            <field name="model_id" ref="model_report_pharmacy_sales"/>
+            <field name="groups" eval="[
+                (4, ref('group_branch_manager')),
+                (4, ref('group_finance_team'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+    </data>
+</odoo>

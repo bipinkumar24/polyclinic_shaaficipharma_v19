@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!--
+        Seed categories. noupdate="1" so that once created, module
+        upgrades do NOT overwrite any renaming/reordering the user has
+        done. The `code` values MUST match the old Selection keys so the
+        migration script can map existing products correctly.
+
+        XML IDs follow the pattern cat_<code> so other code/data can
+        reference them stably.
+    -->
+    <data noupdate="1">
+
+        <record id="cat_prescription" model="pharmacy.product.category">
+            <field name="name">Prescription Medicine</field>
+            <field name="code">prescription</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="cat_otc" model="pharmacy.product.category">
+            <field name="name">OTC Medicine</field>
+            <field name="code">otc</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="cat_herbal" model="pharmacy.product.category">
+            <field name="name">Herbal / Traditional</field>
+            <field name="code">herbal</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="cat_supplement" model="pharmacy.product.category">
+            <field name="name">Supplement</field>
+            <field name="code">supplement</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="cat_personal_care" model="pharmacy.product.category">
+            <field name="name">Personal Care / Hygiene</field>
+            <field name="code">personal_care</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="cat_mother_baby" model="pharmacy.product.category">
+            <field name="name">Mother &amp; Baby</field>
+            <field name="code">mother_baby</field>
+            <field name="sequence">60</field>
+        </record>
+
+        <record id="cat_cosmetic" model="pharmacy.product.category">
+            <field name="name">Cosmetic</field>
+            <field name="code">cosmetic</field>
+            <field name="sequence">70</field>
+        </record>
+
+        <record id="cat_wellness" model="pharmacy.product.category">
+            <field name="name">Wellness Product</field>
+            <field name="code">wellness</field>
+            <field name="sequence">80</field>
+        </record>
+
+        <record id="cat_first_aid" model="pharmacy.product.category">
+            <field name="name">First Aid</field>
+            <field name="code">first_aid</field>
+            <field name="sequence">90</field>
+        </record>
+
+        <record id="cat_consumable" model="pharmacy.product.category">
+            <field name="name">Medical Consumable</field>
+            <field name="code">consumable</field>
+            <field name="sequence">100</field>
+        </record>
+
+        <record id="cat_device" model="pharmacy.product.category">
+            <field name="name">Medical Device</field>
+            <field name="code">device</field>
+            <field name="sequence">110</field>
+        </record>
+
+        <record id="cat_diagnostic" model="pharmacy.product.category">
+            <field name="name">Diagnostic</field>
+            <field name="code">diagnostic</field>
+            <field name="sequence">120</field>
+        </record>
+
+        <record id="cat_surgical" model="pharmacy.product.category">
+            <field name="name">Surgical</field>
+            <field name="code">surgical</field>
+            <field name="sequence">130</field>
+        </record>
+
+        <!-- NEW: Orthopedic Support (knee / palm / back / wrist supports) -->
+        <record id="cat_orthopedic_support"
+                model="pharmacy.product.category">
+            <field name="name">Orthopedic Support</field>
+            <field name="code">orthopedic_support</field>
+            <field name="sequence">140</field>
+        </record>
+
+        <record id="cat_veterinary" model="pharmacy.product.category">
+            <field name="name">Veterinary</field>
+            <field name="code">veterinary</field>
+            <field name="sequence">150</field>
+        </record>
+
+        <record id="cat_other" model="pharmacy.product.category">
+            <field name="name">Other</field>
+            <field name="code">other</field>
+            <field name="sequence">999</field>
+        </record>
+
+    </data>
+</odoo>

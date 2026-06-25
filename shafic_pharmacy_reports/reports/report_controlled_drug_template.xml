@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_controlled_drug_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2 class="text-center">Controlled Drug Register</h2>
+                    <p class="text-center text-muted">
+                        Statutory dispensing record -
+                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                    </p>
+                    <table class="table table-sm o_main_table mt-3">
+                        <thead>
+                            <tr>
+                                <th>Reference</th>
+                                <th>Dispense Date</th>
+                                <th>Drug</th>
+                                <th>Batch/Lot</th>
+                                <th class="text-end">Qty</th>
+                                <th class="text-end">Balance</th>
+                                <th>Pharmacist</th>
+                                <th>Patient</th>
+                                <th>Doctor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="entry">
+                                <tr>
+                                    <td><span t-field="entry.name"/></td>
+                                    <td>
+                                        <span t-field="entry.dispense_date"/>
+                                    </td>
+                                    <td><span t-field="entry.product_id"/></td>
+                                    <td><span t-field="entry.lot_id"/></td>
+                                    <td class="text-end">
+                                        <span t-field="entry.quantity"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-field="entry.balance_after"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="entry.pharmacist_id"/>
+                                    </td>
+                                    <td><span t-field="entry.patient_id"/></td>
+                                    <td><span t-field="entry.doctor_id"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <p t-if="not docs" class="text-muted">
+                        No controlled drug dispensing records selected.
+                    </p>
+                    <div class="row mt-5">
+                        <div class="col-6">
+                            <p>Pharmacist Signature: ______________________</p>
+                        </div>
+                        <div class="col-6">
+                            <p>Date: ______________________</p>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

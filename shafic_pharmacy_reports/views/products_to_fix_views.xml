@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Worklist list view: the flagged products, worst data first.
+         Clicking a row opens the STANDARD product form (which carries
+         the cost warning banner), so the fix happens in native Odoo. -->
+    <record id="view_products_to_fix_list" model="ir.ui.view">
+        <field name="name">product.template.cost.fix.list</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <list string="Products to Fix" create="false"
+                  default_order="list_price asc"
+                  decoration-danger="pharmacy_cost_issue_reason and 'Negative' in pharmacy_cost_issue_reason">
+                <field name="default_code" optional="show"/>
+                <field name="name"/>
+                <field name="pharmacy_cost_issue_reason" string="Issue"/>
+                <field name="uom_id" string="Unit of Measure"/>
+                <field name="standard_price" string="Cost"/>
+                <field name="list_price" string="Sale Price"/>
+                <field name="pharmacy_weighted_avg_cost"
+                       string="Effective Cost" optional="show"/>
+                <field name="categ_id" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_products_to_fix" model="ir.actions.act_window">
+        <field name="name">Products to Fix</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('pharmacy_has_cost_issue', '=', True)]</field>
+        <field name="view_id" ref="view_products_to_fix_list"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No products need fixing
+            </p>
+            <p>
+                This list shows products whose cost looks wrong versus
+                their price — usually costed per pack but sold per unit,
+                or a negative (corrupted) cost. Open each product and fix
+                its Unit of Measure and Cost in the standard form; it will
+                drop off this list once saved correctly.<br/><br/>
+                The list refreshes daily. To refresh now, run the server
+                action "Recheck Cost Issues" (Settings -> Technical ->
+                Actions -> Server Actions), or the scheduled job
+                "Pharmacy: Snapshot Cost/Price Anomalies".
+            </p>
+        </field>
+    </record>
+
+    <!-- Manual "Recheck" server action (also runnable from the UI). -->
+    <record id="action_server_recheck_cost_issues" model="ir.actions.server">
+        <field name="name">Recheck Cost Issues</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_recheck_cost_issues()</field>
+    </record>
+
+</odoo>

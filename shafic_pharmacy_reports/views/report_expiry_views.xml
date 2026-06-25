@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Server actions for recording catch-early bonus actions -->
+    <record id="action_expiry_record_discount" model="ir.actions.server">
+        <field name="name">Record: Discount Applied</field>
+        <field name="model_id" ref="model_report_pharmacy_expiry"/>
+        <field name="binding_model_id" ref="model_report_pharmacy_expiry"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_record_discount()</field>
+    </record>
+
+    <record id="action_expiry_record_supplier_return"
+            model="ir.actions.server">
+        <field name="name">Record: Supplier Return</field>
+        <field name="model_id" ref="model_report_pharmacy_expiry"/>
+        <field name="binding_model_id" ref="model_report_pharmacy_expiry"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_record_supplier_return()</field>
+    </record>
+
+    <record id="action_expiry_record_transfer" model="ir.actions.server">
+        <field name="name">Record: Transfer Requested</field>
+        <field name="model_id" ref="model_report_pharmacy_expiry"/>
+        <field name="binding_model_id" ref="model_report_pharmacy_expiry"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_record_transfer()</field>
+    </record>
+
+    <record id="action_expiry_record_clearance" model="ir.actions.server">
+        <field name="name">Record: Marked for Clearance</field>
+        <field name="model_id" ref="model_report_pharmacy_expiry"/>
+        <field name="binding_model_id" ref="model_report_pharmacy_expiry"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_record_clearance()</field>
+    </record>
+
+    <record id="view_report_expiry_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.expiry.list</field>
+        <field name="model">report.pharmacy.expiry</field>
+        <field name="arch" type="xml">
+            <list string="Expiry Report" create="false" edit="false"
+                  decoration-danger="expiry_bucket in ('expired', '30')"
+                  decoration-warning="expiry_bucket in ('60', '90')">
+                <field name="product_id"/>
+                <field name="pharmacy_category_id"/>
+                <field name="lot_name"/>
+                <field name="expiration_date"/>
+                <field name="days_to_expiry"/>
+                <field name="expiry_bucket" widget="badge"
+                       decoration-danger="expiry_bucket in ('expired', '30')"
+                       decoration-warning="expiry_bucket in ('60', '90')"/>
+                <field name="quantity" sum="Quantity"/>
+                <field name="stock_value" sum="Stock Value"/>
+                <field name="margin_lost" sum="Margin Lost" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_expiry_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.expiry.pivot</field>
+        <field name="model">report.pharmacy.expiry</field>
+        <field name="arch" type="xml">
+            <pivot string="Expiry Analysis">
+                <field name="expiry_bucket" type="row"/>
+                <field name="pharmacy_category_id" type="col"/>
+                <field name="stock_value" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_expiry_graph" model="ir.ui.view">
+        <field name="name">report.pharmacy.expiry.graph</field>
+        <field name="model">report.pharmacy.expiry</field>
+        <field name="arch" type="xml">
+            <graph string="Expiry Analysis" type="bar">
+                <field name="expiry_bucket"/>
+                <field name="stock_value" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_report_expiry_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.expiry.search</field>
+        <field name="model">report.pharmacy.expiry</field>
+        <field name="arch" type="xml">
+            <search string="Expiry Report">
+                <field name="product_id"/>
+                <field name="lot_name" string="Batch Number"/>
+                <filter name="expired" string="Expired"
+                        domain="[('expiry_bucket', '=', 'expired')]"/>
+                <filter name="d30" string="Within 30 Days"
+                        domain="[('expiry_bucket', '=', '30')]"/>
+                <filter name="d60" string="Within 60 Days"
+                        domain="[('expiry_bucket', '=', '60')]"/>
+                <filter name="d90" string="Within 90 Days"
+                        domain="[('expiry_bucket', '=', '90')]"/>
+                <group name="group_by">
+                    <filter name="group_bucket" string="Expiry Window"
+                            context="{'group_by': 'expiry_bucket'}"/>
+                    <filter name="group_category" string="Pharmacy Category"
+                            context="{'group_by': 'pharmacy_category_id'}"/>
+                    <filter name="group_product" string="Product"
+                            context="{'group_by': 'product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_pharmacy_expiry_window"
+            model="ir.actions.act_window">
+        <field name="name">Expiry Report</field>
+        <field name="res_model">report.pharmacy.expiry</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="search_view_id" ref="view_report_expiry_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No expiring stock found
+            </p>
+            <p>
+                This report tracks expired and near-expiry batches across
+                all branches so action can be taken before losses occur.
+            </p>
+        </field>
+    </record>
+
+</odoo>

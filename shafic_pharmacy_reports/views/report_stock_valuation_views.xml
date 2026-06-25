@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_report_stock_valuation_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.stock.valuation.list</field>
+        <field name="model">report.pharmacy.stock.valuation</field>
+        <field name="arch" type="xml">
+            <list string="Stock Valuation" create="false" edit="false">
+                <field name="product_id"/>
+                <field name="categ_id"/>
+                <field name="pharmacy_category_id"/>
+                <field name="cost_method"/>
+                <field name="quantity" sum="Qty On Hand"/>
+                <field name="unit_value"/>
+                <field name="stock_value" sum="Stock Value"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_stock_valuation_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.stock.valuation.pivot</field>
+        <field name="model">report.pharmacy.stock.valuation</field>
+        <field name="arch" type="xml">
+            <pivot string="Stock Valuation Analysis">
+                <field name="pharmacy_category_id" type="row"/>
+                <field name="stock_value" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_stock_valuation_graph" model="ir.ui.view">
+        <field name="name">report.pharmacy.stock.valuation.graph</field>
+        <field name="model">report.pharmacy.stock.valuation</field>
+        <field name="arch" type="xml">
+            <graph string="Stock Valuation Analysis" type="bar">
+                <field name="categ_id"/>
+                <field name="stock_value" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_report_stock_valuation_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.stock.valuation.search</field>
+        <field name="model">report.pharmacy.stock.valuation</field>
+        <field name="arch" type="xml">
+            <search string="Stock Valuation">
+                <field name="product_id"/>
+                <field name="categ_id"/>
+                <group name="group_by">
+                    <filter name="group_category" string="Pharmacy Category"
+                            context="{'group_by': 'pharmacy_category_id'}"/>
+                    <filter name="group_categ" string="Product Category"
+                            context="{'group_by': 'categ_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_stock_valuation" model="ir.actions.act_window">
+        <field name="name">Stock Valuation</field>
+        <field name="res_model">report.pharmacy.stock.valuation</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="search_view_id"
+               ref="view_report_stock_valuation_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,150 @@
+/* Shafic Pharmacy Executive Dashboard styling */
+
+.o_pharmacy_dashboard {
+    padding: 16px 24px;
+    background: #f6f7fa;
+    min-height: 100%;
+}
+
+.o_pharmacy_dashboard_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.o_pharmacy_dashboard_header h2 {
+    margin: 0;
+    font-weight: 600;
+    color: #1f2d3d;
+}
+
+.o_pharmacy_branch_selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.o_pharmacy_branch_selector .form-select {
+    min-width: 200px;
+}
+
+.o_pharmacy_loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 60px;
+    color: #6c7a89;
+}
+
+.o_pharmacy_kpi_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.o_pharmacy_kpi {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid #0d6efd;
+    transition: transform 0.1s ease;
+}
+
+.o_pharmacy_kpi:hover {
+    transform: translateY(-2px);
+}
+
+.o_kpi_sales { border-left-color: #0d6efd; }
+.o_kpi_target { border-left-color: #6610f2; }
+.o_kpi_profit { border-left-color: #198754; }
+.o_kpi_basket { border-left-color: #20c997; }
+.o_kpi_expiry { border-left-color: #fd7e14; cursor: pointer; }
+.o_kpi_stock { border-left-color: #dc3545; cursor: pointer; }
+.o_kpi_claims { border-left-color: #0dcaf0; cursor: pointer; }
+.o_kpi_customers { border-left-color: #6c757d; }
+.o_kpi_anomaly { border-left-color: #198754; cursor: pointer; }
+.o_kpi_anomaly_warning { border-left-color: #fd7e14; }
+.o_kpi_anomaly_critical { border-left-color: #dc3545; }
+.o_kpi_deadstock { border-left-color: #198754; cursor: pointer; }
+.o_kpi_deadstock_alert { border-left-color: #dc3545; }
+
+.o_kpi_label {
+    font-size: 13px;
+    color: #6c7a89;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 6px;
+}
+
+.o_kpi_value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1f2d3d;
+}
+
+.o_kpi_sub {
+    font-size: 12px;
+    color: #95a5a6;
+    margin-top: 4px;
+}
+
+.o_pharmacy_panel {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+}
+
+.o_pharmacy_panel h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2d3d;
+}
+
+.o_pharmacy_trend {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    height: 180px;
+    padding-top: 10px;
+}
+
+.o_trend_bar_wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+}
+
+.o_trend_bar {
+    width: 70%;
+    background: linear-gradient(180deg, #0d6efd, #6610f2);
+    border-radius: 4px 4px 0 0;
+    min-height: 2px;
+}
+
+.o_trend_label {
+    margin-top: 6px;
+    font-size: 11px;
+    color: #6c7a89;
+}
+
+.o_pharmacy_top_table {
+    margin: 0;
+}
+
+.o_pharmacy_top_table th {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #6c7a89;
+}

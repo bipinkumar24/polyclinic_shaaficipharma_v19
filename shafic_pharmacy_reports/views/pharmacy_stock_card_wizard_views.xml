@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_pharmacy_stock_card_wizard_form" model="ir.ui.view">
+        <field name="name">pharmacy.stock.card.wizard.form</field>
+        <field name="model">pharmacy.stock.card.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Stock Card Statement">
+                <div class="oe_title">
+                    <h2>Stock Card</h2>
+                    <p>Item statement with opening balance, movements and
+                       closing balance for the chosen period.</p>
+                </div>
+                <group>
+                    <group>
+                        <field name="product_id"/>
+                    </group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_generate" type="object"
+                            string="Generate" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pharmacy_stock_card_wizard"
+            model="ir.actions.act_window">
+        <field name="name">Stock Card Statement</field>
+        <field name="res_model">pharmacy.stock.card.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="view_pharmacy_stock_card_line_list" model="ir.ui.view">
+        <field name="name">pharmacy.stock.card.line.list</field>
+        <field name="model">pharmacy.stock.card.line</field>
+        <field name="arch" type="xml">
+            <list string="Stock Card" create="false" edit="false"
+                  default_order="id"
+                  decoration-bf="line_type != 'move'"
+                  decoration-info="line_type == 'opening'"
+                  decoration-primary="line_type == 'closing'">
+                <field name="line_type" column_invisible="1"/>
+                <field name="date"/>
+                <field name="reference"/>
+                <field name="qty_in" sum="Total In"/>
+                <field name="qty_out" sum="Total Out"/>
+                <field name="balance_qty"/>
+                <field name="unit_cost" optional="show"/>
+                <field name="value" optional="show"/>
+                <field name="balance_value"/>
+                <button name="action_open_source" type="object"
+                        string="Source" icon="fa-external-link"
+                        invisible="line_type != 'move'"
+                        help="Open the source document"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>

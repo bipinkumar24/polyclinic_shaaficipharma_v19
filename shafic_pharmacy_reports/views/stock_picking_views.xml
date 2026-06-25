@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_picking_form_pharmacy" model="ir.ui.view">
+        <field name="name">stock.picking.form.pharmacy</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-warning mb-0"
+                     role="alert"
+                     invisible="not pharmacy_receiving_issues or state == 'done'">
+                    <strong>Receiving Data Issues</strong>
+                    <field name="pharmacy_receiving_issues"
+                           nolabel="1" readonly="1"
+                           class="mt-2 d-block"
+                           style="white-space: pre-line;"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

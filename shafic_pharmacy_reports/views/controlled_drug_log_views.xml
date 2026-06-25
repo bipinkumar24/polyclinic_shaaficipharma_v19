@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_controlled_drug_log_list" model="ir.ui.view">
+        <field name="name">pharmacy.controlled.drug.log.list</field>
+        <field name="model">pharmacy.controlled.drug.log</field>
+        <field name="arch" type="xml">
+            <list string="Controlled Drug Register" create="false">
+                <field name="name"/>
+                <field name="dispense_date"/>
+                <field name="product_id"/>
+                <field name="lot_id"/>
+                <field name="quantity"/>
+                <field name="balance_after"/>
+                <field name="pharmacist_id"/>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="branch_id"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_controlled_drug_log_form" model="ir.ui.view">
+        <field name="name">pharmacy.controlled.drug.log.form</field>
+        <field name="model">pharmacy.controlled.drug.log</field>
+        <field name="arch" type="xml">
+            <form string="Controlled Drug Register Entry">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="dispense_date"/>
+                            <field name="product_id"/>
+                            <field name="lot_id"/>
+                            <field name="quantity"/>
+                            <field name="balance_after"/>
+                        </group>
+                        <group>
+                            <field name="pharmacist_id"/>
+                            <field name="patient_id"/>
+                            <field name="doctor_id"/>
+                            <field name="prescription_id"/>
+                            <field name="pos_order_id"/>
+                            <field name="branch_id"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="note" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_controlled_drug_log_search" model="ir.ui.view">
+        <field name="name">pharmacy.controlled.drug.log.search</field>
+        <field name="model">pharmacy.controlled.drug.log</field>
+        <field name="arch" type="xml">
+            <search string="Controlled Drug Register">
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="pharmacist_id"/>
+                <field name="patient_id"/>
+                <field name="branch_id"/>
+                <filter name="today" string="Today"
+                        domain="[('dispense_date', '&gt;=',
+                                 datetime.datetime.combine(context_today(),
+                                 datetime.time(0,0,0)))]"/>
+                <group name="group_by">
+                    <filter name="group_product" string="Drug"
+                            context="{'group_by': 'product_id'}"/>
+                    <filter name="group_pharmacist" string="Pharmacist"
+                            context="{'group_by': 'pharmacist_id'}"/>
+                    <filter name="group_branch" string="Branch"
+                            context="{'group_by': 'branch_id'}"/>
+                    <filter name="group_date" string="Dispense Date"
+                            context="{'group_by': 'dispense_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_controlled_drug_log" model="ir.actions.act_window">
+        <field name="name">Controlled Drug Register</field>
+        <field name="res_model">pharmacy.controlled.drug.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_controlled_drug_log_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No controlled drug dispensing recorded yet
+            </p>
+            <p>
+                Register entries are created automatically when controlled
+                drugs are dispensed through the POS.
+            </p>
+        </field>
+    </record>
+
+</odoo>

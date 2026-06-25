@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Drill-down list of products (with what's missing per row)     -->
+    <!-- ============================================================ -->
+    <record id="view_report_data_completeness_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.data.completeness.list</field>
+        <field name="model">report.pharmacy.data.completeness</field>
+        <field name="arch" type="xml">
+            <list string="Data Completeness" create="false" edit="false"
+                  decoration-success="is_complete"
+                  decoration-danger="missing_count >= 2"
+                  decoration-warning="missing_count == 1">
+                <field name="product_id"/>
+                <field name="pharmacy_category_id"/>
+                <field name="categ_id" optional="hide"/>
+                <field name="barcode" optional="show"/>
+                <field name="default_code" optional="show"/>
+                <field name="tracking" optional="hide"/>
+                <field name="lot_count" optional="hide"/>
+                <field name="missing_barcode" widget="boolean_toggle"
+                       optional="show"/>
+                <field name="missing_ref" widget="boolean_toggle"
+                       optional="show"/>
+                <field name="missing_lot" widget="boolean_toggle"
+                       optional="show"/>
+                <field name="missing_count" sum="Missing Fields"/>
+                <field name="is_complete" widget="boolean_toggle"/>
+                <field name="last_write_uid" optional="show"/>
+                <field name="last_write_date" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <button name="action_open_product" type="object"
+                        string="Fix" class="btn-link"
+                        icon="fa-pencil"
+                        invisible="is_complete"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_data_completeness_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.data.completeness.pivot</field>
+        <field name="model">report.pharmacy.data.completeness</field>
+        <field name="arch" type="xml">
+            <pivot string="Data Completeness Analysis">
+                <field name="pharmacy_category_id" type="row"/>
+                <field name="missing_count" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_data_completeness_graph" model="ir.ui.view">
+        <field name="name">report.pharmacy.data.completeness.graph</field>
+        <field name="model">report.pharmacy.data.completeness</field>
+        <field name="arch" type="xml">
+            <graph string="Missing Fields by Category" type="bar">
+                <field name="pharmacy_category_id"/>
+                <field name="missing_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_report_data_completeness_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.data.completeness.search</field>
+        <field name="model">report.pharmacy.data.completeness</field>
+        <field name="arch" type="xml">
+            <search string="Data Completeness">
+                <field name="product_id"/>
+                <field name="barcode"/>
+                <field name="default_code"/>
+                <field name="last_write_uid"/>
+                <filter name="incomplete" string="Incomplete"
+                        domain="[('is_complete', '=', False)]"/>
+                <filter name="complete" string="Complete"
+                        domain="[('is_complete', '=', True)]"/>
+                <separator/>
+                <filter name="missing_barcode" string="Missing Barcode"
+                        domain="[('missing_barcode', '=', True)]"/>
+                <filter name="missing_ref" string="Missing Reference"
+                        domain="[('missing_ref', '=', True)]"/>
+                <filter name="missing_lot" string="Missing Lot"
+                        domain="[('missing_lot', '=', True)]"/>
+                <group name="group_by">
+                    <filter name="group_category" string="Pharmacy Category"
+                            context="{'group_by': 'pharmacy_category_id'}"/>
+                    <filter name="group_categ" string="Product Category"
+                            context="{'group_by': 'categ_id'}"/>
+                    <filter name="group_writer" string="Last Edited By"
+                            context="{'group_by': 'last_write_uid'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_data_completeness"
+            model="ir.actions.act_window">
+        <field name="name">Data Completeness Report</field>
+        <field name="res_model">report.pharmacy.data.completeness</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="search_view_id"
+               ref="view_report_data_completeness_search"/>
+        <field name="context">{'search_default_incomplete': 1}</field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Headline OWL dashboard client action                          -->
+    <!-- ============================================================ -->
+    <record id="action_pharmacy_data_completeness"
+            model="ir.actions.client">
+        <field name="name">Data Completeness</field>
+        <field name="tag">shafic_pharmacy_data_completeness</field>
+    </record>
+
+</odoo>

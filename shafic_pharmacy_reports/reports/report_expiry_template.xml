@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_expiry_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2 class="text-center">Pharmacy Expiry Report</h2>
+                    <p class="text-center text-muted">
+                        Generated on
+                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                    </p>
+                    <table class="table table-sm o_main_table mt-3">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Batch No.</th>
+                                <th>Expiry Date</th>
+                                <th class="text-end">Days to Expiry</th>
+                                <th>Window</th>
+                                <th class="text-end">Quantity</th>
+                                <th class="text-end">Stock Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="total_value" t-value="0"/>
+                            <t t-foreach="docs" t-as="line">
+                                <t t-set="total_value"
+                                   t-value="total_value + (line.stock_value or 0)"/>
+                                <tr>
+                                    <td><span t-field="line.product_id"/></td>
+                                    <td>
+                                        <span t-field="line.pharmacy_category"/>
+                                    </td>
+                                    <td><span t-field="line.lot_name"/></td>
+                                    <td>
+                                        <span t-field="line.expiration_date"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-field="line.days_to_expiry"/>
+                                    </td>
+                                    <td><span t-field="line.expiry_bucket"/></td>
+                                    <td class="text-end">
+                                        <span t-field="line.quantity"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-field="line.stock_value"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7" class="text-end">
+                                    <strong>Total Stock Value at Risk</strong>
+                                </td>
+                                <td class="text-end">
+                                    <strong t-esc="total_value"
+                                            t-options="{'widget': 'float',
+                                                        'precision': 2}"/>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <p t-if="not docs" class="text-muted">
+                        No expiring stock found for the selected criteria.
+                    </p>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

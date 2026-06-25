@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_prescription_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="text-center">Prescription</h2>
+                        <h4 class="text-center text-muted">
+                            <span t-field="doc.name"/>
+                        </h4>
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Patient</strong></td>
+                                        <td><span t-field="doc.patient_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Doctor</strong></td>
+                                        <td><span t-field="doc.doctor_id"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Date</strong></td>
+                                        <td>
+                                            <span
+                                              t-field="doc.prescription_date"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Branch</strong></td>
+                                        <td><span t-field="doc.branch_id"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Pharmacist</strong></td>
+                                        <td>
+                                            <span t-field="doc.pharmacist_id"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <h4 class="mt-3">Prescribed Items</h4>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th class="text-end">Quantity</th>
+                                    <th>Dosage Instructions</th>
+                                    <th class="text-end">Duration (days)</th>
+                                    <th>Controlled</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.line_ids" t-as="line">
+                                    <tr>
+                                        <td><span t-field="line.product_id"/></td>
+                                        <td class="text-end">
+                                            <span t-field="line.quantity"/>
+                                        </td>
+                                        <td><span t-field="line.dosage"/></td>
+                                        <td class="text-end">
+                                            <span t-field="line.duration_days"/>
+                                        </td>
+                                        <td>
+                                            <span t-if="line.is_controlled">
+                                                Yes</span>
+                                            <span t-else="">No</span>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <p t-if="doc.note" class="mt-3">
+                            <strong>Notes: </strong>
+                            <span t-field="doc.note"/>
+                        </p>
+                        <div class="row mt-5">
+                            <div class="col-6">
+                                <p>Pharmacist Signature: __________________</p>
+                            </div>
+                            <div class="col-6">
+                                <p>Date: __________________</p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

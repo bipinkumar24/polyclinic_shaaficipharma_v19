@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Prescription sales analysis                                   -->
+    <!-- ============================================================ -->
+    <record id="view_report_prescription_sales_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.prescription.sales.list</field>
+        <field name="model">report.pharmacy.prescription.sales</field>
+        <field name="arch" type="xml">
+            <list string="Prescription Sales" create="false" edit="false">
+                <field name="prescription_no"/>
+                <field name="prescription_date"/>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="branch_id"/>
+                <field name="product_id"/>
+                <field name="is_controlled"/>
+                <field name="quantity" sum="Quantity"/>
+                <field name="line_count" sum="Lines"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_prescription_sales_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.prescription.sales.pivot</field>
+        <field name="model">report.pharmacy.prescription.sales</field>
+        <field name="arch" type="xml">
+            <pivot string="Prescription Sales Analysis">
+                <field name="doctor_id" type="row"/>
+                <field name="prescription_date" interval="month" type="col"/>
+                <field name="quantity" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_prescription_sales_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.prescription.sales.search</field>
+        <field name="model">report.pharmacy.prescription.sales</field>
+        <field name="arch" type="xml">
+            <search string="Prescription Sales">
+                <field name="prescription_no"/>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="product_id"/>
+                <field name="branch_id"/>
+                <filter name="controlled" string="Controlled Drugs Only"
+                        domain="[('is_controlled', '=', True)]"/>
+                <group name="group_by">
+                    <filter name="group_doctor" string="Doctor"
+                            context="{'group_by': 'doctor_id'}"/>
+                    <filter name="group_branch" string="Branch"
+                            context="{'group_by': 'branch_id'}"/>
+                    <filter name="group_product" string="Medicine"
+                            context="{'group_by': 'product_id'}"/>
+                    <filter name="group_date" string="Date"
+                            context="{'group_by': 'prescription_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_prescription_sales"
+            model="ir.actions.act_window">
+        <field name="name">Prescription Sales</field>
+        <field name="res_model">report.pharmacy.prescription.sales</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="search_view_id"
+               ref="view_report_prescription_sales_search"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Controlled drug analysis                                      -->
+    <!-- ============================================================ -->
+    <record id="view_report_controlled_drug_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.controlled.drug.list</field>
+        <field name="model">report.pharmacy.controlled.drug</field>
+        <field name="arch" type="xml">
+            <list string="Controlled Drug Analysis" create="false"
+                  edit="false">
+                <field name="dispense_date"/>
+                <field name="product_id"/>
+                <field name="lot_id"/>
+                <field name="quantity" sum="Dispensed Qty"/>
+                <field name="pharmacist_id"/>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="branch_id"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_controlled_drug_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.controlled.drug.pivot</field>
+        <field name="model">report.pharmacy.controlled.drug</field>
+        <field name="arch" type="xml">
+            <pivot string="Controlled Drug Analysis">
+                <field name="product_id" type="row"/>
+                <field name="dispense_date" interval="month" type="col"/>
+                <field name="quantity" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_controlled_drug_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.controlled.drug.search</field>
+        <field name="model">report.pharmacy.controlled.drug</field>
+        <field name="arch" type="xml">
+            <search string="Controlled Drug Analysis">
+                <field name="product_id"/>
+                <field name="pharmacist_id"/>
+                <field name="patient_id"/>
+                <field name="branch_id"/>
+                <group name="group_by">
+                    <filter name="group_product" string="Drug"
+                            context="{'group_by': 'product_id'}"/>
+                    <filter name="group_pharmacist" string="Pharmacist"
+                            context="{'group_by': 'pharmacist_id'}"/>
+                    <filter name="group_branch" string="Branch"
+                            context="{'group_by': 'branch_id'}"/>
+                    <filter name="group_date" string="Dispense Date"
+                            context="{'group_by': 'dispense_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_controlled_drug" model="ir.actions.act_window">
+        <field name="name">Controlled Drug Analysis</field>
+        <field name="res_model">report.pharmacy.controlled.drug</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="search_view_id"
+               ref="view_report_controlled_drug_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- POS control / Z-report                                        -->
+    <!-- ============================================================ -->
+    <record id="view_report_pos_control_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.pos.control.list</field>
+        <field name="model">report.pharmacy.pos.control</field>
+        <field name="arch" type="xml">
+            <list string="POS Session Control" create="false" edit="false"
+                  decoration-danger="cash_difference != 0"
+                  decoration-muted="state == 'closed'">
+                <field name="session_id"/>
+                <field name="config_id"/>
+                <field name="branch_id"/>
+                <field name="user_id"/>
+                <field name="start_at"/>
+                <field name="stop_at"/>
+                <field name="order_count" sum="Orders"/>
+                <field name="session_revenue" sum="Session Revenue"/>
+                <field name="opening_cash" sum="Opening Cash"/>
+                <field name="closing_cash_expected" sum="Expected Closing"/>
+                <field name="closing_cash_real" sum="Counted Closing"/>
+                <field name="cash_difference" sum="Cash Difference"/>
+                <field name="state"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_pos_control_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.pos.control.pivot</field>
+        <field name="model">report.pharmacy.pos.control</field>
+        <field name="arch" type="xml">
+            <pivot string="POS Session Control">
+                <field name="branch_id" type="row"/>
+                <field name="session_revenue" type="measure"/>
+                <field name="cash_difference" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_pos_control_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.pos.control.search</field>
+        <field name="model">report.pharmacy.pos.control</field>
+        <field name="arch" type="xml">
+            <search string="POS Session Control">
+                <field name="session_id"/>
+                <field name="config_id"/>
+                <field name="branch_id"/>
+                <field name="user_id"/>
+                <filter name="discrepancy" string="Cash Discrepancy"
+                        domain="['|', ('cash_difference', '&gt;', 0),
+                                 ('cash_difference', '&lt;', 0)]"/>
+                <group name="group_by">
+                    <filter name="group_branch" string="Branch"
+                            context="{'group_by': 'branch_id'}"/>
+                    <filter name="group_config" string="POS Point"
+                            context="{'group_by': 'config_id'}"/>
+                    <filter name="group_user" string="Responsible"
+                            context="{'group_by': 'user_id'}"/>
+                    <filter name="group_date" string="Opened"
+                            context="{'group_by': 'start_at:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_pos_control" model="ir.actions.act_window">
+        <field name="name">POS Session Control</field>
+        <field name="res_model">report.pharmacy.pos.control</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="search_view_id" ref="view_report_pos_control_search"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Payment method analysis                                       -->
+    <!-- ============================================================ -->
+    <record id="view_report_payment_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.payment.list</field>
+        <field name="model">report.pharmacy.payment</field>
+        <field name="arch" type="xml">
+            <list string="Payment Analysis" create="false" edit="false">
+                <field name="payment_date"/>
+                <field name="payment_method_id"/>
+                <field name="session_id" optional="hide"/>
+                <field name="branch_id"/>
+                <field name="payment_count" sum="Transactions"/>
+                <field name="amount_total" sum="Total Amount"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_payment_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.payment.pivot</field>
+        <field name="model">report.pharmacy.payment</field>
+        <field name="arch" type="xml">
+            <pivot string="Payment Analysis">
+                <field name="payment_method_id" type="row"/>
+                <field name="branch_id" type="col"/>
+                <field name="amount_total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_payment_graph" model="ir.ui.view">
+        <field name="name">report.pharmacy.payment.graph</field>
+        <field name="model">report.pharmacy.payment</field>
+        <field name="arch" type="xml">
+            <graph string="Payment Analysis" type="pie">
+                <field name="payment_method_id"/>
+                <field name="amount_total" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_report_payment_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.payment.search</field>
+        <field name="model">report.pharmacy.payment</field>
+        <field name="arch" type="xml">
+            <search string="Payment Analysis">
+                <field name="payment_method_id"/>
+                <field name="branch_id"/>
+                <group name="group_by">
+                    <filter name="group_method" string="Payment Method"
+                            context="{'group_by': 'payment_method_id'}"/>
+                    <filter name="group_branch" string="Branch"
+                            context="{'group_by': 'branch_id'}"/>
+                    <filter name="group_date" string="Date"
+                            context="{'group_by': 'payment_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_payment" model="ir.actions.act_window">
+        <field name="name">Payment Analysis</field>
+        <field name="res_model">report.pharmacy.payment</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="search_view_id" ref="view_report_payment_search"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Refund / void analysis                                        -->
+    <!-- ============================================================ -->
+    <record id="view_report_refund_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.refund.list</field>
+        <field name="model">report.pharmacy.refund</field>
+        <field name="arch" type="xml">
+            <list string="Refund Analysis" create="false" edit="false">
+                <field name="order_date"/>
+                <field name="order_id"/>
+                <field name="branch_id"/>
+                <field name="user_id"/>
+                <field name="partner_id" optional="hide"/>
+                <field name="refund_amount" sum="Refund Amount"/>
+                <field name="note"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_refund_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.refund.pivot</field>
+        <field name="model">report.pharmacy.refund</field>
+        <field name="arch" type="xml">
+            <pivot string="Refund Analysis">
+                <field name="branch_id" type="row"/>
+                <field name="order_date" interval="month" type="col"/>
+                <field name="refund_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_refund_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.refund.search</field>
+        <field name="model">report.pharmacy.refund</field>
+        <field name="arch" type="xml">
+            <search string="Refund Analysis">
+                <field name="order_id"/>
+                <field name="branch_id"/>
+                <field name="user_id"/>
+                <group name="group_by">
+                    <filter name="group_branch" string="Branch"
+                            context="{'group_by': 'branch_id'}"/>
+                    <filter name="group_user" string="User"
+                            context="{'group_by': 'user_id'}"/>
+                    <filter name="group_date" string="Date"
+                            context="{'group_by': 'order_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_refund" model="ir.actions.act_window">
+        <field name="name">Refund Analysis</field>
+        <field name="res_model">report.pharmacy.refund</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="search_view_id" ref="view_report_refund_search"/>
+    </record>
+
+</odoo>

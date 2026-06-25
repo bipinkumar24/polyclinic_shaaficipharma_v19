@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_pharmacy_dashboard" model="ir.actions.client">
+        <field name="name">Executive Dashboard</field>
+        <field name="tag">shafic_pharmacy_dashboard</field>
+    </record>
+
+    <record id="action_pharmacy_bonus_scorecard" model="ir.actions.client">
+        <field name="name">Inventory Bonus Scorecard</field>
+        <field name="tag">shafic_pharmacy_bonus_scorecard</field>
+    </record>
+
+</odoo>

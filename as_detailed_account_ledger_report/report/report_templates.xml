@@ -1,0 +1,270 @@
+<odoo>
+    <!-- ========================================================== -->
+    <!-- STEP 1: Define a new paper format with zero top/bottom margins -->
+    <!-- ========================================================== -->
+    <record id="paperformat_account_ledger_custom" model="report.paperformat">
+
+        <field name="name">Account Ledger Custom Paperformat</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="margin_top">0</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line" eval="False"/>
+        <field name="orientation">Portrait</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <!-- Report Actions -->
+    <record id="action_report_detailed_account_ledger_html" model="ir.actions.report">
+        <field name="name">Detailed Account Ledger</field>
+        <field name="model">account.ledger.wizard</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">as_detailed_account_ledger_report.report_ledger_template</field>
+        <field name="report_file">as_detailed_account_ledger_report.report_ledger_template</field>
+    </record>
+
+    <record id="action_report_detailed_account_ledger_pdf" model="ir.actions.report">
+        <field name="name">Detailed Account Ledger</field>
+        <field name="model">account.ledger.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">as_detailed_account_ledger_report.report_ledger_template</field>
+        <field name="report_file">as_detailed_account_ledger_report.report_ledger_template</field>
+        <field name="print_report_name">(object.account_id.code or 'Ledger') + '_Report'</field>
+        <!-- ========================================================== -->
+        <!-- STEP 2: Assign the new paper format to the PDF report action -->
+        <!-- ========================================================== -->
+        <field name="paperformat_id" ref="as_detailed_account_ledger_report.paperformat_account_ledger_custom"/>
+    </record>
+
+    <!-- Report QWeb Template (No changes needed inside the template itself) -->
+    <template id="report_ledger_template">
+        <t t-call="web.html_container">
+            <t t-set="data_report_margin_top" t-value="12"/>
+            <t t-set="data_report_header_spacing" t-value="9"/>
+            <t t-set="data_report_dpi" t-value="110"/>
+            <t t-call="web.basic_layout">
+                <div class="page">
+                    <!-- Manually Constructed Header -->
+                    <div class="row"
+                         style="border-bottom: 1px solid #dee2e6; padding-bottom: 10px; margin-bottom: 20px;">
+                        <div class="col-6">
+                            <t t-if="company.logo">
+                                <img t-att-src="image_data_uri(company.logo)" style="max-height: 80px;"
+                                     alt="Logo"/>
+                            </t>
+                        </div>
+                        <div class="col-6 report-text-right">
+                            <span t-esc="company.name" class="text-strong"/>
+                            <br/>
+                            <span t-if="company.street" t-esc="company.street"/>
+                            <br t-if="company.street"/>
+                            <span t-if="company.street2" t-esc="company.street2"/>
+                            <br t-if="company.street2"/>
+                            <span t-if="company.city" t-esc="company.city"/>
+                            <span t-if="company.state_id">,
+                                <span t-esc="company.state_id.name"/>
+                            </span>
+                            <span t-if="company.zip" t-esc="company.zip"/>
+                            <br t-if="company.city or company.zip"/>
+                            <span t-if="company.country_id" t-esc="company.country_id.name"/>
+                            <br t-if="company.country_id"/>
+                        </div>
+                    </div>
+
+                    <!-- Main Report Content -->
+                    <div class="report-text-center">
+                        <h2>Account Ledger</h2>
+                        <h4>Account Head:
+                            <span t-esc="account.code"/>
+                            -
+                            <span t-esc="account.name"/>
+                        </h4>
+                    </div>
+
+                    <div class="row mt32 mb8">
+                        <div class="col-6">
+                            <strong>Date From:</strong>
+                            <span t-esc="date_from"/>&#160;&#160;&#160;
+                            <strong>To:</strong>
+                            <span t-esc="date_to"/>
+                        </div>
+                        <div class="col-6 report-text-right">
+                            <strong>Date Printed:</strong>
+                            <span t-esc="date_printed"/>
+                        </div>
+                    </div>
+
+                    <div class="balance-summary">
+                        <div class="opening">Opening :
+                            <span t-att-class="'neg-num' if opening_balance &lt; 0 else ''">
+                                <span t-esc="abs(opening_balance)"
+                                      t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                            </span>
+                        </div>
+                        <div class="closing">Closing :
+                            <span t-att-class="'neg-num' if closing_balance &lt; 0 else ''">
+                                <span t-esc="abs(closing_balance)"
+                                      t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <table class="table table-sm table-bordered mt16">
+                        <!-- ... Table content ... -->
+                        <thead>
+                            <tr>
+                                <th class="report-text-left">Date</th>
+                                <th class="report-text-left">Business Partner</th>
+                                <th class="report-text-left">Product</th>
+                                <th class="report-text-left">Reference</th>
+                                <th class="report-text-left">Type</th>
+                                <th class="report-text-left">Document No</th>
+                                <th class="report-text-right">Quantity</th>
+                                <th class="report-text-right">Rate</th>
+                                <th class="report-text-right">Debit Value</th>
+                                <th class="report-text-right">Credit Value</th>
+                                <th class="report-text-left">Doc Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="grand_total_debit" t-value="0"/>
+                            <t t-set="grand_total_credit" t-value="0"/>
+
+                            <t t-foreach="sorted_dates" t-as="report_date">
+                                <t t-set="daily_subtotal_debit" t-value="0"/>
+                                <t t-set="daily_subtotal_credit" t-value="0"/>
+
+                                <t t-foreach="lines_by_date[report_date]" t-as="line">
+
+                                    <t t-set="amount" t-value="abs(line.debit - line.credit)"/>
+
+                                    <tr>
+                                        <td class="report-text-left">
+                                            <span t-esc="line.date.strftime('%d/%m/%Y')"/>
+                                        </td>
+                                        <td class="report-text-left">
+                                            <span t-field="line.partner_id.name"/>
+                                        </td>
+                                        <td class="report-text-left">
+                                            <span t-field="line.product_id.name"/>
+                                        </td>
+                                        <td class="report-text-left">
+                                            <span t-field="line.name"/>
+                                        </td>
+                                        <td class="report-text-left">
+                                            <span t-field="line.journal_id.type"/>
+                                        </td>
+                                        <td class="report-text-left">
+                                            <span t-field="line.move_id.name"/>
+                                        </td>
+                                        <td class="report-text-right">
+                                            <span t-esc="line.quantity"/>
+                                        </td>
+
+                                        <td class="report-text-right">
+                                            <t t-if="line.price_unit != 0">
+                                                <span t-esc="line.price_unit"
+                                                      t-options='{"widget": "monetary", "display_currency": company.currency_id}'/>
+                                            </t>
+                                            <t t-if="line.price_unit == 0">
+                                                <t t-if="line.quantity != 0 and amount != 0">
+                                                    <span t-esc="amount / line.quantity"
+                                                          t-options='{"widget": "monetary", "display_currency": company.currency_id}'/>
+                                                </t>
+                                                <t t-if="line.quantity == 0 or amount == 0">
+                                                    <span t-esc="0.0"
+                                                          t-options='{"widget": "monetary", "display_currency": company.currency_id}'/>
+                                                </t>
+                                            </t>
+                                        </td>
+
+                                        <td class="report-text-right">
+                                            <t t-if="account.account_type == 'asset_receivable'">
+                                                <span t-esc="amount"
+                                                      t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                            </t>
+                                            <t t-elif="account.account_type == 'liability_payable'">
+                                                <span t-esc="0.0"
+                                                      t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="line.debit"
+                                                      t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                            </t>
+                                        </td>
+
+                                        <td class="report-text-right">
+                                            <t t-if="account.account_type == 'liability_payable'">
+                                                <span t-esc="amount"
+                                                      t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                            </t>
+                                            <t t-elif="account.account_type == 'asset_receivable'">
+                                                <span t-esc="0.0"
+                                                      t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-esc="line.credit"
+                                                      t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                            </t>
+                                        </td>
+
+                                        <td class="report-text-left">
+                                            <span t-esc="get_status_label(line.move_id.state)"/>
+                                        </td>
+                                    </tr>
+
+                                    <t t-if="account.account_type == 'asset_receivable'">
+                                        <t t-set="daily_subtotal_debit" t-value="daily_subtotal_debit + amount"/>
+                                    </t>
+                                    <t t-elif="account.account_type == 'liability_payable'">
+                                        <t t-set="daily_subtotal_credit" t-value="daily_subtotal_credit + amount"/>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-set="daily_subtotal_debit" t-value="daily_subtotal_debit + line.debit"/>
+                                        <t t-set="daily_subtotal_credit" t-value="daily_subtotal_credit + line.credit"/>
+                                    </t>
+
+                                </t>
+
+                                <tr class="subtotal-row">
+                                    <td colspan="8" class="report-text-left pl-4 text-strong">
+                                        <span t-esc="report_date.strftime('%d-%b-%y')"/>
+                                    </td>
+                                    <td class="report-text-right text-strong">
+                                        <span t-esc="daily_subtotal_debit"
+                                              t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                    <td class="report-text-right text-strong">
+                                        <span t-esc="daily_subtotal_credit"
+                                              t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                    </td>
+                                    <td/>
+                                </tr>
+
+                                <t t-set="grand_total_debit" t-value="grand_total_debit + daily_subtotal_debit"/>
+                                <t t-set="grand_total_credit" t-value="grand_total_credit + daily_subtotal_credit"/>
+
+                            </t>
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="8" class="report-text-right text-strong">Total</td>
+                                <td class="report-text-right text-strong">
+                                    <span t-esc="grand_total_debit"
+                                          t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                </td>
+                                <td class="report-text-right text-strong">
+                                    <span t-esc="grand_total_credit"
+                                          t-options='{"widget": "monetary", "display_currency": user.company_id.currency_id}'/>
+                                </td>
+                                <td/>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- 1. Expiry checks - daily -->
+    <record id="cron_pharmacy_expiry_check" model="ir.cron">
+        <field name="name">Pharmacy: Expiry Check</field>
+        <field name="model_id" ref="model_pharmacy_cron"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_expiry_check()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- 2. Reorder alerts - daily -->
+    <record id="cron_pharmacy_reorder_alert" model="ir.cron">
+        <field name="name">Pharmacy: Reorder Alert</field>
+        <field name="model_id" ref="model_pharmacy_cron"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_reorder_alert()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- 3. Dashboard / movement analysis refresh - every 6 hours -->
+    <record id="cron_pharmacy_refresh_analysis" model="ir.cron">
+        <field name="name">Pharmacy: Refresh Movement Analysis</field>
+        <field name="model_id" ref="model_pharmacy_cron"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_refresh_analysis()</field>
+        <field name="interval_number">6</field>
+        <field name="interval_type">hours</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- 4. Insurance status sync - daily -->
+    <record id="cron_pharmacy_insurance_sync" model="ir.cron">
+        <field name="name">Pharmacy: Insurance Status Sync</field>
+        <field name="model_id" ref="model_pharmacy_cron"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_insurance_sync()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- 5. Monthly bonus snapshot - on the 1st of each month -->
+    <record id="cron_pharmacy_bonus_snapshot" model="ir.cron">
+        <field name="name">Pharmacy: Monthly Bonus Snapshot</field>
+        <field name="model_id" ref="model_pharmacy_cron"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_bonus_snapshot()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- 6. Daily stock-value capture - feeds bonus rate denominator -->
+    <record id="cron_pharmacy_daily_stock_value" model="ir.cron">
+        <field name="name">Pharmacy: Daily Stock Value Capture</field>
+        <field name="model_id" ref="model_pharmacy_cron"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_capture_daily_stock_value()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- 7. Weekly digest email - every Monday morning -->
+    <record id="cron_pharmacy_weekly_digest" model="ir.cron">
+        <field name="name">Pharmacy: Weekly Digest Email</field>
+        <field name="model_id" ref="model_pharmacy_cron"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_weekly_digest()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">weeks</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- 8. Anomaly alerts - daily, alerts on unusual patterns -->
+    <record id="cron_pharmacy_anomaly_alerts" model="ir.cron">
+        <field name="name">Pharmacy: Anomaly Alerts</field>
+        <field name="model_id" ref="model_pharmacy_cron"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_anomaly_alerts()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- 9. Auto-prepare draft POs for hot, low-cover products -->
+    <record id="cron_pharmacy_auto_prepare_orders" model="ir.cron">
+        <field name="name">Pharmacy: Auto-Prepare Purchase Orders</field>
+        <field name="model_id" ref="model_pharmacy_cron"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_auto_prepare_orders()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- 10. Snapshot cost/price anomalies daily for history + New Today -->
+    <record id="cron_pharmacy_cost_anomaly_snapshot" model="ir.cron">
+        <field name="name">Pharmacy: Snapshot Cost/Price Anomalies</field>
+        <field name="model_id" ref="model_pharmacy_cron"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_snapshot_cost_anomalies()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="True"/>
+    </record>
+
+</odoo>

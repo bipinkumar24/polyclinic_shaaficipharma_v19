@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List view -->
+    <record id="view_collection_sms_batch_list" model="ir.ui.view">
+        <field name="name">collection.sms.batch.list</field>
+        <field name="model">collection.sms.batch</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="line_count"/>
+                <field name="included_count"/>
+                <field name="invalid_count"/>
+                <field name="total_balance"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="sent_date" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'generated'"
+                       decoration-success="state == 'sent'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form view -->
+    <record id="view_collection_sms_batch_form" model="ir.ui.view">
+        <field name="name">collection.sms.batch.form</field>
+        <field name="model">collection.sms.batch</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_load_customers" type="object"
+                            string="Load Customers" class="btn-primary"
+                            invisible="state in ('generated', 'sent')"/>
+                    <button name="action_generate_file" type="object"
+                            string="Generate File" class="btn-primary"
+                            invisible="state in ('generated', 'sent') or line_count == 0"/>
+                    <button name="action_mark_sent" type="object"
+                            string="Mark as Sent" class="btn-primary"
+                            invisible="state != 'generated'"/>
+                    <button name="action_reset" type="object"
+                            string="Reset to Draft"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,generated,sent"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="date"/>
+                            <field name="min_balance"/>
+                        </group>
+                        <group>
+                            <field name="line_count"/>
+                            <field name="included_count"/>
+                            <field name="invalid_count"/>
+                            <field name="duplicate_count"/>
+                            <field name="total_balance"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Send details">
+                        <field name="message_template"/>
+                        <field name="sent_date" invisible="state != 'sent'"/>
+                        <field name="sent_uid" invisible="state != 'sent'"/>
+                    </group>
+                    <div class="alert alert-info" role="alert"
+                         invisible="state == 'draft'">
+                        In the Golis portal: <b>Send Bulk SMS</b> &#8594;
+                        <b>Browse</b> the downloaded file &#8594; set
+                        <b>Phone Number Column = Main Phone</b> &#8594; type the
+                        message and insert <b>{Customer Name}</b> and
+                        <b>{BALANCE}</b> with <b>Select Merge Field</b> &#8594;
+                        choose Sender ID &#8594; <b>Send</b>.
+                    </div>
+                    <group string="Download" invisible="state == 'draft'">
+                        <field name="file_name" readonly="1"/>
+                        <field name="file_data" filename="file_name" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Customers">
+                            <field name="line_ids">
+                                <list editable="bottom"
+                                      decoration-muted="not has_valid_phone"
+                                      decoration-warning="duplicate_phone">
+                                    <field name="include" widget="boolean_toggle"/>
+                                    <field name="phone"/>
+                                    <field name="customer_name"/>
+                                    <field name="balance"/>
+                                    <field name="has_valid_phone"/>
+                                    <field name="duplicate_phone"/>
+                                    <field name="partner_id" optional="show"/>
+                                    <field name="message" optional="hide"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                            <p class="text-muted">
+                                Greyed rows have no usable phone and are excluded.
+                                Orange rows share a number with another customer
+                                &#8211; review before sending. Untick "Send" to
+                                skip anyone; fix a number to re-include it.
+                            </p>
+                        </page>
+                    </notebook>
+                    <group>
+                        <field name="note" placeholder="Notes..." nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_collection_sms_batch" model="ir.actions.act_window">
+        <field name="name">Debt Collection SMS</field>
+        <field name="res_model">collection.sms.batch</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a collection run
+            </p>
+            <p>
+                Click <b>Load Customers</b> to pull everyone with an outstanding
+                balance, review the list, then <b>Generate File</b> to produce
+                the CSV for Golis.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_collection_root" name="Debt Collection"
+              sequence="95" groups="group_collection_user"/>
+    <menuitem id="menu_collection_sms_batch"
+              parent="menu_collection_root"
+              action="action_collection_sms_batch"
+              sequence="10"/>
+</odoo>

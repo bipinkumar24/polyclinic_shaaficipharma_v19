@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pos_customer_activation_user,pos.customer.activation.user,model_pos_customer_activation,base.group_user,1,0,1,0
+access_pos_customer_activation_accountant,pos.customer.activation.accountant,model_pos_customer_activation,account.group_account_user,1,1,1,0
+access_pos_customer_activation_manager,pos.customer.activation.manager,model_pos_customer_activation,account.group_account_manager,1,1,1,1
+access_pos_activation_reject_wizard_user,pos.activation.reject.wizard.user,model_pos_customer_activation_reject_wizard,base.group_user,1,1,1,1

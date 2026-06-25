@@ -1,0 +1,89 @@
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+                <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+
+.report-text-left { text-align: left !important; }
+.report-text-right { text-align: right !important; }
+.report-text-center { text-align: center !important; }
+
+/* Define the new color palette */
+:root {
+  --header-bg-color: #B2E2E2;    /* Light Teal/Cyan */
+  --subtotal-bg-color: #FAF0E6;  /* Light Beige/Linen */
+  --total-bg-color: #D2B4B4;      /* Muted Red/Brown */
+  --table-border-color: #000;
+}
+
+body, .o_report_layout_standard, .table {
+    font-family: 'Ubuntu', sans-serif !important;
+    font-size: 11px !important; /* Updated font size */
+}
+
+.report-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.report-header h2 {
+    font-weight: bold;
+    font-size: 28px;
+    margin-bottom: 0;
+}
+.report-header h4 {
+    margin-top: 5px;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.balance-summary {
+    border: 1px solid var(--table-border-color);
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.table thead th {
+    font-weight: bold;
+    background-color: var(--header-bg-color) !important;
+    color: #000 !important;
+    border: 1px solid var(--table-border-color) !important;
+    vertical-align: middle;
+}
+
+.table tbody td {
+    border: 1px solid var(--table-border-color);
+}
+
+.body-row{
+    background-color: #faf2f2 !important;
+}
+.subtotal-row {
+    background-color: var(--subtotal-bg-color) !important;
+}
+.subtotal-row td {
+    border: 1px solid var(--table-border-color) !important;
+    border-bottom: 1px solid var(--table-border-color) !important;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+}
+
+.total-row {
+    background-color: var(--total-bg-color) !important;
+    font-weight: bold;
+}
+.total-row td {
+     border: 1px solid var(--table-border-color) !important;
+}
+
+
+.text-strong {
+    font-weight: bold;
+}
+
+.neg-num:before {
+    content: "(";
+}
+.neg-num:after {
+    content: ")";
+}

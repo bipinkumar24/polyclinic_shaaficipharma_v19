@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Partner form: POS Activation tab ──────────────────────────── -->
+    <record id="view_partner_form_pos_activation" model="ir.ui.view">
+        <field name="name">res.partner.form.pos.activation</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <page name="sales_purchases" position="after">
+                <page string="POS Activation" name="pos_activation">
+
+                    <div class="alert alert-info mb-3" role="alert"
+                         invisible="pos_activation_state != 'not_requested'">
+                        <i class="fa fa-info-circle me-2" title="Info"/>
+                        Set <b>Allow in POS</b> and a <b>Credit Limit</b>, then save to submit an approval request.
+                    </div>
+
+                    <div class="alert alert-warning mb-3" role="alert"
+                         invisible="pos_activation_state != 'pending'">
+                        <i class="fa fa-clock-o me-2" title="Pending Approval"/>
+                        <b>Pending Approval</b> — Waiting for an Accountant or above to approve.
+                        This customer is <b>not yet visible</b> in POS.
+                    </div>
+
+                    <div class="alert alert-success mb-3" role="alert"
+                         invisible="pos_activation_state != 'approved'">
+                        <i class="fa fa-check-circle me-2" title="Approved"/>
+                        <b>Approved</b> — This customer is <b>active in POS</b>.
+                    </div>
+
+                    <div class="alert alert-danger mb-3" role="alert"
+                         invisible="pos_activation_state != 'rejected'">
+                        <i class="fa fa-times-circle me-2" title="Rejected"/>
+                        <b>Rejected</b> —
+                        <field name="pos_rejection_reason" readonly="1" nolabel="1"/>
+                    </div>
+
+                    <group>
+                        <group string="POS Access Settings">
+                            <field name="pos_allow_in_pos" widget="boolean_toggle"/>
+                            <field name="pos_credit_limit"
+                                   invisible="not pos_allow_in_pos"
+                                   required="pos_allow_in_pos"/>
+                            <field name="pos_activation_state"
+                                   readonly="1"
+                                   widget="badge"
+                                   decoration-warning="pos_activation_state == 'pending'"
+                                   decoration-success="pos_activation_state == 'approved'"
+                                   decoration-danger="pos_activation_state == 'rejected'"
+                                   decoration-muted="pos_activation_state == 'not_requested'"/>
+                        </group>
+                        <group string="Approval Details"
+                               invisible="pos_activation_state not in ('approved', 'rejected')">
+                            <field name="pos_approved_by" readonly="1"/>
+                            <field name="pos_approval_date" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <div invisible="not pos_activation_id" groups="account.group_account_user">
+                        <button name="action_pos_customer_activations"
+                                string="View Activation Request"
+                                type="object"
+                                class="btn btn-link"
+                                icon="fa-external-link"/>
+                    </div>
+
+                </page>
+            </page>
+        </field>
+    </record>
+
+    <!-- ── Partner list: POS Status column ───────────────────────────── -->
+    <record id="view_partner_tree_pos_activation" model="ir.ui.view">
+        <field name="name">res.partner.tree.pos.activation</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="email" position="after">
+                <field name="pos_activation_state"
+                       optional="show"
+                       string="POS Status"
+                       widget="badge"
+                       decoration-warning="pos_activation_state == 'pending'"
+                       decoration-success="pos_activation_state == 'approved'"
+                       decoration-danger="pos_activation_state == 'rejected'"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

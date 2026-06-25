@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_report_cost_price_anomaly_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.cost.price.anomaly.list</field>
+        <field name="model">report.pharmacy.cost.price.anomaly</field>
+        <field name="arch" type="xml">
+            <list string="Cost / Price Anomalies"
+                  create="false" edit="false"
+                  decoration-danger="severity == 'critical'"
+                  decoration-warning="severity == 'warning'"
+                  decoration-info="severity == 'review'">
+                <field name="severity" widget="badge"
+                       decoration-danger="severity == 'critical'"
+                       decoration-warning="severity == 'warning'"
+                       decoration-info="severity == 'review'"/>
+                <field name="product_id"/>
+                <field name="pharmacy_category_id"/>
+                <field name="current_cost" string="Effective Cost"/>
+                <field name="standard_cost" optional="show"/>
+                <field name="cost_variance_pct" widget="percentage"
+                       optional="show"
+                       decoration-warning="cost_variance_pct &lt; -25 or cost_variance_pct &gt; 25"
+                       decoration-danger="cost_variance_pct &lt; -50 or cost_variance_pct &gt; 50"/>
+                <field name="current_price"/>
+                <field name="margin_pct" widget="percentage"/>
+                <field name="avg_cost_90d" optional="show"/>
+                <field name="cost_change_pct" widget="percentage"
+                       optional="show"/>
+                <field name="category_median_margin" widget="percentage"
+                       optional="hide"/>
+                <field name="cost_source" widget="badge"
+                       decoration-success="cost_source == 'warehouse'"
+                       decoration-warning="cost_source == 'standard'"
+                       decoration-danger="cost_source == 'zero'"
+                       optional="show"/>
+                <field name="flag_below_cost" widget="boolean_toggle"
+                       optional="show"/>
+                <field name="flag_thin_margin" widget="boolean_toggle"
+                       optional="show"/>
+                <field name="flag_cost_spike" widget="boolean_toggle"
+                       optional="show"/>
+                <field name="flag_peer_outlier" widget="boolean_toggle"
+                       optional="show"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <button name="action_open_product" type="object"
+                        string="Fix" class="btn-link" icon="fa-pencil"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_cost_price_anomaly_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.cost.price.anomaly.pivot</field>
+        <field name="model">report.pharmacy.cost.price.anomaly</field>
+        <field name="arch" type="xml">
+            <pivot string="Anomalies by Category and Severity">
+                <field name="pharmacy_category_id" type="row"/>
+                <field name="severity" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_cost_price_anomaly_graph" model="ir.ui.view">
+        <field name="name">report.pharmacy.cost.price.anomaly.graph</field>
+        <field name="model">report.pharmacy.cost.price.anomaly</field>
+        <field name="arch" type="xml">
+            <graph string="Anomalies by Severity" type="bar">
+                <field name="severity"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_report_cost_price_anomaly_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.cost.price.anomaly.search</field>
+        <field name="model">report.pharmacy.cost.price.anomaly</field>
+        <field name="arch" type="xml">
+            <search string="Cost / Price Anomalies">
+                <field name="product_id"/>
+                <field name="pharmacy_category_id"/>
+                <filter name="critical" string="Critical"
+                        domain="[('severity', '=', 'critical')]"/>
+                <filter name="warning" string="Warning"
+                        domain="[('severity', '=', 'warning')]"/>
+                <filter name="review" string="Review"
+                        domain="[('severity', '=', 'review')]"/>
+                <separator/>
+                <filter name="below_cost" string="Selling Below Cost"
+                        domain="[('flag_below_cost', '=', True)]"/>
+                <filter name="thin_margin" string="Thin Margin (&lt;10%)"
+                        domain="[('flag_thin_margin', '=', True)]"/>
+                <filter name="cost_spike" string="Cost Spike"
+                        domain="[('flag_cost_spike', '=', True)]"/>
+                <filter name="peer_outlier" string="Peer Outlier"
+                        domain="[('flag_peer_outlier', '=', True)]"/>
+                <separator/>
+                <filter name="cost_discrepancy_large"
+                        string="Effective vs Standard differ &gt;25%"
+                        domain="['|',
+                                 ('cost_variance_pct', '&gt;', 25),
+                                 ('cost_variance_pct', '&lt;', -25)]"/>
+                <filter name="cost_discrepancy_huge"
+                        string="Effective vs Standard differ &gt;50%"
+                        domain="['|',
+                                 ('cost_variance_pct', '&gt;', 50),
+                                 ('cost_variance_pct', '&lt;', -50)]"/>
+                <filter name="source_warehouse"
+                        string="Cost from Warehouse-Wise"
+                        domain="[('cost_source', '=', 'warehouse')]"/>
+                <filter name="source_standard"
+                        string="Cost from Standard (fallback)"
+                        domain="[('cost_source', '=', 'standard')]"/>
+                <group name="group_by">
+                    <filter name="group_severity" string="Severity"
+                            context="{'group_by': 'severity'}"/>
+                    <filter name="group_category" string="Pharmacy Category"
+                            context="{'group_by': 'pharmacy_category_id'}"/>
+                    <filter name="group_source" string="Cost Source"
+                            context="{'group_by': 'cost_source'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_cost_price_anomaly"
+            model="ir.actions.act_window">
+        <field name="name">Cost / Price Anomalies</field>
+        <field name="res_model">report.pharmacy.cost.price.anomaly</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="search_view_id"
+               ref="view_report_cost_price_anomaly_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No anomalies — that's the goal
+            </p>
+            <p>
+                An empty list is good news. The detector runs four
+                checks on every active product: selling below cost,
+                thin margin, cost spike vs the product's own history,
+                and margin far from the category peer median. When the
+                list is non-empty, fix the highest-severity rows first.
+            </p>
+        </field>
+    </record>
+
+</odoo>

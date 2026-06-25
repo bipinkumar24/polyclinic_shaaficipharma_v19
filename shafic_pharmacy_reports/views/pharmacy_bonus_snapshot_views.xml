@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_pharmacy_bonus_snapshot_list" model="ir.ui.view">
+        <field name="name">pharmacy.bonus.snapshot.list</field>
+        <field name="model">pharmacy.bonus.snapshot</field>
+        <field name="arch" type="xml">
+            <list string="Bonus Snapshots" create="false">
+                <field name="display_name" string="Period"/>
+                <field name="capture_date"/>
+                <field name="expiry_rate" widget="percentage"
+                       string="Expiry Rate"/>
+                <field name="catch_pct" widget="percentage"
+                       string="Caught Early"/>
+                <field name="data_pct" widget="percentage"
+                       string="Data Complete"/>
+                <field name="total_earned" string="Earned ($)" sum="Earned"/>
+                <field name="total_possible" string="Possible ($)"
+                       optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_bonus_snapshot_form" model="ir.ui.view">
+        <field name="name">pharmacy.bonus.snapshot.form</field>
+        <field name="model">pharmacy.bonus.snapshot</field>
+        <field name="arch" type="xml">
+            <form string="Bonus Snapshot" create="false">
+                <header>
+                    <button name="action_recapture" type="object"
+                            string="Re-capture from Live"
+                            class="oe_highlight"
+                            confirm="Overwrite this snapshot with the current live figures?"/>
+                </header>
+                <sheet>
+                    <h1>
+                        <field name="display_name" readonly="1"/>
+                    </h1>
+                    <group>
+                        <group string="Period">
+                            <field name="year"/>
+                            <field name="month"/>
+                            <field name="capture_date"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Stock Figures">
+                            <field name="average_stock_value"
+                                   widget="monetary"/>
+                            <field name="expired_value" widget="monetary"/>
+                            <field name="near_expiry_value"
+                                   widget="monetary"/>
+                        </group>
+                    </group>
+                    <group string="KPI Results">
+                        <group>
+                            <field name="expiry_rate"
+                                   string="Expiry Rate (%)"/>
+                            <field name="catch_pct"
+                                   string="Caught Early (%)"/>
+                            <field name="data_pct"
+                                   string="Data Completeness (%)"/>
+                        </group>
+                        <group>
+                            <field name="expiry_score"
+                                   string="Expiry Score (%)"/>
+                            <field name="catch_score"
+                                   string="Catch Score (%)"/>
+                            <field name="data_score"
+                                   string="Data Score (%)"/>
+                        </group>
+                    </group>
+                    <group string="Bonus Payout">
+                        <group>
+                            <field name="expiry_pay"
+                                   string="Expiry Earned ($)"/>
+                            <field name="catch_pay"
+                                   string="Catch Earned ($)"/>
+                            <field name="data_pay"
+                                   string="Data Earned ($)"/>
+                        </group>
+                        <group>
+                            <field name="total_earned"
+                                   string="Team Pool Earned ($)"
+                                   class="oe_inline"/>
+                            <field name="total_possible"
+                                   string="Total Possible ($)"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_bonus_snapshot_search" model="ir.ui.view">
+        <field name="name">pharmacy.bonus.snapshot.search</field>
+        <field name="model">pharmacy.bonus.snapshot</field>
+        <field name="arch" type="xml">
+            <search string="Bonus Snapshots">
+                <field name="year"/>
+                <field name="month"/>
+                <field name="company_id"/>
+                <group name="group_by">
+                    <filter name="group_year" string="Year"
+                            context="{'group_by': 'year'}"/>
+                    <filter name="group_company" string="Company"
+                            context="{'group_by': 'company_id'}"
+                            groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pharmacy_bonus_snapshot"
+            model="ir.actions.act_window">
+        <field name="name">Bonus History</field>
+        <field name="res_model">pharmacy.bonus.snapshot</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id"
+               ref="view_pharmacy_bonus_snapshot_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No bonus snapshots captured yet.
+            </p>
+            <p>
+                A snapshot is captured automatically on the 1st of each
+                month for the previous month. You can also capture the
+                current month manually from the Bonus Scorecard screen
+                using the "Capture this month" button.
+            </p>
+        </field>
+    </record>
+
+</odoo>

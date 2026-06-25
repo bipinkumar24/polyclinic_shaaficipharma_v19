@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Customer analytics                                            -->
+    <!-- ============================================================ -->
+    <record id="view_report_customer_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.customer.list</field>
+        <field name="model">report.pharmacy.customer</field>
+        <field name="arch" type="xml">
+            <list string="Customer Analytics" create="false" edit="false">
+                <field name="partner_id"/>
+                <field name="customer_segment" widget="badge"/>
+                <field name="branch_id"/>
+                <field name="visit_count" sum="Visits"/>
+                <field name="total_spend" sum="Total Spend"/>
+                <field name="avg_basket" avg="Avg Basket"/>
+                <field name="qty_purchased" sum="Items"/>
+                <field name="last_visit"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_customer_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.customer.pivot</field>
+        <field name="model">report.pharmacy.customer</field>
+        <field name="arch" type="xml">
+            <pivot string="Customer Analytics">
+                <field name="customer_segment" type="row"/>
+                <field name="total_spend" type="measure"/>
+                <field name="visit_count" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_customer_graph" model="ir.ui.view">
+        <field name="name">report.pharmacy.customer.graph</field>
+        <field name="model">report.pharmacy.customer</field>
+        <field name="arch" type="xml">
+            <graph string="Customer Analytics" type="pie">
+                <field name="customer_segment"/>
+                <field name="total_spend" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_report_customer_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.customer.search</field>
+        <field name="model">report.pharmacy.customer</field>
+        <field name="arch" type="xml">
+            <search string="Customer Analytics">
+                <field name="partner_id"/>
+                <field name="branch_id"/>
+                <filter name="high_value" string="High Value"
+                        domain="[('customer_segment', '=', 'high_value')]"/>
+                <filter name="frequent" string="Frequent"
+                        domain="[('customer_segment', '=', 'frequent')]"/>
+                <filter name="insurance" string="Insurance"
+                        domain="[('customer_segment', '=', 'insurance')]"/>
+                <group name="group_by">
+                    <filter name="group_segment" string="Segment"
+                            context="{'group_by': 'customer_segment'}"/>
+                    <filter name="group_branch" string="Branch"
+                            context="{'group_by': 'branch_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_customer" model="ir.actions.act_window">
+        <field name="name">Customer Analytics</field>
+        <field name="res_model">report.pharmacy.customer</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="search_view_id" ref="view_report_customer_search"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Loyalty analytics                                             -->
+    <!-- ============================================================ -->
+    <record id="view_report_loyalty_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.loyalty.list</field>
+        <field name="model">report.pharmacy.loyalty</field>
+        <field name="arch" type="xml">
+            <list string="Loyalty Analytics" create="false" edit="false">
+                <field name="partner_id"/>
+                <field name="program_id"/>
+                <field name="points_earned" sum="Points Earned"/>
+                <field name="points_balance" sum="Points Balance"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_loyalty_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.loyalty.search</field>
+        <field name="model">report.pharmacy.loyalty</field>
+        <field name="arch" type="xml">
+            <search string="Loyalty Analytics">
+                <field name="partner_id"/>
+                <field name="program_id"/>
+                <group name="group_by">
+                    <filter name="group_program" string="Program"
+                            context="{'group_by': 'program_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_loyalty" model="ir.actions.act_window">
+        <field name="name">Loyalty Analytics</field>
+        <field name="res_model">report.pharmacy.loyalty</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_report_loyalty_search"/>
+    </record>
+
+</odoo>

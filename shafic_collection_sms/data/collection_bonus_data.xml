@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_collection_bonus_period" model="ir.sequence">
+            <field name="name">Collection Bonus Period</field>
+            <field name="code">collection.bonus.period</field>
+            <field name="prefix">BONUS/%(year)s/%(month)s/</field>
+            <field name="padding">3</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Example rule with placeholder rates. EDIT the tiers and set the
+             collector before using. Marginal/bracket mode by default. -->
+        <record id="bonus_config_example" model="collection.bonus.config">
+            <field name="name">Example Bonus Rule (edit me)</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="calc_mode">marginal</field>
+        </record>
+        <record id="bonus_tier_example_1" model="collection.bonus.tier">
+            <field name="config_id" ref="bonus_config_example"/>
+            <field name="from_amount">0</field>
+            <field name="to_amount">1000</field>
+            <field name="percent">1.0</field>
+        </record>
+        <record id="bonus_tier_example_2" model="collection.bonus.tier">
+            <field name="config_id" ref="bonus_config_example"/>
+            <field name="from_amount">1000</field>
+            <field name="to_amount">5000</field>
+            <field name="percent">2.0</field>
+        </record>
+        <record id="bonus_tier_example_3" model="collection.bonus.tier">
+            <field name="config_id" ref="bonus_config_example"/>
+            <field name="from_amount">5000</field>
+            <field name="to_amount">0</field>
+            <field name="percent">3.0</field>
+        </record>
+    </data>
+</odoo>

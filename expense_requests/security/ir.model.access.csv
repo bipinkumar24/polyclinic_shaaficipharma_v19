@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_approval_level_account,access.approval.level.account,model_approval_level_account,,1,1,1,1
+access_remarks_approval, access.remarks.approval,model_account_remark_wizard,,1,1,1,1
+access_remarks_approval_account,access.remarks.approval.account,model_remarks_approval_account,,1,1,1,1
+access_emp_fee,access.emp.fee,model_emp_fee,,1,1,1,1
+access_ir_model_fields_user,access.ir.model.fields.user,base.model_ir_model_fields,base.group_user,1,0,0,0

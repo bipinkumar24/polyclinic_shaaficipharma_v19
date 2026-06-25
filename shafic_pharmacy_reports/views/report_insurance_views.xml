@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_report_insurance_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.insurance.list</field>
+        <field name="model">report.pharmacy.insurance</field>
+        <field name="arch" type="xml">
+            <list string="Insurance Billing" create="false" edit="false"
+                  decoration-warning="is_pending == True"
+                  decoration-danger="state == 'rejected'"
+                  decoration-success="state == 'paid'">
+                <field name="claim_no"/>
+                <field name="claim_date"/>
+                <field name="provider_id"/>
+                <field name="patient_id"/>
+                <field name="branch_id"/>
+                <field name="claim_amount" sum="Claimed"/>
+                <field name="approved_amount" sum="Approved"/>
+                <field name="rejected_amount" sum="Rejected"/>
+                <field name="state" widget="badge"/>
+                <field name="is_pending" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_insurance_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.insurance.pivot</field>
+        <field name="model">report.pharmacy.insurance</field>
+        <field name="arch" type="xml">
+            <pivot string="Insurance Billing Analysis">
+                <field name="provider_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="claim_amount" type="measure"/>
+                <field name="approved_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_insurance_graph" model="ir.ui.view">
+        <field name="name">report.pharmacy.insurance.graph</field>
+        <field name="model">report.pharmacy.insurance</field>
+        <field name="arch" type="xml">
+            <graph string="Insurance Billing Analysis" type="bar">
+                <field name="provider_id"/>
+                <field name="claim_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_report_insurance_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.insurance.search</field>
+        <field name="model">report.pharmacy.insurance</field>
+        <field name="arch" type="xml">
+            <search string="Insurance Billing">
+                <field name="claim_no"/>
+                <field name="provider_id"/>
+                <field name="patient_id"/>
+                <field name="branch_id"/>
+                <filter name="pending" string="Pending"
+                        domain="[('is_pending', '=', True)]"/>
+                <filter name="rejected" string="Rejected"
+                        domain="[('state', '=', 'rejected')]"/>
+                <filter name="paid" string="Paid"
+                        domain="[('state', '=', 'paid')]"/>
+                <group name="group_by">
+                    <filter name="group_provider" string="Provider"
+                            context="{'group_by': 'provider_id'}"/>
+                    <filter name="group_branch" string="Branch"
+                            context="{'group_by': 'branch_id'}"/>
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_date" string="Claim Date"
+                            context="{'group_by': 'claim_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_insurance" model="ir.actions.act_window">
+        <field name="name">Insurance Billing</field>
+        <field name="res_model">report.pharmacy.insurance</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="search_view_id" ref="view_report_insurance_search"/>
+    </record>
+
+</odoo>

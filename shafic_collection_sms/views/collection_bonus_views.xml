@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============ Bonus Rule (config) ============ -->
+    <record id="view_bonus_config_form" model="ir.ui.view">
+        <field name="name">collection.bonus.config.form</field>
+        <field name="model">collection.bonus.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Rule name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="scope"/>
+                            <field name="collector_user_id"
+                                   invisible="scope != 'single'"
+                                   required="scope == 'single'"/>
+                            <field name="collector_journal_ids"
+                                   widget="many2many_tags"
+                                   invisible="scope != 'single'"
+                                   options="{'no_create': True}"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="calc_mode"/>
+                            <field name="cashier_attribution"
+                                   invisible="scope != 'cashier'"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <separator string="Shared / default tiers"/>
+                    <field name="tier_ids">
+                        <list editable="bottom">
+                            <field name="from_amount"/>
+                            <field name="to_amount"/>
+                            <field name="percent"/>
+                            <field name="name"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                    <separator string="Cashiers"
+                               invisible="scope != 'cashier'"/>
+                    <field name="cashier_ids" invisible="scope != 'cashier'">
+                        <list>
+                            <field name="user_id"/>
+                            <field name="journal_ids" widget="many2many_tags"
+                                   optional="show"/>
+                        </list>
+                        <form>
+                            <group>
+                                <field name="user_id"/>
+                                <field name="journal_ids" widget="many2many_tags"
+                                       options="{'no_create': True}"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                            <separator string="Tiers (leave empty to use the shared table)"/>
+                            <field name="tier_ids">
+                                <list editable="bottom">
+                                    <field name="from_amount"/>
+                                    <field name="to_amount"/>
+                                    <field name="percent"/>
+                                    <field name="name"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </form>
+                    </field>
+                    <group string="Exclusions">
+                        <field name="excluded_journal_ids" widget="many2many_tags"
+                               options="{'no_create': True}"/>
+                    </group>
+                    <p class="text-muted">
+                        Bracket mode example: 0&#8211;1000 @ 1%, 1000&#8211;5000
+                        @ 2%, 5000&#8211;and up @ 3%. Set the last band's
+                        <b>To</b> to 0 for "no upper limit".
+                    </p>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_bonus_config_list" model="ir.ui.view">
+        <field name="name">collection.bonus.config.list</field>
+        <field name="model">collection.bonus.config</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="scope"/>
+                <field name="collector_user_id" optional="show"/>
+                <field name="calc_mode"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_bonus_config" model="ir.actions.act_window">
+        <field name="name">Bonus Rules</field>
+        <field name="res_model">collection.bonus.config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ============ Bonus Period ============ -->
+    <record id="view_bonus_period_list" model="ir.ui.view">
+        <field name="name">collection.bonus.period.list</field>
+        <field name="model">collection.bonus.period</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="scope"/>
+                <field name="collector_user_id" optional="show"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="collected_amount"/>
+                <field name="bonus_amount"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state in ('computed','confirmed')"
+                       decoration-success="state == 'paid'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_bonus_period_form" model="ir.ui.view">
+        <field name="name">collection.bonus.period.form</field>
+        <field name="model">collection.bonus.period</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_compute" type="object" string="Compute"
+                            class="btn-primary" invisible="state == 'paid'"/>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            class="btn-primary" invisible="state != 'computed'"/>
+                    <button name="action_mark_paid" type="object" string="Mark as Paid"
+                            class="btn-primary" invisible="state != 'confirmed'"/>
+                    <button name="action_reset" type="object" string="Reset to Draft"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,computed,confirmed,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_payments" type="object"
+                                class="oe_stat_button" icon="fa-money">
+                            <field name="payment_count" widget="statinfo"
+                                   string="Payments"/>
+                        </button>
+                        <button name="action_view_batches" type="object"
+                                class="oe_stat_button" icon="fa-envelope">
+                            <field name="sms_batch_count" widget="statinfo"
+                                   string="SMS Batches"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="config_id"
+                                   readonly="state != 'draft'"
+                                   options="{'no_create': True}"/>
+                            <field name="scope"/>
+                            <field name="collector_user_id"
+                                   invisible="scope != 'single'"/>
+                            <field name="calc_mode"/>
+                        </group>
+                        <group>
+                            <field name="date_from" readonly="state != 'draft'"/>
+                            <field name="date_to" readonly="state != 'draft'"/>
+                            <field name="collected_amount"/>
+                            <field name="bonus_amount"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Bonus Breakdown" invisible="scope == 'cashier'">
+                            <field name="result_tier_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="from_amount"/>
+                                    <field name="to_amount"/>
+                                    <field name="percent"/>
+                                    <field name="base_amount"/>
+                                    <field name="bonus_amount" sum="Bonus"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Per-Cashier Results" invisible="scope != 'cashier'">
+                            <field name="cashier_result_ids">
+                                <list decoration-warning="unassigned == True">
+                                    <field name="user_id"/>
+                                    <field name="unassigned" optional="show"/>
+                                    <field name="collected_amount"/>
+                                    <field name="bonus_amount" sum="Bonus"/>
+                                    <field name="payment_count"/>
+                                    <field name="uses_own_tiers"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <button name="action_open_payments" type="object"
+                                            string="Payments" icon="fa-money"/>
+                                </list>
+                                <form>
+                                    <group>
+                                        <group>
+                                            <field name="user_id"/>
+                                            <field name="uses_own_tiers"/>
+                                        </group>
+                                        <group>
+                                            <field name="collected_amount"/>
+                                            <field name="bonus_amount"/>
+                                            <field name="payment_count"/>
+                                            <field name="currency_id" invisible="1"/>
+                                        </group>
+                                    </group>
+                                    <separator string="Bonus Breakdown"/>
+                                    <field name="result_tier_ids">
+                                        <list>
+                                            <field name="name"/>
+                                            <field name="from_amount"/>
+                                            <field name="to_amount"/>
+                                            <field name="percent"/>
+                                            <field name="base_amount"/>
+                                            <field name="bonus_amount" sum="Bonus"/>
+                                            <field name="currency_id" column_invisible="1"/>
+                                        </list>
+                                    </field>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Payments Counted">
+                            <field name="payment_line_ids">
+                                <list>
+                                    <field name="payment_date"/>
+                                    <field name="partner_id"/>
+                                    <field name="user_id"/>
+                                    <field name="journal_id"/>
+                                    <field name="ref"/>
+                                    <field name="amount" sum="Total Collected"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <button name="action_open_move" type="object"
+                                            string="Open" icon="fa-external-link"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group>
+                        <field name="note" placeholder="Notes..." nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_bonus_period" model="ir.actions.act_window">
+        <field name="name">Bonus Periods</field>
+        <field name="res_model">collection.bonus.period</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a bonus period</p>
+            <p>Pick the month and bonus rule, then <b>Compute</b> to total the
+               collections and calculate the tiered bonus.</p>
+        </field>
+    </record>
+
+    <!-- ============ Menus ============ -->
+    <menuitem id="menu_collection_bonus_period"
+              parent="menu_collection_root"
+              action="action_bonus_period"
+              sequence="20"/>
+    <menuitem id="menu_collection_config" name="Configuration"
+              parent="menu_collection_root" sequence="90"
+              groups="group_collection_manager"/>
+    <menuitem id="menu_collection_bonus_config"
+              parent="menu_collection_config"
+              action="action_bonus_config"
+              sequence="10"/>
+</odoo>

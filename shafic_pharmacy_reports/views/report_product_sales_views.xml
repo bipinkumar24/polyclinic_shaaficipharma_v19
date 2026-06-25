@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_report_product_sales_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.product.sales.list</field>
+        <field name="model">report.pharmacy.product.sales</field>
+        <field name="arch" type="xml">
+            <list string="Product Sales" create="false" edit="false">
+                <field name="product_id"/>
+                <field name="categ_id" optional="show"/>
+                <field name="pharmacy_category_id"/>
+                <field name="branch_id"/>
+                <field name="qty_sold" sum="Qty Sold"/>
+                <field name="order_count" sum="Orders"/>
+                <field name="revenue" sum="Revenue"/>
+                <field name="cost" sum="Cost" optional="hide"/>
+                <field name="margin" sum="Margin"/>
+                <field name="margin_percent" avg="Avg %" widget="percentage"/>
+                <field name="avg_price"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_product_sales_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.product.sales.pivot</field>
+        <field name="model">report.pharmacy.product.sales</field>
+        <field name="arch" type="xml">
+            <pivot string="Product Sales Analysis">
+                <field name="pharmacy_category_id" type="row"/>
+                <field name="revenue" type="measure"/>
+                <field name="margin" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_product_sales_graph" model="ir.ui.view">
+        <field name="name">report.pharmacy.product.sales.graph</field>
+        <field name="model">report.pharmacy.product.sales</field>
+        <field name="arch" type="xml">
+            <graph string="Product Sales Analysis" type="bar">
+                <field name="product_id"/>
+                <field name="revenue" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_report_product_sales_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.product.sales.search</field>
+        <field name="model">report.pharmacy.product.sales</field>
+        <field name="arch" type="xml">
+            <search string="Product Sales">
+                <field name="product_id"/>
+                <field name="categ_id"/>
+                <field name="branch_id"/>
+                <group name="group_by">
+                    <filter name="group_branch" string="Branch"
+                            context="{'group_by': 'branch_id'}"/>
+                    <filter name="group_category" string="Pharmacy Category"
+                            context="{'group_by': 'pharmacy_category_id'}"/>
+                    <filter name="group_categ" string="Product Category"
+                            context="{'group_by': 'categ_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_product_sales" model="ir.actions.act_window">
+        <field name="name">Product Sales</field>
+        <field name="res_model">report.pharmacy.product.sales</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="search_view_id" ref="view_report_product_sales_search"/>
+    </record>
+
+</odoo>

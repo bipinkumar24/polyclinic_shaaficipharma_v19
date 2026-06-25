@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!-- Supplier performance                                          -->
+    <!-- ============================================================ -->
+    <record id="view_report_supplier_performance_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.supplier.performance.list</field>
+        <field name="model">report.pharmacy.supplier.performance</field>
+        <field name="arch" type="xml">
+            <list string="Supplier Performance" create="false" edit="false">
+                <field name="supplier_id"/>
+                <field name="order_count" sum="Purchase Orders"/>
+                <field name="line_count" sum="Order Lines"/>
+                <field name="total_purchased" sum="Total Purchased"/>
+                <field name="qty_purchased" sum="Qty Purchased"/>
+                <field name="qty_received" sum="Qty Received"/>
+                <field name="delivery_accuracy" avg="Delivery Accuracy %"
+                       widget="percentage"/>
+                <field name="on_time_rate" avg="On-Time %"
+                       widget="percentage"/>
+                <field name="avg_lead_time" avg="Avg Lead Time"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_supplier_performance_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.supplier.performance.pivot</field>
+        <field name="model">report.pharmacy.supplier.performance</field>
+        <field name="arch" type="xml">
+            <pivot string="Supplier Performance Analysis">
+                <field name="supplier_id" type="row"/>
+                <field name="total_purchased" type="measure"/>
+                <field name="on_time_rate" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_supplier_performance_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.supplier.performance.search</field>
+        <field name="model">report.pharmacy.supplier.performance</field>
+        <field name="arch" type="xml">
+            <search string="Supplier Performance">
+                <field name="supplier_id"/>
+                <group name="group_by">
+                    <filter name="group_supplier" string="Supplier"
+                            context="{'group_by': 'supplier_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_supplier_performance"
+            model="ir.actions.act_window">
+        <field name="name">Supplier Performance</field>
+        <field name="res_model">report.pharmacy.supplier.performance</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="search_view_id"
+               ref="view_report_supplier_performance_search"/>
+    </record>
+
+    <!-- ============================================================ -->
+    <!-- Purchase vs sales                                             -->
+    <!-- ============================================================ -->
+    <record id="view_report_purchase_sales_list" model="ir.ui.view">
+        <field name="name">report.pharmacy.purchase.sales.list</field>
+        <field name="model">report.pharmacy.purchase.sales</field>
+        <field name="arch" type="xml">
+            <list string="Purchase vs Sales" create="false" edit="false">
+                <field name="product_id"/>
+                <field name="qty_purchased" sum="Qty Purchased"/>
+                <field name="purchase_value" sum="Purchase Value"/>
+                <field name="qty_sold" sum="Qty Sold"/>
+                <field name="sales_value" sum="Sales Value"/>
+                <field name="gross_margin" sum="Gross Margin"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_report_purchase_sales_pivot" model="ir.ui.view">
+        <field name="name">report.pharmacy.purchase.sales.pivot</field>
+        <field name="model">report.pharmacy.purchase.sales</field>
+        <field name="arch" type="xml">
+            <pivot string="Purchase vs Sales Analysis">
+                <field name="product_id" type="row"/>
+                <field name="purchase_value" type="measure"/>
+                <field name="sales_value" type="measure"/>
+                <field name="gross_margin" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_purchase_sales_search" model="ir.ui.view">
+        <field name="name">report.pharmacy.purchase.sales.search</field>
+        <field name="model">report.pharmacy.purchase.sales</field>
+        <field name="arch" type="xml">
+            <search string="Purchase vs Sales">
+                <field name="product_id"/>
+                <group name="group_by">
+                    <filter name="group_product" string="Product"
+                            context="{'group_by': 'product_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_purchase_sales" model="ir.actions.act_window">
+        <field name="name">Purchase vs Sales</field>
+        <field name="res_model">report.pharmacy.purchase.sales</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="search_view_id"
+               ref="view_report_purchase_sales_search"/>
+    </record>
+
+</odoo>

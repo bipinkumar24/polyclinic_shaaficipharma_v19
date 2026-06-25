@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_product_recall_list" model="ir.ui.view">
+        <field name="name">pharmacy.product.recall.list</field>
+        <field name="model">pharmacy.product.recall</field>
+        <field name="arch" type="xml">
+            <list string="Product Recalls"
+                  decoration-info="state == 'draft'"
+                  decoration-warning="state == 'in_progress'"
+                  decoration-success="state == 'completed'"
+                  decoration-danger="severity == 'high'">
+                <field name="name"/>
+                <field name="recall_date"/>
+                <field name="product_id"/>
+                <field name="supplier_id"/>
+                <field name="severity" widget="badge"
+                       decoration-danger="severity == 'high'"
+                       decoration-warning="severity == 'medium'"/>
+                <field name="affected_qty"/>
+                <field name="state" widget="badge"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_product_recall_form" model="ir.ui.view">
+        <field name="name">pharmacy.product.recall.form</field>
+        <field name="model">pharmacy.product.recall</field>
+        <field name="arch" type="xml">
+            <form string="Product Recall">
+                <header>
+                    <button name="action_start" type="object"
+                            string="Start Recall" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_notify_customers" type="object"
+                            string="Notify Affected Customers"
+                            class="btn-secondary"
+                            invisible="state != 'in_progress'"/>
+                    <button name="action_complete" type="object"
+                            string="Complete" class="btn-primary"
+                            invisible="state != 'in_progress'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="recall_date"/>
+                            <field name="product_id"/>
+                            <field name="supplier_id"/>
+                            <field name="severity"/>
+                        </group>
+                        <group>
+                            <field name="affected_qty"/>
+                            <field name="company_id"
+                                   groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Recall Reason">
+                        <field name="reason" nolabel="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Affected Batches / Lots" name="lots">
+                            <field name="lot_ids" widget="many2many_tags"/>
+                        </page>
+                        <page string="Affected Customers" name="customers">
+                            <field name="affected_customer_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="phone"/>
+                                    <field name="email"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_product_recall_search" model="ir.ui.view">
+        <field name="name">pharmacy.product.recall.search</field>
+        <field name="model">pharmacy.product.recall</field>
+        <field name="arch" type="xml">
+            <search string="Product Recalls">
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="supplier_id"/>
+                <filter name="draft" string="Draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="in_progress" string="In Progress"
+                        domain="[('state', '=', 'in_progress')]"/>
+                <filter name="completed" string="Completed"
+                        domain="[('state', '=', 'completed')]"/>
+                <separator/>
+                <filter name="high_severity" string="High Severity"
+                        domain="[('severity', '=', 'high')]"/>
+                <group name="group_by">
+                    <filter name="group_product" string="Product"
+                            context="{'group_by': 'product_id'}"/>
+                    <filter name="group_supplier" string="Supplier"
+                            context="{'group_by': 'supplier_id'}"/>
+                    <filter name="group_state" string="Status"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_severity" string="Severity"
+                            context="{'group_by': 'severity'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_product_recall" model="ir.actions.act_window">
+        <field name="name">Product Recalls</field>
+        <field name="res_model">pharmacy.product.recall</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_product_recall_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Record your first product recall
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_stock_report_wizard_form" model="ir.ui.view">
+        <field name="name">pharmacy.stock.report.wizard.form</field>
+        <field name="model">pharmacy.stock.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Inventory Report">
+                <sheet>
+                    <group>
+                        <field name="report_type"/>
+                        <field name="pharmacy_category_id"/>
+                        <field name="movement_class"
+                               invisible="report_type != 'movement'"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_view_report" type="object"
+                            string="View Report" class="btn-primary"/>
+                    <button name="action_refresh_movement" type="object"
+                            string="Refresh &amp; View"
+                            class="btn-secondary"
+                            invisible="report_type != 'movement'"/>
+                    <button string="Cancel" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_stock_report_wizard" model="ir.actions.act_window">
+        <field name="name">Inventory Report</field>
+        <field name="res_model">pharmacy.stock.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

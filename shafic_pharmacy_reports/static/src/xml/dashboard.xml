@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="shafic_pharmacy_reports.PharmacyDashboard">
+        <div class="o_pharmacy_dashboard">
+            <div class="o_pharmacy_dashboard_header">
+                <h2>Pharmacy Executive Dashboard</h2>
+                <div class="o_pharmacy_branch_selector">
+                    <label>Branch:</label>
+                    <select t-on-change="onBranchChange"
+                            class="form-select">
+                        <option value="">All Branches</option>
+                        <t t-foreach="state.branches" t-as="branch"
+                           t-key="branch.id">
+                            <option t-att-value="branch.id">
+                                <t t-esc="branch.name"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+            </div>
+
+            <div t-if="state.loading" class="o_pharmacy_loading">
+                <i class="fa fa-spinner fa-spin fa-2x"/>
+                <span>Loading dashboard...</span>
+            </div>
+
+            <div t-else="" class="o_pharmacy_dashboard_body">
+                <!-- KPI cards -->
+                <div class="o_pharmacy_kpi_grid">
+                    <div class="o_pharmacy_kpi o_kpi_sales">
+                        <div class="o_kpi_label">Today's Sales</div>
+                        <div class="o_kpi_value">
+                            <t t-esc="formatCurrency(
+                                state.data.today_sales)"/>
+                        </div>
+                    </div>
+                    <div class="o_pharmacy_kpi o_kpi_target">
+                        <div class="o_kpi_label">MTD Sales vs Target</div>
+                        <div class="o_kpi_value">
+                            <t t-esc="formatCurrency(state.data.mtd_sales)"/>
+                        </div>
+                        <div class="o_kpi_sub">
+                            <t t-esc="formatPercent(
+                                state.data.target_achievement)"/>
+                            of <t t-esc="formatCurrency(
+                                state.data.sales_target)"/>
+                        </div>
+                    </div>
+                    <div class="o_pharmacy_kpi o_kpi_profit"
+                         style="cursor: pointer;"
+                         t-on-click="() => this.openProfitability()">
+                        <div class="o_kpi_label">Gross Profit %</div>
+                        <div class="o_kpi_value">
+                            <t t-esc="formatPercent(
+                                state.data.gross_profit_pct)"/>
+                        </div>
+                        <div class="o_kpi_sub">tap to break down by product</div>
+                    </div>
+                    <div class="o_pharmacy_kpi o_kpi_basket">
+                        <div class="o_kpi_label">Average Basket</div>
+                        <div class="o_kpi_value">
+                            <t t-esc="formatCurrency(
+                                state.data.avg_basket)"/>
+                        </div>
+                    </div>
+                    <div class="o_pharmacy_kpi o_kpi_expiry"
+                         t-on-click="() => this.openAction(
+                            'shafic_pharmacy_reports.'
+                            + 'action_report_pharmacy_expiry_window')">
+                        <div class="o_kpi_label">Expiry Alerts</div>
+                        <div class="o_kpi_value">
+                            <t t-esc="state.data.expiry_alerts"/>
+                        </div>
+                        <div class="o_kpi_sub">batches expiring soon</div>
+                    </div>
+                    <div class="o_pharmacy_kpi o_kpi_stock"
+                         t-on-click="() => this.openAction(
+                            'shafic_pharmacy_reports.'
+                            + 'action_report_pharmacy_reorder')">
+                        <div class="o_kpi_label">Low Stock Alerts</div>
+                        <div class="o_kpi_value">
+                            <t t-esc="state.data.low_stock_alerts"/>
+                        </div>
+                        <div class="o_kpi_sub">products below reorder</div>
+                    </div>
+                    <div class="o_pharmacy_kpi o_kpi_anomaly"
+                         t-att-class="state.data.anomaly_critical
+                                      ? 'o_kpi_anomaly_critical'
+                                      : (state.data.anomaly_total
+                                         ? 'o_kpi_anomaly_warning' : '')"
+                         t-on-click="() => this.openAction(
+                            'shafic_pharmacy_reports.'
+                            + 'action_report_cost_price_anomaly')">
+                        <div class="o_kpi_label">Cost / Price Anomalies</div>
+                        <div class="o_kpi_value">
+                            <t t-esc="state.data.anomaly_total"/>
+                        </div>
+                        <div class="o_kpi_sub"
+                             t-if="state.data.anomaly_critical">
+                            <t t-esc="state.data.anomaly_critical"/> critical
+                        </div>
+                        <div class="o_kpi_sub"
+                             t-elif="state.data.anomaly_total">
+                            <t t-esc="state.data.anomaly_warning"/> warn,
+                            <t t-esc="state.data.anomaly_review"/> review
+                        </div>
+                        <div class="o_kpi_sub" t-else="">
+                            none — good news
+                        </div>
+                    </div>
+                    <div class="o_pharmacy_kpi o_kpi_deadstock"
+                         t-att-class="state.data.dead_stock_count
+                                      ? 'o_kpi_deadstock_alert' : ''"
+                         t-on-click="() => this.openDeadStock()">
+                        <div class="o_kpi_label">Dead Stock</div>
+                        <div class="o_kpi_value">
+                            <t t-esc="state.data.dead_stock_count"/>
+                        </div>
+                        <div class="o_kpi_sub"
+                             t-if="state.data.dead_stock_count">
+                            <t t-esc="formatCurrency(
+                                state.data.dead_stock_value)"/> tied up
+                        </div>
+                        <div class="o_kpi_sub" t-else="">
+                            none — good news
+                        </div>
+                    </div>
+                    <div class="o_pharmacy_kpi o_kpi_claims"
+                         t-on-click="() => this.openAction(
+                            'shafic_pharmacy_reports.'
+                            + 'action_insurance_claim')">
+                        <div class="o_kpi_label">Pending Insurance</div>
+                        <div class="o_kpi_value">
+                            <t t-esc="state.data.pending_claims"/>
+                        </div>
+                        <div class="o_kpi_sub">
+                            <t t-esc="formatCurrency(
+                                state.data.pending_claims_value)"/>
+                        </div>
+                    </div>
+                    <div class="o_pharmacy_kpi o_kpi_customers">
+                        <div class="o_kpi_label">Customers (MTD)</div>
+                        <div class="o_kpi_value">
+                            <t t-esc="state.data.customer_count"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7-day sales trend -->
+                <div class="o_pharmacy_panel">
+                    <h3>7-Day Sales Trend</h3>
+                    <div class="o_pharmacy_trend">
+                        <t t-foreach="state.data.sales_trend || []"
+                           t-as="day" t-key="day_index">
+                            <div class="o_trend_bar_wrap">
+                                <div class="o_trend_bar"
+                                     t-attf-style="height: {{
+                                        barHeight(day.value)}}"/>
+                                <div class="o_trend_label">
+                                    <t t-esc="day.label"/>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Top medicines -->
+                <div class="o_pharmacy_panel">
+                    <h3>Top Selling Medicines</h3>
+                    <table class="o_pharmacy_top_table table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th class="text-end">Qty Sold</th>
+                                <th class="text-end">Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.data.top_products || []"
+                               t-as="product" t-key="product_index">
+                                <tr>
+                                    <td><t t-esc="product.name"/></td>
+                                    <td class="text-end">
+                                        <t t-esc="product.qty"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <t t-esc="formatCurrency(
+                                            product.revenue)"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr t-if="!(state.data.top_products || [])
+                                      .length">
+                                <td colspan="3" class="text-center
+                                    text-muted">
+                                    No sales data available
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

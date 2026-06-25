@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_cost_anomaly_snapshot_list" model="ir.ui.view">
+        <field name="name">pharmacy.cost.anomaly.snapshot.list</field>
+        <field name="model">pharmacy.cost.anomaly.snapshot</field>
+        <field name="arch" type="xml">
+            <list string="Anomaly History" create="false" edit="false"
+                  decoration-danger="severity == 'critical'"
+                  decoration-warning="severity == 'warning'"
+                  decoration-info="severity == 'review'">
+                <field name="snapshot_date"/>
+                <field name="product_id"/>
+                <field name="pharmacy_category_id" optional="show"/>
+                <field name="severity" widget="badge"
+                       decoration-danger="severity == 'critical'"
+                       decoration-warning="severity == 'warning'"
+                       decoration-info="severity == 'review'"/>
+                <field name="is_new" widget="boolean_toggle"
+                       string="New"/>
+                <field name="flag_below_cost" optional="show"/>
+                <field name="flag_thin_margin" optional="show"/>
+                <field name="flag_cost_spike" optional="hide"/>
+                <field name="flag_peer_outlier" optional="hide"/>
+                <field name="current_cost" optional="show"/>
+                <field name="standard_cost" optional="hide"/>
+                <field name="current_price" optional="show"/>
+                <field name="margin_pct" optional="show"/>
+                <field name="cost_source" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cost_anomaly_snapshot_pivot" model="ir.ui.view">
+        <field name="name">pharmacy.cost.anomaly.snapshot.pivot</field>
+        <field name="model">pharmacy.cost.anomaly.snapshot</field>
+        <field name="arch" type="xml">
+            <pivot string="Anomaly History">
+                <field name="snapshot_date" type="row" interval="day"/>
+                <field name="severity" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_cost_anomaly_snapshot_graph" model="ir.ui.view">
+        <field name="name">pharmacy.cost.anomaly.snapshot.graph</field>
+        <field name="model">pharmacy.cost.anomaly.snapshot</field>
+        <field name="arch" type="xml">
+            <graph string="Anomaly History" type="line">
+                <field name="snapshot_date" interval="day"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_cost_anomaly_snapshot_search" model="ir.ui.view">
+        <field name="name">pharmacy.cost.anomaly.snapshot.search</field>
+        <field name="model">pharmacy.cost.anomaly.snapshot</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id"/>
+                <field name="pharmacy_category_id"/>
+                <!-- Date filters -->
+                <filter name="today" string="Today"
+                        domain="[('snapshot_date', '=',
+                                 (context_today()).strftime('%Y-%m-%d'))]"/>
+                <filter name="this_week" string="This Week"
+                        domain="[('snapshot_date', '&gt;=',
+                                 (context_today() + relativedelta(weeks=-1)).strftime('%Y-%m-%d'))]"/>
+                <filter name="this_month" string="This Month"
+                        domain="[('snapshot_date', '&gt;=',
+                                 (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <!-- New today -->
+                <filter name="new_today" string="New Today"
+                        domain="['&amp;',
+                                 ('is_new', '=', True),
+                                 ('snapshot_date', '=',
+                                  (context_today()).strftime('%Y-%m-%d'))]"/>
+                <filter name="new_any" string="New (any date)"
+                        domain="[('is_new', '=', True)]"/>
+                <separator/>
+                <!-- Severity -->
+                <filter name="critical" string="Critical"
+                        domain="[('severity', '=', 'critical')]"/>
+                <filter name="warning" string="Warning"
+                        domain="[('severity', '=', 'warning')]"/>
+                <filter name="review" string="Review"
+                        domain="[('severity', '=', 'review')]"/>
+                <group name="group_by">
+                    <filter name="group_date" string="Date"
+                            context="{'group_by': 'snapshot_date:day'}"/>
+                    <filter name="group_severity" string="Severity"
+                            context="{'group_by': 'severity'}"/>
+                    <filter name="group_category" string="Pharmacy Category"
+                            context="{'group_by': 'pharmacy_category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_cost_anomaly_snapshot" model="ir.actions.act_window">
+        <field name="name">Anomaly History</field>
+        <field name="res_model">pharmacy.cost.anomaly.snapshot</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="context">{'search_default_today': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No anomaly history yet
+            </p>
+            <p>
+                History is captured once a day by the scheduled job
+                "Pharmacy: Snapshot Cost/Price Anomalies". After it runs,
+                you can filter by date and see which anomalies are new
+                today. To populate immediately, run that scheduled action
+                manually from Settings -> Technical -> Scheduled Actions.
+            </p>
+        </field>
+    </record>
+
+</odoo>

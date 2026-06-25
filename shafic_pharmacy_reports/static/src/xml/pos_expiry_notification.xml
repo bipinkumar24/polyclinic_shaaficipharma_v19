@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="shafic_pharmacy_reports.ExpiryNotificationPopup">
+        <Dialog title.translate="'Multiple Expiration Dates'"
+                size="'md'"
+                footer="false">
+            <div class="o_expiry_popup">
+                <div class="o_expiry_product">
+                    <t t-esc="props.productName"/>
+                </div>
+                <div class="o_expiry_note">
+                    This product has
+                    <strong><t t-esc="props.lots.length"/></strong>
+                    lots with different expiration dates on hand.
+                    The system will dispense the earliest-expiring lot
+                    first (FEFO).
+                </div>
+                <table class="o_expiry_table">
+                    <thead>
+                        <tr>
+                            <th>Lot</th>
+                            <th>Expiration</th>
+                            <th>When</th>
+                            <th class="text-end">Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="props.lots"
+                            t-as="lot"
+                            t-key="lot.lot_id"
+                            t-att-class="isUrgent(lot)
+                                ? 'o_expiry_urgent' : ''">
+                            <td><t t-esc="lot.lot_name"/></td>
+                            <td><t t-esc="lot.expiration_date"/></td>
+                            <td><t t-esc="daysLabel(lot)"/></td>
+                            <td class="text-end">
+                                <t t-esc="lot.qty"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="o_expiry_footer">
+                    <button class="btn btn-primary"
+                            t-on-click.stop="() => this.acknowledge()">
+                        OK, noted
+                    </button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+
+</templates>

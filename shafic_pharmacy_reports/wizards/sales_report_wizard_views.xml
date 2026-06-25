@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sales_report_wizard_form" model="ir.ui.view">
+        <field name="name">pharmacy.sales.report.wizard.form</field>
+        <field name="model">pharmacy.sales.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="POS Sales Report">
+                <sheet>
+                    <group>
+                        <group string="Period">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="group_by"/>
+                        </group>
+                        <group string="Filters">
+                            <field name="branch_ids" widget="many2many_tags"/>
+                            <field name="cashier_ids" widget="many2many_tags"/>
+                            <field name="pharmacy_category_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_view_report" type="object"
+                            string="View Report" class="btn-primary"/>
+                    <button name="action_export_xlsx" type="object"
+                            string="Export Excel" class="btn-secondary"/>
+                    <button string="Cancel" class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sales_report_wizard" model="ir.actions.act_window">
+        <field name="name">POS Sales Report</field>
+        <field name="res_model">pharmacy.sales.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>
