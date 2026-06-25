@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_debt_collector_bonus_manager,debt.collector.bonus.manager,model_debt_collector_bonus,account.group_account_manager,1,1,1,1
+access_debt_collector_bonus_line_manager,debt.collector.bonus.line.manager,model_debt_collector_bonus_line,account.group_account_manager,1,1,1,1
+access_debt_collector_bonus_user,debt.collector.bonus.user,model_debt_collector_bonus,account.group_account_user,1,0,0,0
+access_debt_collector_bonus_line_user,debt.collector.bonus.line.user,model_debt_collector_bonus_line,account.group_account_user,1,0,0,0

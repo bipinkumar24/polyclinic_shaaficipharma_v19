@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============ Form ============ -->
+    <record id="view_debt_collector_bonus_form" model="ir.ui.view">
+        <field name="name">debt.collector.bonus.form</field>
+        <field name="model">debt.collector.bonus</field>
+        <field name="arch" type="xml">
+            <form string="Debt Collector Bonus">
+                <header>
+                    <button name="action_compute" type="object"
+                            string="Compute" class="oe_highlight"
+                            invisible="state == 'confirmed'"/>
+                    <button name="action_confirm" type="object"
+                            string="Confirm &amp; Post" class="oe_highlight"
+                            invisible="state != 'computed'"/>
+                    <button name="action_reset" type="object"
+                            string="Reset to Draft"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,computed,confirmed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_move" type="object"
+                                class="oe_stat_button" icon="fa-book"
+                                invisible="not move_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Journal Entry</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Period">
+                            <field name="date_from"
+                                   readonly="state != 'draft'"/>
+                            <field name="date_to"
+                                   readonly="state != 'draft'"/>
+                            <field name="company_id" groups="base.group_multi_company"
+                                   readonly="state != 'draft'"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Totals">
+                            <field name="total_recovered"/>
+                            <field name="total_pool"/>
+                            <field name="total_bonus"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Collectors" name="lines">
+                            <field name="line_ids" readonly="state == 'confirmed'">
+                                <list string="Collectors" editable="bottom"
+                                      create="false" delete="false">
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="user_id" readonly="1"/>
+                                    <field name="opening_aged_debt" readonly="1"/>
+                                    <field name="recovered_aged" readonly="1"/>
+                                    <field name="gate_achievement_pct"
+                                           readonly="1"/>
+                                    <field name="eligible" readonly="1"/>
+                                    <field name="total_recovered" readonly="1"/>
+                                    <field name="points" readonly="1"/>
+                                    <field name="base_bonus" readonly="1"/>
+                                    <field name="kicker_bonus" readonly="1"/>
+                                    <field name="conduct_penalty_pct"/>
+                                    <field name="bonus_amount" readonly="1"
+                                           sum="Total"/>
+                                    <field name="status_label" readonly="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Scheme Parameters" name="scheme">
+                            <group>
+                                <group string="Eligibility Gate">
+                                    <field name="aged_threshold_days"
+                                           readonly="state == 'confirmed'"/>
+                                    <field name="gate_pct"
+                                           readonly="state == 'confirmed'"/>
+                                    <field name="upper_pct"
+                                           readonly="state == 'confirmed'"/>
+                                </group>
+                                <group string="Pool &amp; Kicker">
+                                    <field name="pool_pct"
+                                           readonly="state == 'confirmed'"/>
+                                    <field name="kicker_mode"
+                                           readonly="state == 'confirmed'"/>
+                                    <field name="kicker_value"
+                                           readonly="state == 'confirmed'"/>
+                                </group>
+                                <group string="Speed Factors">
+                                    <field name="speed_factor_1"
+                                           readonly="state == 'confirmed'"/>
+                                    <field name="speed_factor_2"
+                                           readonly="state == 'confirmed'"/>
+                                    <field name="speed_factor_3"
+                                           readonly="state == 'confirmed'"/>
+                                    <field name="speed_factor_4"
+                                           readonly="state == 'confirmed'"/>
+                                    <field name="speed_factor_5"
+                                           readonly="state == 'confirmed'"/>
+                                </group>
+                                <group string="Guardrails">
+                                    <field name="clawback"
+                                           readonly="state == 'confirmed'"/>
+                                    <field name="excluded_partner_ids"
+                                           widget="many2many_tags"
+                                           readonly="state == 'confirmed'"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Accounting" name="accounting">
+                            <group>
+                                <group>
+                                    <field name="journal_id"
+                                           readonly="state == 'confirmed'"/>
+                                    <field name="expense_account_id"
+                                           readonly="state == 'confirmed'"/>
+                                    <field name="payable_account_id"
+                                           readonly="state == 'confirmed'"/>
+                                </group>
+                                <group>
+                                    <field name="move_id" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============ List ============ -->
+    <record id="view_debt_collector_bonus_list" model="ir.ui.view">
+        <field name="name">debt.collector.bonus.list</field>
+        <field name="model">debt.collector.bonus</field>
+        <field name="arch" type="xml">
+            <list string="Debt Collector Bonus"
+                  decoration-muted="state == 'draft'"
+                  decoration-success="state == 'confirmed'">
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="total_recovered"/>
+                <field name="total_pool"/>
+                <field name="total_bonus"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'confirmed'"
+                       decoration-info="state == 'computed'"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============ Search ============ -->
+    <record id="view_debt_collector_bonus_search" model="ir.ui.view">
+        <field name="name">debt.collector.bonus.search</field>
+        <field name="model">debt.collector.bonus</field>
+        <field name="arch" type="xml">
+            <search string="Debt Collector Bonus">
+                <field name="name"/>
+                <filter name="draft" string="Draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="computed" string="Computed"
+                        domain="[('state', '=', 'computed')]"/>
+                <filter name="confirmed" string="Confirmed"
+                        domain="[('state', '=', 'confirmed')]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============ Action & Menu ============ -->
+    <record id="action_debt_collector_bonus" model="ir.actions.act_window">
+        <field name="name">Debt Collector Bonus</field>
+        <field name="res_model">debt.collector.bonus</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_debt_collector_bonus_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a debt collector bonus run
+            </p>
+            <p>
+                Choose a period, set the scheme parameters and compute the
+                speed-weighted recovery bonus for each collector.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_debt_collector_bonus_root"
+              name="Collector Bonus"
+              parent="account.menu_finance"
+              sequence="90"/>
+
+    <menuitem id="menu_debt_collector_bonus"
+              name="Debt Collector Bonus"
+              parent="menu_debt_collector_bonus_root"
+              action="action_debt_collector_bonus"
+              groups="account.group_account_user"
+              sequence="10"/>
+
+</odoo>

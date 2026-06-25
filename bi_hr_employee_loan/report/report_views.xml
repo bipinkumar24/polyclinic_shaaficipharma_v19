@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="report_employee_loan_print" model="ir.actions.report">
+            <field name="name">Print Loan</field>
+            <field name="model">loan.request</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">bi_hr_employee_loan.report_loan</field>
+            <field name="report_file">bi_hr_employee_loan.report_loan</field>
+            <field name="binding_model_id" ref="model_loan_request"/>
+            <field name="binding_type">report</field>
+            <field name="attachment">(object.name + '_Loan.pdf')</field>
+        </record>
+        
+         
+    </data>
+</odoo>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record id="cron_adavance_salary_amount_paid" model="ir.cron">
+            <field name="name">Advance Salary Amount Paid</field>
+            <field name="model_id" ref="bi_employee_advance_salary.model_advance_salary"/>
+            <field name="state">code</field>
+            <field name="code">model.add_amount_paid()</field>
+            <field eval="False" name="active" />
+            <field name="user_id" ref="base.user_root" />
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : <https://store.webkul.com/license.html/> -->
+<templates xml:space="preserve">
+    <t t-name="wk_pos_credit_limit.PosCreditLimitPopup">
+        <Dialog title="props.title">
+            <p class="text-prewrap">
+                <b><t t-esc="props.partner" /></b>
+                <t t-esc="props.message" />
+            </p>
+            <t t-set-slot="footer">
+                <button class="btn btn-primary" t-on-click="() => props.close()">OK</button>
+            </t>
+        </Dialog>
+    </t>
+</templates>

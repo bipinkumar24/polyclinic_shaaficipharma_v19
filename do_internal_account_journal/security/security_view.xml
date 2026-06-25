@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--
+            Odoo 19 removed the `stock.valuation.layer` model, so the two record
+            rules that scoped valuation layers by branch
+            (`stock_account.model_stock_valuation_layer`) no longer have a target
+            model and have been removed. Branch isolation on the remaining
+            inventory models (stock.location / stock.warehouse / stock.quant)
+            is unaffected.
+        -->
+    </data>
+</odoo>

@@ -1,0 +1,124 @@
+# -*- coding: utf-8 -*-
+from odoo import api, fields, models, _
+import datetime
+from odoo.exceptions import UserError, ValidationError
+
+
+class AdvanceSalaryWizard(models.TransientModel):
+    _name = 'advance.salary.wizard'
+    _description = "Advance Salary wizard"
+
+    date_from = fields.Date(string="Date From")
+    date_to = fields.Date(string="Date To")
+    employee_ids = fields.Many2many('hr.employee', string="Employees")
+
+    def button_generate_report(self):
+        data = {
+            'employee_ids': self.employee_ids.ids or False,
+            'date_from': self.date_from,
+            'date_to': self.date_to,
+        }
+        return self.env.ref('bi_employee_advance_salary.advance_salary_report_wizard').report_action(self, data=data)
+
+    def button_generate_partner_ladger(self):
+        advance_rule_id = self.env['hr.salary.rule'].search([('code', '=', 'ADVSAL')], limit=1)
+        debit_account_id = advance_rule_id.account_debit
+        date_from = self.date_from
+        date_to = self.date_to
+        employee_lits = self.employee_ids.ids or False
+        line_ids = []
+        employee_ids = self.env['hr.employee'].browse(employee_lits)
+        all_move_line_ids = self.env['account.move.line'].search([('date', '>=', date_from),('date', '<=', date_to), ('account_id', '=', debit_account_id.id)])
+        if employee_ids:
+            partner_ids = employee_ids.mapped('partner_id')
+            for partner in partner_ids:
+                move_line_ids = all_move_line_ids.filtered(lambda x:x.partner_id.id == partner.id)
+                if move_line_ids:
+                    line_ids.extend(move_line_ids.ids)
+        else:
+            employee_ids = self.env['hr.employee'].search([])
+            partner_ids = employee_ids.mapped('partner_id')
+            for partner in partner_ids:
+                move_line_ids = all_move_line_ids.filtered(lambda x:x.partner_id.id == partner.id)
+                if move_line_ids:
+                    line_ids.extend(move_line_ids.ids)
+        # date_from = self.date_from
+        # date_to = self.date_to
+        # employee_lits = self.employee_ids.ids or False
+        # line_ids = []
+        # advance_salary_ids = self.env['advance.salary'].search([('req_date', '>=', date_from), ('req_date', '<=', date_to)])
+        # employee_ids = self.env['hr.employee'].browse(employee_lits)
+        # if employee_ids:
+        #     for employee in employee_ids:
+        #         advance_salary_employee_ids = advance_salary_ids.filtered(lambda x:x.employee_id.id == employee.id)
+        #         if advance_salary_employee_ids:
+        #             advance_salary_employee_ids = advance_salary_ids.filtered(lambda x:x.employee_id.id == employee.id)
+        #             if advance_salary_employee_ids:
+        #                 move_ids = advance_salary_employee_ids.mapped('bill_id')
+        #                 line_ids.extend(move_ids.mapped('line_ids').ids)
+        #             for move_id in move_ids:
+        #                 data = move_id._get_reconciled_info_JSON_values()
+        #                 payment_data_ids = [payment['payment_id'] for payment in data]
+        #                 payment_list = []
+        #                 for payment in payment_data_ids:
+        #                     payment_id = self.env['account.payment'].search([('id', '=', payment)])
+        #                     if payment_id:
+        #                         line_ids.extend(payment.sudo().move_id.sudo().mapped('line_ids').exists().ids)
+        # else:
+        #     employee_ids = self.env['hr.employee'].search([])
+        #     for employee in employee_ids:
+        #         advance_salary_employee_ids = advance_salary_ids.filtered(lambda x:x.employee_id.id == employee.id)
+        #         if advance_salary_employee_ids:
+        #             advance_salary_employee_ids = advance_salary_ids.filtered(lambda x:x.employee_id.id == employee.id)
+        #             if advance_salary_employee_ids:
+        #                 move_ids = advance_salary_employee_ids.mapped('bill_id')
+        #                 line_ids.extend(move_ids.mapped('line_ids').ids)
+        #             for move_id in move_ids:
+        #                 data = move_id._get_reconciled_info_JSON_values()
+        #                 payment_data_ids = [payment['payment_id'] for payment in data]
+        #                 payment_list = []
+        #                 for payment in payment_data_ids:
+        #                     payment_id = self.env['account.payment'].search([('id', '=', payment)])
+        #                     if payment_id:
+        #                         line_ids.extend(payment.sudo().move_id.sudo().mapped('line_ids').exists().ids)
+        return {
+            'name': _('Partner Ledger'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move.line',
+            'view_mode': 'tree',
+            'view_id':self.env.ref('account.view_move_line_tree_grouped_partner').id,
+            'search_view_id':self.env.ref('account.view_account_move_line_filter').id,
+            'domain': [('id', 'in', line_ids)],
+            'context': {'search_default_group_by_partner': 1},
+        }
+
+
+class CustomerAdvanceSalaryTemplete(models.AbstractModel):
+    _name = 'report.bi_employee_advance_salary.advance_salary_templete'
+
+    @api.model
+    def _get_report_values(self, docids, data=None):
+        model = self.env.context.get('active_model')
+        docs = self.env[model].browse(self.env.context.get('active_id'))
+        date_from = data['date_from']
+        date_to = data['date_to']
+        employee_lits = data['employee_ids']
+        data = []
+        advance_salary_ids = self.env['advance.salary'].search([('req_date', '>=', date_from), ('req_date', '<=', date_to)])
+        employee_ids = self.env['hr.employee'].browse(employee_lits)
+        if employee_ids:
+            for employee in employee_ids:
+                advance_salary_employee_ids = advance_salary_ids.filtered(lambda x:x.employee_id.id == employee.id)
+                if advance_salary_employee_ids:
+                    data.append({'employee_id': employee, 'lines': advance_salary_employee_ids})
+        else:
+            employee_ids = self.env['hr.employee'].search([])
+            for employee in employee_ids:
+                advance_salary_employee_ids = advance_salary_ids.filtered(lambda x:x.employee_id.id == employee.id)
+                if advance_salary_employee_ids:
+                    data.append({'employee_id': employee, 'lines': advance_salary_employee_ids})
+        return {
+            'date_from': date_from,
+            'docs': docs,
+            'data': data
+        }

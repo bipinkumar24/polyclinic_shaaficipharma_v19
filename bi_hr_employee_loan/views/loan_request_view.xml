@@ -1,0 +1,434 @@
+<?xml version="1.0"  encoding="utf-8"?>
+<odoo>
+
+	<record id="view_loan_request_search_form" model="ir.ui.view">
+		<field name="name">loan.request.search.form</field>
+		<field name="model">loan.request</field>
+		<field name="arch" type="xml">
+			<search string="Tasks">
+				<field name="user_id"/>
+				<field name="loan_type_id" />
+			</search>
+		</field>
+	</record>
+
+
+
+	<record id="view_loan_req_tree" model="ir.ui.view">
+		<field name="name">loan.request.list</field>
+		<field name="model">loan.request</field>
+		<field name="priority">2</field>
+		<field name="arch" type="xml">
+		<list string="Loan Type">
+			<field name="name"/>
+			<field  name="applied_date"/>
+			<field name="employee_id"/>
+			<field name="loan_type_id"/>
+			<field name="approve_date"/>
+			<field name="department_id"/>
+			<field name="company_id"/>
+			<field name="user_id"/>
+			<field name="principal_amount"/>
+			<field name="is_interest_payable"/>
+			<field name="interest_mode"/>
+			<field name="rate"/>
+			<field name="total_loan"/>
+			<field name="total_interest"/>     
+		</list>
+		</field>
+	</record>
+		
+
+
+	<record id="seq_loan" model="ir.sequence">
+		<field name="name">loan_sequencer</field>
+		<field name="code">loan.request</field>
+		<field name="prefix">LOAN</field>
+		<field name="padding">4</field>
+	</record>
+
+
+	<record id="view_loan_req_form" model="ir.ui.view">
+	<field name="name">loan.request.form</field>
+	<field name="model">loan.request</field>
+	<field name="priority">2</field>
+	<field name="arch" type="xml">
+		<form string="Loan Type">
+			 <header>
+
+				<button name="action_confirm" string="Apply"
+						type="object" invisible="stage not in ('draft')"/>
+				<button name="action_department_approve" 
+						string="Department Approve"
+						type="object" invisible="stage not in ('applied')"
+						groups="bi_hr_employee_loan.hr_loan_department_id"/>
+				<button name="action_approve" string="Approve"
+						type="object"
+						invisible="stage not in ('stage','not in','waiting_depart')"
+						 groups="bi_hr_employee_loan.hr_loan_manager_id"/>  
+				<button name="compute_loan" string="Compute"
+						type="object"
+						invisible="stage not in ('stage','not in','waiting')"
+						context="{'is_compute_button': True}"
+						groups="bi_hr_employee_loan.hr_loan_accountant_id"/>
+				<button name="disburse_loan" string="Disburse"
+						type="object"
+						invisible="stage not in ('stage','not in','approve')"
+						 groups="bi_hr_employee_loan.hr_loan_accountant_id"/>
+				<button name="action_cancel_dep" string="Reject"
+						type="object" groups="bi_hr_employee_loan.hr_loan_department_id"
+						invisible="stage not in ('stage','not in','applied')"
+						/>	
+				<button name="action_cancel_hr" string="Reject"
+						type="object" groups="bi_hr_employee_loan.hr_loan_manager_id"
+						invisible="stage not in ('stage','not in','waiting_depart')"
+						/>
+				<button name="action_cancel_acc" string="Reject"
+						type="object" groups="bi_hr_employee_loan.hr_loan_accountant_id"
+						invisible="stage not in ('stage','not in','waiting')"
+						/>
+				<button name="compute_loan" string="Re-Compute"
+						type="object"
+						invisible="stage not in ('stage','not in','approve')"
+						context="{'is_compute_button': True, 'is_re_compute_button': True}"
+						groups="base.group_system"/>			
+				<button name="action_resettodraft"  class="oe_highlight" string="Reset to Draft"
+						type="object" groups="bi_hr_employee_loan.group_send_to_draft_loan"
+						invisible="stage not in ('stage','not in','approve')"
+						/>
+
+
+				<field name="stage" widget="statusbar" statusbar_visible="draft,applied,waiting_depart,waiting,approve"/>
+			 </header>
+			
+			<sheet>
+					<div class="oe_button_box" name="button_box">
+						<button class="oe_stat_button" name="show_account_move"
+							type="object" icon="fa-list"
+							invisible="journal_count == 0">
+							<field name="journal_count" widget="statinfo" string="Loan Journal" />
+						</button>
+					</div>	    		
+				<h2>
+					<group>
+						<field name="employee_id"
+							readonly="stage not in ('draft')"
+							options="{'no_create': True}"/>
+					</group>
+ 
+					<br/>
+					<field name="name"/>
+					<field name="is_compute" invisible='1'/>
+					<field name="partner_id" invisible="1"/>
+				</h2>
+
+				<group>
+					<group >
+						<field name="applied_date"
+						readonly="stage not in ('draft')"/>
+						<field name="loan_type_id"
+						readonly="stage not in ('draft')" options="{'no_create': True}"/>
+						<field name="first_installment" required="1" invisible="1"/>
+						<field name="first_installment_date" required="1"/>
+
+					</group>
+					<group>
+						<field name="approve_date" readonly="1"/>
+						<field name="disbursement_date" readonly="1"/>
+						<field name="department_id" readonly ="1"/>
+						<field name="company_id" readonly="1"/>
+						<field name="user_id" readonly="1"/>
+						<field name="move_entries" widget="many2many_tags" invisible='1'/>
+					</group>
+				</group>
+				<notebook>
+
+					<page string="General">
+						<group>
+							<field name="currency_id"/>
+							<field name="department_employee_id" invisible="1"/>
+							<field name="account_employee_id" invisible="1"/>
+							<field name="hr_employee_id" invisible="1"/>
+							<field name="principal_amount" 
+							readonly="stage not in ('draft')"/>
+							<field name="is_interest_payable"  readonly="1"/>
+							<field name="interest_mode" readonly="1"
+							invisible="not is_interest_payable"/>
+							
+							<field name="duration_months" 
+							readonly="stage not in ('draft')"/>
+							<field name="rate" readonly="1"
+							invisible="not is_interest_payable"/>
+
+							<field name="installment_ids">
+								<list create="false" edit="true">
+									<field name="installment_number" string="Number"/>
+									<field  name="date_from"/>
+									<field  name="date_to"/>
+									<field name="loan_id"/>
+									<field  name="principal_amount" sum="Total" readonly="0"/>
+									<field  name="interest_amount" sum="Total"
+									invisible="not parent.is_interest_payable"/> 
+									<field  name="emi_installment" sum="Total"/>
+									<field  name="state"/>
+									<field name="currency_id"/>
+									<field name="skip"/>
+								</list>
+								<form>
+                                    <sheet>
+							    		<h2><field name="name" readonly="1"/></h2>
+							    		<group>
+							    			<group>
+							    				<field name="loan_id" readonly="1"/>
+							    				<field name="loan_type_id" readonly="1"/>
+												<field name="skip" readonly="1"/>
+												<field name="state" readonly="1"/>
+							    			</group>
+							    			<group>
+							    				<field name="employee_id" readonly="1"/>
+							    			</group>
+							    		</group>
+							    		<notebook>
+							    			<page string="Details">
+							    				<group>
+							    					<group>
+							    						<field name="installment_number" 
+							    							readonly="state not in ('unpaid')"/>
+							    						<field name="interest_amount" 
+							    							readonly="state not in ('unpaid')"
+							    							invisible="not payable_interest"/>
+							    						<field name="currency_id" 
+							    							readonly="state not in ('unpaid')"
+							    							invisible="not payable_interest"/>
+							    						<field name="interest_acouunting_id" 
+							    							readonly="state not in ('unpaid')"
+							    							invisible="not payable_interest"/>
+							    						<field name="payable_interest" invisible='1' readonly="1"/>
+
+							    					</group>
+							    					<group>
+
+							    						<field name="installment_booked" invisible="1" readonly="1"/>
+							    						<field name="date_from" 
+							    							readonly="state not in ('unpaid')"/>
+							    						<field name="date_to" readonly="state not in ('unpaid')"/>
+							    						<field name="principal_amount" readonly="state not in ('unpaid')"/>
+							    						<field name="emi_installment" readonly="state not in ('unpaid')"/>
+							    						<field name="accounting_entry_id" readonly="1"/>
+							    					</group>
+							    				</group>
+							    			</page>
+							    		</notebook>
+							     	</sheet>
+                                </form>
+							</field>
+
+							<field name="total_loan"/>
+							<field name="total_interest" 
+							invisible="not is_interest_payable"/>
+							<field name="received_from_employee"/>
+							<field name="balance_on_loan"/>
+
+						</group>
+					</page>
+						<page string="Proofs">
+						<field name="hide_proofs" invisible='1'/>
+						<field name="loan_proof_ids" options="{'no_create_edit': True}"/>
+						<group name="loan_document_images" string="Loan Documents">
+                        	<field name="loan_images_ids"  required="1" 
+    							readonly="stage not in ('draft')"
+    							invisible="hide_proofs"
+								class="o_website_sale_image_list" context="{'default_name': name}" mode="kanban" nolabel="1" options="{'create_text':'Add a Document'}"/>		
+                    	</group>
+					</page>
+
+					<page string="Accounting">
+						<group>
+						<field name="disburse_journal_id" readonly="1" force_save="1"/>
+						<field name="interest_journal_id" 
+							invisible="not is_interest_payable"
+							required="stage in ('waiting') and is_interest_payable"/>
+						<field name="account_entery_id"/>
+						<field name="loan_entry_id"/>
+						<field name="employee_account_id" readonly="1" force_save="1"/>
+						</group>
+
+					</page>
+
+					<page string="Policies">
+						<group>
+						<field name="policy_id"
+						readonly="stage not in ('draft')" options="{'no_create': True}"/>
+					</group>
+					</page>
+
+					<page string="Notes">
+						<field name="notes" areadonly="stage not in ('draft')"/>
+					</page>
+				</notebook>
+				
+			</sheet>
+			<chatter reload_on_attachment="True"/>
+		</form>
+	</field>
+	</record>
+
+
+	<record id="loan_req_action" model="ir.actions.act_window">
+	<field name="name">Loan Request</field>
+	<field name="type">ir.actions.act_window</field>
+	<field name="res_model">loan.request</field>
+	<field name="view_mode">list,form,kanban</field>
+	<field name="domain">[('stage','=','draft')]</field>
+	<field name="help" type="html">
+	   <p class="oe_view_nocontent_create"> </p>
+	   <p></p>
+	</field>
+	</record>
+
+
+
+	<menuitem 
+		id="sub_req_menu_loan" 
+		parent="main_menu_loan" 
+		name="Loans" 
+		sequence="15"/>
+
+	<menuitem 
+		action="loan_req_action" 
+		id="menu_loan_req" 
+		parent="sub_req_menu_loan" 
+		name="Loan Requests" 
+		sequence="29"/>
+
+
+	<record id="loan_req_approve_action" model="ir.actions.act_window">
+	<field name="name">Loan Request To Approve</field>
+	<field name="type">ir.actions.act_window</field>
+	<field name="res_model">loan.request</field>
+	<field name="view_mode">list,form,kanban</field>
+	<field name="domain">[('stage','in',['waiting_depart','applied','waiting'])]</field>
+	<field name="help" type="html">
+		<p class="oe_view_nocontent_create"> </p>
+	</field>
+	</record>
+
+	<menuitem 
+		action="loan_req_approve_action" 
+		id="menu_loan_req_to_approve" 
+		parent="sub_req_menu_loan" 
+		name="Loan Requests To Approve" 
+		sequence="32" 
+		groups="hr_loan_manager_id,hr_loan_department_id,hr_loan_accountant_id"/>
+
+	  <record id="view_loan_req_tree_dis" model="ir.ui.view">
+	   <field name="name">loan.request.list</field>
+	   <field name="model">loan.request</field>
+	   <field name="priority">2</field>
+	   <field name="arch" type="xml">
+	    <list string="Loan Type" create="false">
+	     <field name="name"/>
+	     <field  name="applied_date"/>
+	     <field name="employee_id"/>
+	      <field name="loan_type_id"/>
+	       <field name="approve_date"/>
+	        <field name="department_id"/>
+
+	        <field name="company_id"/>
+	     	 <field name="user_id"/>
+	     	 <field name="principal_amount"/>
+	     	 <field name="is_interest_payable"/>
+
+	     	<field name="interest_mode"/>
+	     	 <field name="rate"/>
+	     	 <field name="total_loan"/>
+	     	 <field name="total_interest"/>
+	     	 
+	 	     
+	    </list>
+	   </field>
+        </record>
+        	
+	<record id="loan_req_disburse_action" model="ir.actions.act_window">
+	<field name="name">Loans To Disburse</field>
+	<field name="type">ir.actions.act_window</field>
+	<field name="res_model">loan.request</field>
+	<field name="view_mode">list,form,kanban</field>
+	<field name="domain">[('stage','=','approve')]</field>
+	<field name="help" type="html">
+		<p class="oe_view_nocontent_create"> </p>
+	</field>
+	</record>
+	<record id="disburse_loan_menu_display" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_loan_req_tree_dis"/>
+            <field name="act_window_id" ref="loan_req_disburse_action"/>
+        </record>
+
+    <record id="view_loan_req_tree_total" model="ir.ui.view">
+	   <field name="name">loan.request.list</field>
+	   <field name="model">loan.request</field>
+	   <field name="priority">2</field>
+	   <field name="arch" type="xml">
+	    <list string="Loan Type" create="false">
+	     <field name="name"/>
+	     <field  name="applied_date"/>
+	     <field name="employee_id"/>
+	      <field name="loan_type_id"/>
+	       <field name="approve_date"/>
+	        <field name="department_id"/>
+
+	        <field name="company_id"/>
+	     	 <field name="user_id"/>
+	     	 <field name="principal_amount"/>
+	     	 <field name="is_interest_payable"/>
+
+	     	<field name="interest_mode"/>
+	     	 <field name="rate"/>
+	     	 <field name="total_loan"/>
+	     	 <field name="total_interest"/>
+	     	 
+	 	     
+	    </list>
+	   </field>
+        </record> 
+
+
+<record id="loan_req_total_action" model="ir.actions.act_window">
+	  <field name="name">Disbursed Loans</field>
+	  <field name="type">ir.actions.act_window</field>
+	  <field name="res_model">loan.request</field>
+	  <field name="view_mode">list,form,kanban</field>
+	  <field name="domain">[('stage','=','disbursed')]</field>
+	  <field name="help" type="html">
+	   <p class="oe_view_nocontent_create"> </p>
+	   <p></p>
+	  </field>
+	</record>
+
+	
+  
+        <record id="total_loans" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_loan_req_tree_total"/>
+            <field name="act_window_id" ref="loan_req_total_action"/>
+        </record>     
+
+	<menuitem  
+		id="sub_req_menu_loan_account" 
+		parent="main_menu_loan" 
+		name="Accounting" 
+		sequence="17" 
+		groups="hr_loan_accountant_id"/>
+
+	<menuitem 
+		action="loan_req_disburse_action" 
+		id="menu_loan_req_to_disburse" 
+		parent="sub_req_menu_loan_account" 
+		name="Loans To Disburse" 
+		sequence="33"
+		groups="hr_loan_accountant_id"/>
+	<menuitem action="loan_req_total_action" id="menu_loan_req_total" parent="sub_req_menu_loan" name="Disbursed Loans" groups="hr_loan_accountant_id,hr_loan_manager_id,hr_loan_department_id" sequence="56"/>	
+</odoo>

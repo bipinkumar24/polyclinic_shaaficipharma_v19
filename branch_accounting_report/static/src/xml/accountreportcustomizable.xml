@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+         
+    <!-- <t t-name="account_reports.partner_ledger" t-inherit="account_reports.PartnerLedgerReportFilterExtraOptions" t-inherit-mode="extension" owl="1">
+        <xpath expr="." position="inside">
+            <div id="filter_branch" class="filter_branch">
+                <t t-call="branch_accounting_report.search_template_branch"/>
+            </div>
+        </xpath>
+    </t>
+
+    <t t-name="account_reports.adge_receivable" t-inherit="account_reports.AgedPartnerBalanceFilterExtraOptions" t-inherit-mode="extension" owl="1">
+        <xpath expr="." position="inside">
+            <div id="filter_branch" class="filter_branch">
+                <t t-call="branch_accounting_report.search_template_branch"/>
+            </div>
+        </xpath>
+    </t> -->
+    
+
+    <!-- <t t-name="branch_accounting_report.llll" t-inherit="account_reports.GenericTaxReportFiltersCustomizable" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[@id='filter_date']" position="after">
+            <t t-call="branch_accounting_report.search_template_branch"/>
+        </xpath>
+    </t> -->
+
+   
+</templates>
+
+

@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_loan_proof,access.loan.proof,model_loan_proof,,1,1,1,1
+access_loan_type,access.loan.type,model_loan_type,,1,1,1,1
+access_loan_policies,access.loan.policies,model_loan_policies,,1,1,1,1
+access_loan_request,access.loan.request,model_loan_request,,1,1,1,1
+access_loan_installment,access.loan.installment,model_loan_installment,,1,1,1,1
+access_reject_request,access.reject.request,model_reject_request,,1,1,1,1
+access_loan_image,access.loan.image,model_loan_image,,1,1,1,1
+access_loan_installment_wizard,access_loan_installment_wizard,model_loan_installment_wizard,base.group_user,1,1,1,1
+access_indemnity_wizard,access_indemnity_wizard,model_indemnity_wizard,base.group_user,1,1,1,1

@@ -1,0 +1,38 @@
+<?xml version="1.0"  encoding="utf-8"?>
+<odoo>
+
+
+    <record id="view_rejest_request_form" model="ir.ui.view">
+	   	<field name="name">reject.request.form</field>
+	   	<field name="model">reject.request</field>
+	   	<field name="priority">2</field>
+	   	<field name="arch" type="xml">
+	   	<form string="Reject Request Message">
+	    	<sheet>
+	    		<group>
+	    			<group>
+	    				<field name="message"  required = "True"/>
+	    			</group>
+	    		</group>
+	     	</sheet>
+ 			<footer>
+				<button string="Reject Request" name="update_employee_to_reject_request" class="oe_highlight" type="object"/>
+				or
+				<button string="Cancel" class="btn-default" special="cancel" />
+			</footer>
+		</form>
+		</field>
+	</record>
+
+		<record id="action_reject_request" model="ir.actions.act_window">
+			<field name="name">Reject Request</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">reject.request</field>
+			<field name="view_mode">form</field>
+			<field name="help" type="html">
+				<p class="oe_view_nocontent_create">
+					
+                </p>
+			</field>
+		</record>	
+</odoo>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_pos_session_closing" model="ir.actions.report">
+        <field name="name">Session Closing Report</field>
+        <field name="model">pos.session</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pos_cashier_bonus.report_session_closing</field>
+        <field name="report_file">pos_cashier_bonus.report_session_closing</field>
+        <field name="binding_model_id" ref="point_of_sale.model_pos_session"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_session_closing">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+                <div class="page" style="font-family:Helvetica,Arial,sans-serif;color:#1a1a1a;">
+
+                    <!-- Header -->
+                    <div style="background:#0a1f44;color:#ffffff;padding:18px 22px;">
+                        <div style="border-left:4px solid #c9a227;padding-left:14px;">
+                            <div style="font-size:20px;font-weight:bold;letter-spacing:.5px;">
+                                POS SESSION CLOSING REPORT
+                            </div>
+                            <div style="font-size:11px;color:#c9a227;margin-top:2px;">
+                                <span t-esc="docs[:1].company_id.name or docs.env.company.name"/>
+                                &#8226; <span t-esc="len(docs)"/> session(s)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sessions -->
+                    <table style="width:100%;margin-top:18px;font-size:9.5px;border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:#0a1f44;color:#ffffff;">
+                                <th style="padding:6px 7px;text-align:left;">Session</th>
+                                <th style="padding:6px 7px;text-align:left;">Register / Bank Journal</th>
+                                <th style="padding:6px 7px;text-align:left;">Cashier</th>
+                                <th style="padding:6px 7px;text-align:left;">Closed</th>
+                                <th style="padding:6px 7px;text-align:right;">Expected</th>
+                                <th style="padding:6px 7px;text-align:right;">Actual</th>
+                                <th style="padding:6px 7px;text-align:right;">Cash Difference Gain</th>
+                                <th style="padding:6px 7px;text-align:right;">Cash Difference Loss</th>
+                                <th style="padding:6px 7px;text-align:right;">Net Difference</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="docs" t-as="s"
+                                style="border-bottom:1px solid #e2e2e2;">
+                                <td style="padding:6px 7px;font-weight:bold;">
+                                    <span t-field="s.name"/>
+                                </td>
+                                <td style="padding:6px 7px;">
+                                    <span t-field="s.config_id.name"/>
+                                    <div style="font-size:7.5px;color:#8a8a8a;margin-top:1px;">
+                                        <span t-field="s.closing_journal_id.name"/>
+                                    </div>
+                                </td>
+                                <td style="padding:6px 7px;"><span t-field="s.user_id.name"/></td>
+                                <td style="padding:6px 7px;"><span t-field="s.stop_at"/></td>
+                                <td style="padding:6px 7px;text-align:right;">
+                                    <span t-field="s.cash_expected_amount"
+                                          t-options="{'widget':'monetary','display_currency':s.currency_id}"/>
+                                </td>
+                                <td style="padding:6px 7px;text-align:right;">
+                                    <span t-field="s.cash_actual_amount"
+                                          t-options="{'widget':'monetary','display_currency':s.currency_id}"/>
+                                </td>
+                                <td style="padding:6px 7px;text-align:right;">
+                                    <span t-field="s.cash_gain_amount"
+                                          t-options="{'widget':'monetary','display_currency':s.currency_id}"/>
+                                </td>
+                                <td style="padding:6px 7px;text-align:right;color:#9a3412;">
+                                    <span t-field="s.cash_loss_amount"
+                                          t-options="{'widget':'monetary','display_currency':s.currency_id}"/>
+                                </td>
+                                <td t-att-style="'padding:6px 7px;text-align:right;font-weight:bold;color:' +
+                                                 ('#9a3412' if s.cash_difference_amount &lt; 0 else
+                                                  ('#0a1f44' if s.cash_difference_amount &gt; 0 else '#5a5a5a'))">
+                                    <span t-field="s.cash_difference_amount"
+                                          t-options="{'widget':'monetary','display_currency':s.currency_id}"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f4f1e6;border-top:2px solid #c9a227;">
+                                <td colspan="4" style="padding:7px 7px;font-weight:bold;">TOTAL</td>
+                                <td style="padding:7px 7px;text-align:right;font-weight:bold;">
+                                    <span t-esc="sum(docs.mapped('cash_expected_amount'))"
+                                          t-options="{'widget':'monetary','display_currency':docs[:1].currency_id}"/>
+                                </td>
+                                <td style="padding:7px 7px;text-align:right;font-weight:bold;">
+                                    <span t-esc="sum(docs.mapped('cash_actual_amount'))"
+                                          t-options="{'widget':'monetary','display_currency':docs[:1].currency_id}"/>
+                                </td>
+                                <td style="padding:7px 7px;text-align:right;font-weight:bold;">
+                                    <span t-esc="sum(docs.mapped('cash_gain_amount'))"
+                                          t-options="{'widget':'monetary','display_currency':docs[:1].currency_id}"/>
+                                </td>
+                                <td style="padding:7px 7px;text-align:right;font-weight:bold;color:#9a3412;">
+                                    <span t-esc="sum(docs.mapped('cash_loss_amount'))"
+                                          t-options="{'widget':'monetary','display_currency':docs[:1].currency_id}"/>
+                                </td>
+                                <td style="padding:7px 7px;text-align:right;font-weight:bold;color:#0a1f44;">
+                                    <span t-esc="sum(docs.mapped('cash_difference_amount'))"
+                                          t-options="{'widget':'monetary','display_currency':docs[:1].currency_id}"/>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <p style="margin-top:14px;font-size:9px;color:#8a8a8a;">
+                        Expected is the total the system recorded across the
+                        counted payment methods; Actual is what the cashier
+                        recorded at closing. The difference is read from the
+                        posted journal entries &#8212; the session's own entry
+                        plus each "Combine ... POS payments" settlement entry
+                        &#8212; on the Cash Difference Gain and Loss accounts.
+                        Net Difference is gain less loss: a positive figure is
+                        an overage, a negative figure a shortage.
+                    </p>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- ================= SUMMARY (grouped by register) ================= -->
+    <record id="action_report_pos_session_closing_summary" model="ir.actions.report">
+        <field name="name">Session Closing Summary</field>
+        <field name="model">pos.session</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pos_cashier_bonus.report_session_closing_summary</field>
+        <field name="report_file">pos_cashier_bonus.report_session_closing_summary</field>
+        <field name="binding_model_id" ref="point_of_sale.model_pos_session"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_session_closing_summary">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+                <div class="page" style="font-family:Helvetica,Arial,sans-serif;color:#1a1a1a;">
+
+                    <!-- Header -->
+                    <div style="background:#0a1f44;color:#ffffff;padding:18px 22px;">
+                        <div style="border-left:4px solid #c9a227;padding-left:14px;">
+                            <div style="font-size:20px;font-weight:bold;letter-spacing:.5px;">
+                                POS SESSION CLOSING SUMMARY
+                            </div>
+                            <div style="font-size:11px;color:#c9a227;margin-top:2px;">
+                                <span t-esc="company.name"/>
+                                &#8226; <span t-esc="total_count"/> session(s)
+                                &#8226; <span t-esc="len(groups)"/> register(s)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Per-register roll-up -->
+                    <table style="width:100%;margin-top:18px;font-size:10px;border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:#0a1f44;color:#ffffff;">
+                                <th style="padding:7px 8px;text-align:left;">Register</th>
+                                <th style="padding:7px 8px;text-align:left;">Bank Journal</th>
+                                <th style="padding:7px 8px;text-align:right;">Sessions</th>
+                                <th style="padding:7px 8px;text-align:right;">Cash Difference Gain</th>
+                                <th style="padding:7px 8px;text-align:right;">Cash Difference Loss</th>
+                                <th style="padding:7px 8px;text-align:right;">Net Difference</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="groups" t-as="g"
+                                style="border-bottom:1px solid #e2e2e2;">
+                                <td style="padding:7px 8px;font-weight:bold;">
+                                    <span t-esc="g['register']"/>
+                                </td>
+                                <td style="padding:7px 8px;color:#5a5a5a;">
+                                    <span t-esc="g['journal']"/>
+                                </td>
+                                <td style="padding:7px 8px;text-align:right;">
+                                    <span t-esc="g['count']"/>
+                                </td>
+                                <td style="padding:7px 8px;text-align:right;">
+                                    <span t-esc="g['gain']"
+                                          t-options="{'widget':'monetary','display_currency':currency}"/>
+                                </td>
+                                <td style="padding:7px 8px;text-align:right;color:#9a3412;">
+                                    <span t-esc="g['loss']"
+                                          t-options="{'widget':'monetary','display_currency':currency}"/>
+                                </td>
+                                <td t-att-style="'padding:7px 8px;text-align:right;font-weight:bold;color:' +
+                                                 ('#9a3412' if g['difference'] &lt; 0 else
+                                                  ('#0a1f44' if g['difference'] &gt; 0 else '#5a5a5a'))">
+                                    <span t-esc="g['difference']"
+                                          t-options="{'widget':'monetary','display_currency':currency}"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="background:#f4f1e6;border-top:2px solid #c9a227;">
+                                <td colspan="2" style="padding:8px;font-weight:bold;">TOTAL</td>
+                                <td style="padding:8px;text-align:right;font-weight:bold;">
+                                    <span t-esc="total_count"/>
+                                </td>
+                                <td style="padding:8px;text-align:right;font-weight:bold;">
+                                    <span t-esc="total_gain"
+                                          t-options="{'widget':'monetary','display_currency':currency}"/>
+                                </td>
+                                <td style="padding:8px;text-align:right;font-weight:bold;color:#9a3412;">
+                                    <span t-esc="total_loss"
+                                          t-options="{'widget':'monetary','display_currency':currency}"/>
+                                </td>
+                                <td style="padding:8px;text-align:right;font-weight:bold;color:#0a1f44;">
+                                    <span t-esc="total_difference"
+                                          t-options="{'widget':'monetary','display_currency':currency}"/>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <p style="margin-top:14px;font-size:9px;color:#8a8a8a;">
+                        Each register's figures roll up the closing differences
+                        of its sessions, read from the posted journal entries
+                        &#8212; the lines on the bank journal's Cash Difference
+                        Gain and Loss accounts. Net Difference is gain less loss:
+                        positive is an overage, negative a shortage. For the
+                        per-session detail, use the Session Closing Report.
+                    </p>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

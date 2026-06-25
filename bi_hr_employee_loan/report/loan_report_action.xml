@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="loan_installment_report_wizard" model="ir.actions.report">
+            <field name="name">Loan Installment Report</field>
+            <field name="model">loan.installment.wizard</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">bi_hr_employee_loan.loan_installment_templete</field>
+            <field name="report_file">bi_hr_employee_loan.loan_installment_templete</field>
+            <field name="binding_model_id" ref="bi_hr_employee_loan.model_loan_installment_wizard"/>
+            <field name="binding_type">report</field>
+        </record>
+        <record id="indemnity_report_wizard" model="ir.actions.report">
+            <field name="name">Indemnity Report</field>
+            <field name="model">indemnity.wizard</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">bi_hr_employee_loan.indemnity_report_templete</field>
+            <field name="report_file">bi_hr_employee_loan.indemnity_report_templete</field>
+            <field name="binding_model_id" ref="bi_hr_employee_loan.model_indemnity_wizard"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

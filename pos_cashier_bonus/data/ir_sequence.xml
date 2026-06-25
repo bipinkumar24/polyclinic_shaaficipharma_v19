@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_pos_cashier_bonus" model="ir.sequence">
+            <field name="name">POS Cashier Bonus</field>
+            <field name="code">pos.cashier.bonus</field>
+            <field name="prefix">BONUS/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

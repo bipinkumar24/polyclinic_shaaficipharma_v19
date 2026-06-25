@@ -1,0 +1,131 @@
+<?xml version="1.0"  encoding="utf-8"?>
+<odoo>
+
+	<record id="view_loan_installment_tree" model="ir.ui.view">
+	   <field name="name">loan.installment.list</field>
+	   <field name="model">loan.installment</field>
+	   <field name="priority">2</field>
+	   <field name="arch" type="xml">
+	    <list string="Loan Installment" decoration-success="state == 'paid'">
+	     <!-- <field name="installment_number" string="Number"/> -->
+	     <field name="loan_id"/>
+	     <field  name="date_from"/>
+	     <field  name="date_to"/>
+
+	     <field  name="principal_amount" sum="Total"/>
+	     <field  name="interest_amount" sum="Total"/>
+	     
+	     <field  name="emi_installment" sum="Total"/>
+	     <field name="loan_amount_balance"/>
+	     <field  name="state"/>
+
+	     <field name="currency_id"/>
+			<field name="skip"/>
+	     
+			     
+	    </list>
+	   </field>
+        </record>
+        
+
+        <record id="view_loan_installment_form" model="ir.ui.view">
+	   <field name="name">loan.installment.form</field>
+	   <field name="model">loan.installment</field>
+	   <field name="priority">2</field>
+	   <field name="arch" type="xml">
+	    <form string="Loan Installment">
+	    	 
+
+	    	<header>
+	    		<field name="state" widget="statusbar" statusbar_visible="unpaid,approve,paid"/>
+	    		<button name="approve_payment" string="Approve Payment"
+                    	type="object" invisible="state not in ('unpaid')" groups="bi_hr_employee_loan.hr_loan_accountant_id,bi_hr_employee_loan.loan_employee"/>
+                <button name="book_interest" string="Book Interest" groups="bi_hr_employee_loan.hr_loan_accountant_id" 
+                	type="object" 
+                	invisible="installment_booked or not payable_interest or state not in ('unpaid','approve')"/>
+                
+               	 <button name="action_payment" string="Pay"
+                	type="object"
+                	invisible="state not in ('approve')"
+                	groups="bi_hr_employee_loan.hr_loan_accountant_id,bi_hr_employee_loan.loan_employee"/>
+                <button name="reset_draft" string="Reset To Draft"
+                	type="object" invisible="state not in ('approve')" />
+	    	</header>
+	    	
+	    	<sheet>
+	    		<h2><field name="name"/></h2>
+	    		<group>
+	    			<group>
+	    				<field name="loan_id" />
+	    				<field name="loan_type_id"/>
+						<field name="skip"/>
+	    			</group>
+	    			<group>
+	    				<field name="employee_id"/>
+	    			</group>
+	    		</group>
+	    		<notebook>
+	    			<page string="Details">
+	    				<group>
+	    					<group>
+	    						<field name="installment_number"
+	    						readonly="state not in ('unpaid')"/>
+	    						<field name="interest_amount" 
+	    						readonly="state not in ('unpaid')"
+	    						invisible="not payable_interest"/>
+	    						<field name="currency_id" 
+	    						readonly="state not in ('unpaid')"/>
+	    						<field name="interest_acouunting_id" 
+	    						invisible="not payable_interest"/>
+	    						<field name="payable_interest" invisible='1'/>
+
+	    					</group>
+	    					<group>
+
+	    						<field name="installment_booked" invisible="1"/>
+	    						<field name="date_from" readonly="state not in ('unpaid')" />
+	    						<field name="date_to" readonly="state not in ('unpaid')" />
+	    						<field name="principal_amount" readonly="state not in ('unpaid')" />
+	    						<field name="emi_installment" readonly="state not in ('unpaid')" />
+	    						<field name="accounting_entry_id"/>
+	    					</group>
+	    				</group>
+	    			</page>
+	    		</notebook>
+	     </sheet>
+	 </form>
+	</field>
+</record>
+
+	<record id="view_loan_installment_search_form" model="ir.ui.view">
+		<field name="name">loan.installment.search.form</field>
+		<field name="model">loan.installment</field>
+		<field name="arch" type="xml">
+			<search string="Loan Installment">
+				<field name="employee_id"/>
+				<field name="loan_id"/>
+                <filter string="Employee" name="employee" domain="[]" context="{'group_by': 'employee_id'}"/>
+			</search>
+		</field>
+	</record>
+	  
+
+  	<record id="loan_req_installment_action" model="ir.actions.act_window">
+	  <field name="name">Loan Installments Details</field>
+	  <field name="type">ir.actions.act_window</field>
+	  <field name="res_model">loan.installment</field>
+	  <field name="view_mode">list,form,kanban</field>
+	  <field name="domain">[('state','not in',['confirm_postpone','approval_department'])]</field>
+	  <field name="search_view_id" ref="view_loan_installment_search_form"/>
+	  <field name="context">{'search_default_group_by_employee_id': 1}</field>
+	  <field name="help" type="html">
+	  	<p class="oe_view_nocontent_create"> </p>
+	  	<p></p>
+	  </field>
+	</record>
+
+	
+	<menuitem action="loan_req_installment_action" id="menu_loan_installment" parent="sub_req_menu_loan" name="Loan Installments" sequence="55"/>
+
+
+</odoo>

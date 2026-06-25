@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="advance_salary_report_wizard" model="ir.actions.report">
+            <field name="name">Advance Salary Report</field>
+            <field name="model">advance.salary.wizard</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">bi_employee_advance_salary.advance_salary_templete</field>
+            <field name="report_file">bi_employee_advance_salary.advance_salary_templete</field>
+            <field name="binding_model_id" ref="bi_employee_advance_salary.model_advance_salary_wizard"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

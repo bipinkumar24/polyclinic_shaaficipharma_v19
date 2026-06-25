@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="advance_salary_templete">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="text-center">
+                            <h4 style="font-weight:600;">Advance Salary</h4>
+                        </div>
+                        <div class="text-center">
+                            <h6 style="font-weight:600;">Date from <span t-esc="docs.date_from"/> To <span t-esc="docs.date_to"/></h6>
+                        </div>
+                        <t t-foreach="data" t-as="employee">
+                            <div class="text-center">
+                                <h4 style="font-weight:600;"><span t-esc="employee.get('employee_id').name"/></h4>
+                            </div>
+                            <table class="table table-bordered mt32" style="font-size: 12px;">
+                                <tr>
+                                    <th>Department</th>
+                                    <th>Request Date</th>
+                                    <th>Request Amount</th>
+                                    <th>Confirm Date</th>
+                                    <th>Approve Date(Department)</th>
+                                    <th>Approve Date(HR)</th>
+                                    <th>Approve Date(Director)</th>
+                                    <th>Paid Date</th>
+                                    <th>Paid Amount</th>
+                                </tr>
+                                <tbody>
+                                    <t t-foreach="employee.get('lines')" t-as="line">
+                                        <tr>
+                                            <td class="text-left"> 
+                                                 <span t-esc="line.department_id.name"/>
+                                            </td>
+                                            <td class="text-left"> 
+                                                 <span t-esc="line.req_date" t-options='{"widget": "date"}'/>
+                                            </td>
+                                            <td class="text-left"> 
+                                                 <span t-esc="line.req_amount"/>
+                                            </td>
+                                            <td class="text-left"> 
+                                                 <span t-esc="line.confirm_date" t-options='{"widget": "date"}'/>
+                                            </td>
+                                            <td class="text-left"> 
+                                                 <span t-esc="line.approve_date_department" t-options='{"widget": "date"}'/>
+                                            </td>
+                                            <td class="text-left"> 
+                                                 <span t-esc="line.approve_date_hr" t-options='{"widget": "date"}'/>
+                                            </td>
+                                            <td class="text-left"> 
+                                                 <span t-esc="line.approve_date_director" t-options='{"widget": "date"}'/>
+                                            </td>
+                                            <td class="text-left"> 
+                                                 <span t-esc="line.paid_date"/>
+                                            </td>
+                                            <td class="text-left"> 
+                                                 <span t-esc="line.paid_amount"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <th class="text-center" colspan="2">Total</th>
+                                        <th class="text-center"><span style="padding-left: 10px;" t-esc="sum(employee.get('lines').mapped('req_amount'))" t-options='{"widget": "float", "precision": 2}'/></th>
+                                        <th class="text-center" colspan="5"></th>
+                                        <th class="text-center"><span style="padding-left: 10px;" t-esc="sum(employee.get('lines').mapped('paid_amount'))" t-options='{"widget": "float", "precision": 2}'/></th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

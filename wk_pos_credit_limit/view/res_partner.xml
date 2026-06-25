@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : <https://store.webkul.com/license.html/> -->
+<odoo>
+    <record id="res_partner_inherit_form" model="ir.ui.view">
+        <field name="name">res_partner_views.form.view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <page name="internal_notes" position="after">
+                <page name="wk_pos_credit_limit" string="POS Customer Credit Limit">
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box" >
+                            <div class="o_setting_left_pane">
+                                <field name="credit_hold"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="credit_hold"/>
+                                <div class="text-muted">
+                                    Enable to hold the customer's Credit.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box" invisible="credit_hold" >
+                            <div class="o_setting_left_pane">
+                                <field name="credit_hold_if_order_discount" />
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="credit_hold_if_order_discount"/>
+                                <div class="text-muted">
+                                    Enable to hold Customer's Credit if any discount is applicable or applied on products.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt16 o_settings_container" invisible="credit_hold">
+                        <div class="col-12 col-lg-6 o_setting_box" >
+                            <div class="o_setting_left_pane">
+                                <field name="block_credit_after_limit" />
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="block_credit_after_limit"/>
+                                <div class="text-muted">
+                                    Enable to hold Customer's credit when it exceeds the given Credit Amount.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box" invisible="credit_hold or not block_credit_after_limit"> 
+                            <div class="o_setting_right_pane">
+                                <label for="wk_credit_limit"/>
+                                <div class="text-muted">
+                                    Set credit Limit of a Customer
+                                </div>
+                                <field name="wk_credit_limit" />
+                            </div>
+                        </div>
+                    </div>
+                </page>
+            </page>
+        </field>
+    </record>
+</odoo>

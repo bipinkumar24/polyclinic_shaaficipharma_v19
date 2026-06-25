@@ -1,0 +1,81 @@
+<?xml version="1.0"  encoding="utf-8"?>
+<odoo>
+
+	<record id="view_loan_type_tree" model="ir.ui.view">
+	   <field name="name">loan.type.list</field>
+	   <field name="model">loan.type</field>
+	   <field name="priority">2</field>
+	   <field name="arch" type="xml">
+	    <list string="Loan Type">
+	     <field name="name"/>
+	     <field  name="code"/>
+	     <field name="is_interest_payable"/>
+	     <field name="rate"/>
+	      <field name="interest_mode"/>
+	        <field name="disburse_method"/>
+	        <field name="company_id"/>
+	    </list>
+	   </field>
+        </record>
+        
+
+        <record id="view_loan_type_form" model="ir.ui.view">
+	   <field name="name">loan.type.form</field>
+	   <field name="model">loan.type</field>
+	   <field name="priority">2</field>
+	   <field name="arch" type="xml">
+	    <form string="Loan Type">
+	    	 
+	    	
+	    	<sheet>
+	    		<h2>
+	    			Name
+	    			<field name="name"/>
+	    			<br/>
+	    			Code
+	    			<field name="code"/>
+
+	    		</h2>
+
+	    		<group string="General">
+	    			<group >
+	    				<field name="is_interest_payable"/>
+	    				<field name="hide_interest" invisible='1'/>
+	    				<field name="interest_mode" 
+	    				invisible="hide_interest"/>
+	    				<field name="rate" invisible="hide_interest"/>
+	    				<!-- <field name="interest_account" attrs="{'invisible':[('hide_interest','=',True)]}"/> -->
+
+	    			</group>
+	    			<group>
+	        			<field name="disburse_method"/>
+	        			<field name="company_id"/>
+	    			</group>
+	    		</group>
+	    		<group string="Loan Proofs">
+	    			<field name="loan_proof_ids"/>
+	    			<field name="employee_category_ids"/>
+	    			<field name="employee_ids"/>
+
+	    		</group>
+	     </sheet>
+	 </form>
+	</field>
+</record>
+	  <record id="loan_type_action" model="ir.actions.act_window">
+	  <field name="name">Loan Type</field>
+	  <field name="type">ir.actions.act_window</field>
+	  <field name="res_model">loan.type</field>
+	  <field name="view_mode">list,form,kanban</field>
+	  <field name="help" type="html">
+	   <p class="oe_view_nocontent_create"> </p>
+	   <p></p>
+	  </field>
+	</record>
+
+
+	
+	<menuitem action="loan_type_action" id="menu_loan_type" parent="config_menu_loan" name="Loan Type" sequence="29"/>
+
+
+</odoo>

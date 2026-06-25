@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<template id="report_advance_salary_template">
+			<t t-call="web.external_layout">
+				<t t-set="doc" t-value="doc.with_context({})" />
+				<div class="page">
+                    <br/><br/><br/><br/>
+                    
+					<h2 class="text-center"><b>Advance Salary</b></h2>
+
+                    <h2> <span t-field="doc.employee_id.name" /> - <span t-field="doc.state"/> </h2>
+                    <br/>
+                    <h2>General Information</h2>
+
+					<table style="border-collapse: collapse;width: 100%;" class="table table-condensed">
+                        <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;">
+                            <td><strong >Request Date</strong> </td>
+                            <td><span t-field="doc.req_date" /></td>
+                            <td><strong >Department</strong> </td>
+                            <td><span t-field="doc.department_id.name" /></td>
+                        </tr>
+                        <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;height:50%;">
+                            <td><strong >Department Manager</strong> </td>
+                            <td><span t-field="doc.department_manager_id.name"/></td>
+                            <td><strong >Job Title</strong> </td>
+                            <td><span t-field="doc.job_id.name"/></td>
+                        </tr>                   
+                        <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;">
+                        	<td><strong >Requested User</strong> </td>
+                            <td><span t-field="doc.req_user_id.name" /></td>
+                            <td><strong >Requested Amount</strong> </td>
+                            <td><span t-field="doc.req_amount" /></td>  
+                        </tr>
+                    </table>
+                    <br/>
+
+                    <h2>Dates</h2>
+                    
+                	<table style="border-collapse: collapse;width: 100%;" class="table table-condensed">
+                        <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;height:50%;">
+                            <td><strong >Confirmed Date</strong> </td>
+                            <td><span t-field="doc.confirm_date"/></td>
+                            <td><strong >Confirmed By</strong> </td>
+                            <td><span t-field="doc.confirm_by_id.name"/></td> 
+                        </tr>
+                        <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;">
+                        	<td><strong >Approve Date(Department)</strong> </td>
+                            <td><span t-field="doc.approve_date_department" /></td>
+                            <td><strong >Department Manager</strong> </td>
+                            <td><span t-field="doc.depet_manager_approve_by_id.name" />
+                        </td>                       
+                        </tr>
+                        <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;">
+                            <td><strong >Approve Date(HR)</strong> </td>
+                            <td><span t-field="doc.approve_date_hr" /></td>
+                            <td><strong >HR Manager</strong> </td>
+                            <td><span t-field="doc.hr_manager_id.name" /></td>
+                        </tr>
+                        <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;">
+                            <td><strong >Approve Date(Director)</strong> </td>
+                            <td><span t-field="doc.approve_date_director" /></td>
+                            <td><strong >Director</strong> </td>
+                            <td><span t-field="doc.director_id.name" /></td>
+                        </tr>
+                        <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;">
+                        	<td><strong>Paid Date</strong> </td>
+                            <td><span t-field="doc.paid_date" /></td>
+                            <td><strong >Paid By</strong> </td>
+                            <td><span t-field="doc.paid_by_id.name" /></td>
+                        </tr>
+                    </table>
+                    <br/>
+                </div>
+
+                <div class="page">
+                    <div style="page-break-after:always;"/>
+
+    				<h2>Accounting Information</h2>
+
+    				<table style="border-collapse: collapse;width: 100%;" class="table table-condensed">
+                        <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;height:50%;">
+                            <td><strong >Employee Account</strong> </td>
+                            <td><span t-field="doc.partner_id.name"/></td>
+                            <td><strong >Payment Method</strong> </td>
+                            <td><span t-field="doc.payment_method_id.name"/></td>
+                        </tr>                    
+                        <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;">
+                        	<td><strong >Payment</strong> </td>
+                            <td><span t-field="doc.payment_id.name" /></td>
+                            <td><strong >Paid Amount</strong> </td>
+                            <td><span t-field="doc.paid_amount" />
+                        </td>
+                        </tr>                    
+                    </table>
+                    <br/>
+
+                    <br/><br/><br/><br/><br/>
+                    <h5><b>Requester signature:___________________ </b>    </h5>
+                    <br/>
+                    <h5><b>Approver signature:____________________</b></h5>
+
+				</div>
+			</t>
+		</template>
+
+		<template id="report_advance_salary">
+			<t t-call="web.html_container">
+				<t t-foreach="docs" t-as="doc">
+					<t t-call="bi_employee_advance_salary.report_advance_salary_template"  />
+				</t>
+			</t>
+		</template>
+	</data>
+</odoo>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_pos_cashier_bonus" model="ir.actions.report">
+        <field name="name">Cashier Bonus Sheet</field>
+        <field name="model">pos.cashier.bonus</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pos_cashier_bonus.report_bonus_sheet</field>
+        <field name="report_file">pos_cashier_bonus.report_bonus_sheet</field>
+        <field name="binding_model_id" ref="model_pos_cashier_bonus"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_bonus_sheet">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+                    <div class="page" style="font-family:Helvetica,Arial,sans-serif;color:#1a1a1a;">
+
+                        <!-- Header -->
+                        <div style="background:#0a1f44;color:#ffffff;padding:18px 22px;">
+                            <div style="border-left:4px solid #c9a227;padding-left:14px;">
+                                <div style="font-size:20px;font-weight:bold;letter-spacing:.5px;">
+                                    CASHIER SALES BONUS SHEET
+                                </div>
+                                <div style="font-size:11px;color:#c9a227;margin-top:2px;">
+                                    <span t-field="o.company_id.name"/> &#8226;
+                                    <span t-field="o.name"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Parameters -->
+                        <table style="width:100%;margin-top:16px;font-size:11px;border-collapse:collapse;">
+                            <tr>
+                                <td style="width:25%;color:#5a5a5a;">Period</td>
+                                <td style="width:25%;font-weight:bold;">
+                                    <span t-field="o.date_from"/> &#8594; <span t-field="o.date_to"/>
+                                </td>
+                                <td style="width:25%;color:#5a5a5a;">Monthly Target / Cashier</td>
+                                <td style="width:25%;font-weight:bold;">
+                                    <span t-field="o.target_per_cashier"
+                                          t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="color:#5a5a5a;">Minimum Achievement</td>
+                                <td style="font-weight:bold;"><span t-esc="'%.0f' % o.threshold_pct"/>%</td>
+                                <td style="color:#5a5a5a;">Bonus at 100%</td>
+                                <td style="font-weight:bold;">
+                                    <span t-field="o.bonus_full"
+                                          t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="color:#5a5a5a;">Allowance Pool</td>
+                                <td style="font-weight:bold;">
+                                    <span t-field="o.total_pool"
+                                          t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                </td>
+                                <td style="color:#5a5a5a;">Sales Basis</td>
+                                <td style="font-weight:bold;"><span t-field="o.sales_basis"/></td>
+                            </tr>
+                            <tr>
+                                <td style="color:#5a5a5a;">Top Order-Volume Bonus</td>
+                                <td style="font-weight:bold;">
+                                    <span t-field="o.volume_bonus_amount"
+                                          t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                </td>
+                                <td style="color:#5a5a5a;">Cash Sales</td>
+                                <td style="font-weight:bold;">
+                                    <span t-field="o.total_cash_sales"
+                                          t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="color:#5a5a5a;">Cash Difference Gain</td>
+                                <td style="font-weight:bold;">
+                                    <span t-field="o.total_cash_gain"
+                                          t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                </td>
+                                <td style="color:#5a5a5a;">Cash Difference Loss</td>
+                                <td style="font-weight:bold;">
+                                    <span t-field="o.total_cash_loss"
+                                          t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Lines -->
+                        <table style="width:100%;margin-top:18px;font-size:10px;border-collapse:collapse;">
+                            <thead>
+                                <tr style="background:#0a1f44;color:#ffffff;">
+                                    <th style="padding:6px 7px;text-align:left;">Cashier</th>
+                                    <th style="padding:6px 7px;text-align:right;">Orders</th>
+                                    <th style="padding:6px 7px;text-align:right;">Achiev.</th>
+                                    <th style="padding:6px 7px;text-align:right;">Sales Bonus</th>
+                                    <th style="padding:6px 7px;text-align:right;">Volume Bonus</th>
+                                    <th style="padding:6px 7px;text-align:right;">Cash Diff.</th>
+                                    <th style="padding:6px 7px;text-align:right;">Forfeit</th>
+                                    <th style="padding:6px 7px;text-align:right;">Net Payable</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids" t-as="line"
+                                    style="border-bottom:1px solid #e2e2e2;">
+                                    <td style="padding:6px 7px;font-weight:bold;">
+                                        <span t-field="line.cashier_name"/>
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-field="line.order_count"/>
+                                        <span t-if="line.is_top_volume"
+                                              style="color:#c9a227;font-weight:bold;"> &#9733;</span>
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-esc="'%.1f' % line.achievement_pct"/>%
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-field="line.sales_bonus"
+                                              t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-field="line.volume_bonus"
+                                              t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-field="line.cash_difference"
+                                              t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                        (<span t-esc="'%.2f' % line.cash_diff_pct"/>%)
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-esc="'%.0f' % line.cash_penalty_pct"/>%
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;font-weight:bold;color:#0a1f44;">
+                                        <span t-field="line.bonus_amount"
+                                              t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="background:#f4f1e6;border-top:2px solid #c9a227;">
+                                    <td style="padding:7px 7px;font-weight:bold;">TOTAL</td>
+                                    <td/><td/>
+                                    <td style="padding:7px 7px;text-align:right;font-weight:bold;">
+                                        <span t-field="o.total_sales_bonus"
+                                              t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                    </td>
+                                    <td style="padding:7px 7px;text-align:right;font-weight:bold;">
+                                        <span t-field="o.total_volume_bonus"
+                                              t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                    </td>
+                                    <td style="padding:7px 7px;text-align:right;font-weight:bold;">
+                                        <span t-field="o.total_cash_difference"
+                                              t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                    </td>
+                                    <td/>
+                                    <td style="padding:7px 7px;text-align:right;font-weight:bold;color:#0a1f44;">
+                                        <span t-field="o.total_bonus"
+                                              t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <p style="margin-top:8px;font-size:9px;color:#5a5a5a;">
+                            Pool balance:
+                            <span t-field="o.pool_balance"
+                                  t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                            &#8226; Total POS sales:
+                            <span t-field="o.total_sales"
+                                  t-options="{'widget':'monetary','display_currency':o.currency_id}"/>
+                        </p>
+
+                        <p t-if="o.cash_penalty_applies" style="margin-top:8px;font-size:10px;color:#9a3412;">
+                            <strong>Cash-control penalty:</strong>
+                            for one or more cashiers the total cash difference
+                            exceeded the allowed limit. The Cash Diff. column is
+                            cash gain plus cash loss as absolute amounts; the
+                            Net Payable column is stated after the forfeit.
+                        </p>
+
+                        <p t-if="o.move_id" style="margin-top:12px;font-size:10px;color:#0a1f44;">
+                            <strong>Posted to ledger:</strong>
+                            entry <span t-field="o.move_id.name"/> &#8226;
+                            debit <span t-field="o.expense_account_id.display_name"/>,
+                            credit <span t-field="o.payable_account_id.display_name"/>.
+                        </p>
+
+                        <p style="margin-top:14px;font-size:9px;color:#8a8a8a;">
+                            Sales bonus is paid only at or above the minimum
+                            achievement threshold. The order-volume bonus (&#9733;)
+                            goes to the cashier with the most POS orders among
+                            those who reached the threshold. The cash-control
+                            penalty is assessed per cashier on the total cash
+                            difference — cash gain plus cash loss taken as
+                            absolute amounts — as a percentage of that cashier's
+                            cash sales.
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

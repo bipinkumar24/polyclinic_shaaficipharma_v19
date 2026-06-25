@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add Phone column to the Partner Ledger report -->
+    <record id="partner_ledger_report_phone_column" model="account.report.column">
+        <field name="name">Phone</field>
+        <field name="expression_label">partner_phone</field>
+        <field name="figure_type">string</field>
+        <field name="sequence">15</field>
+        <field name="report_id" ref="account_reports.partner_ledger_report"/>
+    </record>
+</odoo>

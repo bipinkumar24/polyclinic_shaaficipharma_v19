@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="dynamic_discount.ControlButtons" t-inherit="point_of_sale.ControlButtons" t-inherit-mode="extension">
+        <xpath expr="//InternalNoteButton" position="after">
+            <button t-if="pos.config.enable_discount and !this.pos.user?.is_user_pos_discount"
+                class="js_discount"
+                t-att-class="buttonClass"
+                t-on-click="() => this.clickGlobalDiscount()">
+                <i class="fa fa-tag me-1"/>Global Discount
+            </button>
+        </xpath>
+    </t>
+</templates>

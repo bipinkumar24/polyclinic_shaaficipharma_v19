@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="indemnity_report_templete">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="text-center">
+                            <h4 style="font-weight:600;">Indemnity Details</h4>
+                        </div>
+                        <div class="text-center">
+                            <h6 style="font-weight:600;">Date from <span t-esc="docs.date_from"/> To <span t-esc="docs.date_to"/></h6>
+                        </div>
+                        <br/>
+                        <t t-foreach="data" t-as="employee">
+                            <div class="text-center">
+                                <h4 style="font-weight:600;"><span t-esc="employee.get('employee_id').name"/></h4>
+                            </div>
+                            <table class="table table-bordered mt32" style="font-size: 12px;">
+                                <tr>
+                                    <th>Number</th>
+                                    <th>Acoount</th>
+                                    <th>Amount</th>
+                                </tr>
+                                <tbody>
+                                    <t t-foreach="employee.get('lines')" t-as="line">
+                                        <tr>
+                                            <td class="text-left"> 
+                                                 <span t-esc="line.slip_id.name"/>
+                                            </td>
+                                            <td class="text-left"> 
+                                                 <span t-esc="line.salary_rule_id.account_credit.code +line.salary_rule_id.account_credit.name"/>
+                                            </td>
+                                            <td class="text-left"> 
+                                                 <span t-esc="line.total"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <th class="text-center" colspan="2">Total</th>
+                                        <th ><span  t-esc="sum(employee.get('lines').mapped('total'))" t-options='{"widget": "float", "precision": 2}'/></th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

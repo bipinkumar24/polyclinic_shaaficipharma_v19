@@ -1,0 +1,38 @@
+<?xml version="1.0"  encoding="utf-8"?>
+<odoo>
+    <record id="advance_salary_wizard_view_form" model="ir.ui.view">
+	   	<field name="name">advance.salary.wizard.form</field>
+	   	<field name="model">advance.salary.wizard</field>
+	   	<field name="priority">2</field>
+	   	<field name="arch" type="xml">
+		   	<form>
+	            <sheet>
+	                <group>
+	                    <group>
+	                        <field name="date_from" required="1"/>
+	                    </group>
+	                    <group>
+	                        <field name="date_to" required="1"/>
+	                    </group>
+	                </group>
+	                <group>
+	                	<field name="employee_ids" widget="many2many_tags"/>
+	                </group>
+	            </sheet>
+	            <footer>
+	            	<button string="View" name="button_generate_partner_ladger" type="object" class="btn-primary"/>
+	                <!-- <button string="Print" name="button_generate_report" type="object" class="btn-primary"/> -->
+	                <button string="Cancel" class="btn-secondary" special="cancel" />
+	            </footer>
+	        </form>
+		</field>
+	</record>
+	<record id="action_advance_salary_wizard" model="ir.actions.act_window">
+        <field name="name">Advance Salary wizard</field>
+        <field name="res_model">advance.salary.wizard</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+	<menuitem  id="advance_salary_report" parent="bi_employee_advance_salary.admin_tab_id" name="Advance Salary Report" sequence="100" action="action_advance_salary_wizard" groups="bi_hr_employee_loan.action_show_report_admin_id"/>
+</odoo>

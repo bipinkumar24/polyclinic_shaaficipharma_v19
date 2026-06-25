@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<template id="report_loan_template">
+			<t t-call="web.external_layout">
+				<t t-set="doc" t-value="doc.with_context({})" />
+				<div class="page">
+
+					<br/>
+					<br/>
+					<br/>
+					<br/>
+					<br/>
+					<br/>
+					<h2>Loan No : <span t-field="doc.name"/></h2>
+					<table style="border-collapse: collapse;width: 100%;" class="table table-condensed">
+                    <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;height:50%;">
+                        <td><strong >Name : </strong> </td>
+                        <td><span t-field="doc.name"/></td>
+                        <td><strong >Date Applied : </strong> </td>
+                        <td><span t-field="doc.applied_date"/></td>
+                        
+                    </tr>
+                    
+                    <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;">
+                    	<td><strong >Department : </strong> </td>
+                        <td><span t-field="doc.department_id.name" /></td>
+
+                        <td><strong >Date Approved : </strong> </td>
+                        <td><span t-field="doc.approve_date" /></td>
+                        
+                        
+                        
+                    </tr>
+                    <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;">
+
+                    	<td><strong >Principal Amount : </strong> </td>
+                        <td><span t-field="doc.principal_amount" /></td>
+                        <t t-if="doc.disbursement_date">
+                    		<td><strong >Disbursement Date: </strong> </td>
+                        	<td><span t-field="doc.disbursement_date"/></td>
+                        </t>      
+
+                    </tr>
+
+                    <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;">
+
+                    	<td><strong >Interest Rate : </strong> </td>
+                        <td><span t-field="doc.rate" /></td>
+   						
+   						<td><strong >Duration : </strong> </td>
+                        <td><span t-field="doc.duration_months" /></td>
+                    </tr>
+
+                    <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;">
+
+                    	<td><strong >Interest Mode : </strong> </td>
+                        <td><span t-field="doc.interest_mode" /></td>
+                    	<td><strong >Loan Type : </strong> </td>
+                        <td><span t-field="doc.loan_type_id.name" /></td>
+                    </tr>
+                    
+                    <tr style="padding: 8px;text-align: left;border-top: 1px solid #ddd;">
+
+                    	<td><strong >Payment Type: </strong> </td>
+                        <td><span t-field="doc.loan_type_id.disburse_method" /></td>
+                    </tr>
+                </table>
+
+                <br/>
+
+
+
+                
+
+            	<table class="table table-condensed">
+							<thead style="border: 5px solid #ddd;">
+								<tr class="text-center">
+									<th>Interest Amount</th>
+									<th>Total</th>
+									<th>Amount Received</th>
+									<th>Amount Due</th>
+									
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="text-center">
+
+										<td>
+											<span t-esc="doc.total_interest" />
+										</td>
+										<td>
+											<span t-esc="doc.total_loan" />
+										</td>
+										<td>
+											<span t-esc="doc.received_from_employee" />
+										</td>
+										<td >
+											<span t-esc="doc.balance_on_loan" />
+										</td>
+										
+								</tr>
+							</tbody>
+						</table>
+                
+
+                <p style="page-break-before:always;"> </p>
+
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+				<h2>Installments</h2>
+            	<table class="table table-condensed">
+							<thead style="border: 5px solid #ddd;">
+								<tr class="text-center">
+									<th>No.</th>
+									<th>Opening Bal</th>
+									<th>EMI</th>
+									<th>Principal</th>
+									<th>Interest</th>
+
+									<th>From</th>
+									<th>To</th>
+									<th>Closing Bal</th>
+									<th>State</th>
+									
+								</tr>
+							</thead>
+							<t t-set="i" t-value="doc.principal_amount" />
+							<tbody>
+								<tr t-foreach="doc.installment_ids" t-as="line">
+
+										<td>
+											<span t-esc="line.installment_number" />
+										</td>
+
+										<td>
+											<span t-esc="'%.2f'% i"/>
+											<!-- <span t-esc="i" /> -->
+										</td>
+										<td>
+											<span t-esc="line.emi_installment" />
+										</td>
+										<td>
+											<span t-esc="line.principal_amount" />
+										</td>
+										<td >
+											<span t-esc="line.interest_amount" />
+										</td>
+
+										<td>
+											<span t-esc="line.date_from" />
+										</td>
+										<td>
+											<span t-esc="line.date_to" />
+										</td>
+										<td>
+											<t t-set="i" t-value="i - line.principal_amount" />
+											<span t-esc="'%.2f'% i"/>
+										</td>
+										<td >
+											<span t-esc="line.state" />
+										</td>
+										
+								</tr>
+							</tbody>
+						</table>
+                
+                <p style="page-break-before:always;"> </p>
+
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+				
+				<h2>Policy</h2>
+                <table class="table table-condensed">
+							<thead style="border: 5px solid #ddd;">
+								<tr class="text-center">
+									<th>Name</th>
+									<th>Code</th>
+									<th>Type</th>
+									<th>Value</th>
+									
+								</tr>
+							</thead>
+							<tbody>
+								<tr t-foreach="doc.policy_id" t-as="line" class="text-center" >
+
+										<td>
+											<span t-esc="line.name" />
+										</td>
+										<td>
+											<span t-esc="line.code" />
+										</td>
+										<td>
+											<span t-esc="line.policy_type" />
+										</td>
+										<td >
+											<span t-esc="line.values" />
+										</td>
+										
+								</tr>
+							</tbody>
+						</table>
+                
+
+
+
+				</div>
+			</t>
+		</template>
+
+		<template id="report_loan">
+			<t t-call="web.html_container">
+				<t t-foreach="docs" t-as="doc">
+					<t t-call="bi_hr_employee_loan.report_loan_template"  />
+				</t>
+			</t>
+		</template>
+	</data>
+</odoo>

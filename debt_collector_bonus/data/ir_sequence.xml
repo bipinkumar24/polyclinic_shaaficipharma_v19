@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_debt_collector_bonus" model="ir.sequence">
+            <field name="name">Debt Collector Bonus</field>
+            <field name="code">debt.collector.bonus</field>
+            <field name="prefix">DCB/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

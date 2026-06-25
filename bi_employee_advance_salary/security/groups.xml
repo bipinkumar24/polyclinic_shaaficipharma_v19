@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+	<record id="dept_manager_advance_salary_id" model="res.groups">
+		<field name="name">Department Manager (Advance Salary)</field>
+	</record>
+
+    <record id="hr_manager_advance_salary_id" model="res.groups">
+		<field name="name">HR Manager (Advance Salary)</field>
+	</record>
+
+   	<record id="director_manager_advance_salary_id" model="res.groups">
+		<field name="name">Director(Advance Salary)</field>
+	</record>
+
+    <record id="account_manager_advance_salary_id" model="res.groups">
+		<field name="name">Account Manager(Advance Salary)</field>
+	</record>
+
+    <record id="advance_salary_bill_group_id" model="res.groups">
+        <field name="name">Advance Salary Bill User</field>
+    </record>
+
+</odoo>

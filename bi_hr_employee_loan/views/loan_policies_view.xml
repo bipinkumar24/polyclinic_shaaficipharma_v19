@@ -1,0 +1,79 @@
+<?xml version="1.0"  encoding="utf-8"?>
+<odoo>
+
+	<record id="view_loan_policies_tree" model="ir.ui.view">
+	   <field name="name">loan.policies.list</field>
+	   <field name="model">loan.policies</field>
+	   <field name="priority">2</field>
+	   <field name="arch" type="xml">
+	    <list string="Loan Policies">
+	     <field name="name"/>
+	     <field  name="code"/>
+	     <field name="policy_type"/>
+	      <field name="basis"/>
+	       <field name="values"/>	     
+	    </list>
+	   </field>
+    </record>
+        
+
+    <record id="view_loan_policies_form" model="ir.ui.view">
+	   <field name="name">loan.policies.form</field>
+	   <field name="model">loan.policies</field>
+	   <field name="priority">2</field>
+	   <field name="arch" type="xml">
+	    <form string="Loan Policies">
+	    	 
+	    	
+	    	<sheet>
+	    		<h2>
+	    			
+	    			<field name="name"/>
+	    			<br/>
+	    			
+	    			<field name="code"/>
+
+	    		</h2>
+
+	    		<group string="General">
+	    			<group >
+	    				<field name="policy_type"/>
+	      				<field name="basis"
+	      				invisible="policy_type not in ('max')"/>
+	      				<field name="duration_months" 
+	      				invisible="policy_type not in ('gap')"/>
+	      				<field name="days"
+	      				invisible="policy_type not in ('qualifying')"/>
+	       				<field name="values"/>
+	    			</group>
+	    			<group>
+	    				
+	        			<field name="company_id"/>
+	    			</group>
+	    		</group>
+	    		<group string="Employee Category">
+	    			
+	    			<field name="employee_category_ids"/>
+	    		</group>
+	    		<group string="Employees">
+	    		 <field name="employee_ids"/> 
+
+	    		</group>
+	     </sheet>
+	 </form>
+	</field>
+</record>
+	  <record id="loan_policies_action" model="ir.actions.act_window">
+	  <field name="name">Loan Policies</field>
+	  <field name="type">ir.actions.act_window</field>
+	  <field name="res_model">loan.policies</field>
+	  <field name="view_mode">list,form,kanban</field>
+	  <field name="help" type="html">
+	   <p class="oe_view_nocontent_create"> </p>
+	   <p></p>
+	  </field>
+	</record>
+	<menuitem action="loan_policies_action" id="menu_loan_policies" parent="config_menu_loan" name="Loan Policies" sequence="29"/>
+
+
+</odoo>

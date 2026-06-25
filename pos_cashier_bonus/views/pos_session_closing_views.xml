@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============ LIST: session closing reconciliation ============ -->
+    <record id="view_pos_session_closing_list" model="ir.ui.view">
+        <field name="name">pos.session.closing.list</field>
+        <field name="model">pos.session</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <list string="Session Closing" create="false" delete="false"
+                  edit="false" default_order="stop_at desc"
+                  decoration-danger="cash_register_difference &lt; 0"
+                  decoration-warning="cash_register_difference &gt; 0">
+                <field name="currency_id" column_invisible="1"/>
+                <field name="name"/>
+                <field name="config_id" string="Register"/>
+                <field name="closing_journal_id" string="Bank Journal"/>
+                <field name="user_id" string="Cashier"/>
+                <field name="start_at" string="Opened"/>
+                <field name="stop_at" string="Closed"/>
+                <field name="cash_register_balance_start" string="Opening Cash"/>
+<!--                <field name="cash_register_total_entry_encoding" string="Cash Moves"/>-->
+                <field name="cash_register_balance_end"
+                       string="Expected (POS Cash)"/>
+                <field name="cash_register_balance_end_real"
+                       string="Actual Counted"/>
+                <field name="cash_register_difference" string="Difference"
+                       sum="Difference"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'closed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============ SEARCH: date filters ============ -->
+    <record id="view_pos_session_closing_search" model="ir.ui.view">
+        <field name="name">pos.session.closing.search</field>
+        <field name="model">pos.session</field>
+        <field name="arch" type="xml">
+            <search string="Session Closing">
+                <field name="name"/>
+                <field name="config_id" string="Register"/>
+                <field name="user_id" string="Cashier"/>
+                <field name="stop_at" string="Closing Date"/>
+                <filter name="today" string="Closed Today"
+                        domain="[('stop_at', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))),
+                                 ('stop_at', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]"/>
+                <filter name="last7" string="Last 7 Days"
+                        domain="[('stop_at', '&gt;=', datetime.datetime.combine(context_today() + relativedelta(days=-7), datetime.time(0,0,0)))]"/>
+                <filter name="this_month" string="This Month"
+                        domain="[('stop_at', '&gt;=', datetime.datetime.combine(context_today() + relativedelta(day=1), datetime.time(0,0,0)))]"/>
+                <separator/>
+                <filter name="g_config" string="Register"
+                        context="{'group_by': 'config_id'}"/>
+                <filter name="g_journal" string="Bank Journal"
+                        context="{'group_by': 'closing_journal_id'}"/>
+                <filter name="g_user" string="Cashier"
+                        context="{'group_by': 'user_id'}"/>
+                <filter name="g_close" string="Closing Date"
+                        context="{'group_by': 'stop_at:day'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============ ACTION + MENU ============ -->
+    <record id="action_pos_session_closing" model="ir.actions.act_window">
+        <field name="name">Session Closing</field>
+        <field name="res_model">pos.session</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'closed')]</field>
+        <field name="view_id" ref="view_pos_session_closing_list"/>
+        <field name="search_view_id" ref="view_pos_session_closing_search"/>
+        <field name="context">{'search_default_today': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No closed sessions for this period</p>
+            <p>This report reconciles each POS session's expected cash against
+               the amount actually counted at closing. Use the date filters
+               above for today or a custom range.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_pos_session_closing" name="Session Closing"
+              parent="point_of_sale.menu_point_root"
+              action="action_pos_session_closing"
+              groups="point_of_sale.group_pos_manager"
+              sequence="91"/>
+
+</odoo>

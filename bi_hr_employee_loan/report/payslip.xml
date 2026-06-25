@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_sibk_payslip_1234" inherit_id='hr_payroll.report_payslip'>
+            <xpath expr="//table[@name='employee-infos']" position="replace">
+                <table name="employee-infos" class="table table-sm table-bordered">
+                    <tr>
+                        <td class="w-25">
+                            <strong>Employeee</strong>
+                        </td>
+                        <td class="w-25">
+                            <strong>Identification</strong>
+                        </td>
+                        <td class="w-25">
+                            <strong>Designation</strong>
+                        </td>
+                        <td class="w-25">
+                            <strong>Pay Period</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span t-field="o.employee_id"/>
+                        </td>
+                        <td>
+                            <span t-field="o.employee_id.identification_id"/>
+                        </td>
+                        <td>
+                            <span t-field="o.employee_id.job_title"/>
+                        </td>
+                        <td>
+                            <span t-esc="o.date_to.strftime('%B')"/> - <span t-esc="o.date_to.year"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span t-field="o.employee_id.work_email"/></td>
+                        <td><span t-field="o.employee_id.address_home_id.street"/></td>
+                        <td><span t-field="o.employee_id.address_home_id.city"/></td>
+                        <td><span t-field="o.employee_id.address_home_id.zip"/></td>
+                    </tr>
+                </table>
+            </xpath>
+        </template>
+    </data>
+</odoo>

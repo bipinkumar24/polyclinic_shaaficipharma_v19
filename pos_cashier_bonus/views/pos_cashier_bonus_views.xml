@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============ LIST ============ -->
+    <record id="view_pos_cashier_bonus_list" model="ir.ui.view">
+        <field name="name">pos.cashier.bonus.list</field>
+        <field name="model">pos.cashier.bonus</field>
+        <field name="arch" type="xml">
+            <list string="Cashier Bonus"
+                  decoration-muted="state == 'draft'"
+                  decoration-bf="state == 'confirmed'"
+                  decoration-danger="pool_overrun">
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="total_sales" sum="Total POS Sales"/>
+                <field name="total_bonus" sum="Total Bonus"/>
+                <field name="pool_balance"/>
+                <field name="pool_overrun" string="Over Pool"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'computed'"
+                       decoration-success="state == 'confirmed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============ FORM ============ -->
+    <record id="view_pos_cashier_bonus_form" model="ir.ui.view">
+        <field name="name">pos.cashier.bonus.form</field>
+        <field name="model">pos.cashier.bonus</field>
+        <field name="arch" type="xml">
+            <form string="Cashier Bonus">
+                <header>
+                    <button name="action_compute" type="object" string="Compute from POS Sales"
+                            class="oe_highlight" invisible="state == 'confirmed'"/>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            class="oe_highlight" invisible="state != 'computed'"/>
+                    <button name="action_reset" type="object" string="Reset to Draft"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,computed,confirmed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_move" type="object"
+                                class="oe_stat_button" icon="fa-book"
+                                invisible="not move_id">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Journal</span>
+                                <span class="o_stat_text">Entry</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <div class="alert alert-danger" role="alert"
+                         invisible="not pool_overrun">
+                        Total bonus payable exceeds the allowance pool. Enable
+                        "Cap Bonus at 100%" or raise the pool.
+                    </div>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="not cash_penalty_applies">
+                        One or more cashiers have a cash difference above the
+                        allowed limit — their bonus has been reduced. See the
+                        Bonus Forfeited column on each line.
+                    </div>
+                    <group>
+                        <group string="Period &amp; Source"
+                               readonly="state == 'confirmed'">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="config_ids" widget="many2many_tags"
+                                   options="{'no_create': True}"/>
+                            <field name="group_by"/>
+                            <field name="sales_basis"/>
+                        </group>
+                        <group string="Bonus Rule"
+                               readonly="state == 'confirmed'">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="target_per_cashier"/>
+                            <field name="threshold_pct"/>
+                            <field name="bonus_full"/>
+                            <field name="total_pool"/>
+                            <field name="cap_at_target"/>
+                            <field name="redistribute"/>
+                            <field name="volume_bonus_amount"/>
+                            <field name="cash_diff_tier1"/>
+                            <field name="cash_diff_tier2"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Accounting" readonly="state == 'confirmed'">
+                            <field name="journal_id"/>
+                            <field name="expense_account_id"/>
+                            <field name="payable_account_id"/>
+                            <field name="move_id" readonly="1"
+                                   invisible="not move_id"/>
+                            <field name="move_state" readonly="1"
+                                   invisible="not move_id"/>
+                        </group>
+                        <group string="Cash Control">
+                            <field name="gain_account_id"
+                                   options="{'no_create': True}"/>
+                            <field name="loss_account_id"
+                                   options="{'no_create': True}"/>
+                            <field name="total_cash_sales" readonly="1"/>
+                            <field name="total_cash_gain" readonly="1"/>
+                            <field name="total_cash_loss" readonly="1"/>
+                            <field name="total_cash_difference" readonly="1"/>
+                            <field name="cash_penalty_applies" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Cashier Bonus Lines">
+                            <field name="line_ids" readonly="state == 'confirmed'">
+                                <list editable="bottom"
+                                      decoration-success="achievement_pct >= 100"
+                                      decoration-warning="achievement_pct &gt;= threshold_pct and achievement_pct &lt; 100"
+                                      decoration-muted="bonus_amount == 0">
+                                    <field name="group_by" column_invisible="1"/>
+                                    <field name="threshold_pct" column_invisible="1"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="employee_id"
+                                           column_invisible="parent.group_by != 'employee'"
+                                           options="{'no_create': True}"/>
+                                    <field name="user_id"
+                                           column_invisible="parent.group_by != 'user'"
+                                           options="{'no_create': True}"/>
+                                    <field name="order_count" readonly="1"
+                                           decoration-bf="is_top_volume"/>
+                                    <field name="is_top_volume" column_invisible="1"/>
+                                    <field name="actual_sales" readonly="1"/>
+                                    <field name="target" optional="hide"/>
+                                    <field name="achievement_pct" readonly="1"/>
+                                    <field name="status_label" readonly="1" optional="hide"/>
+                                    <field name="sales_bonus" readonly="1" sum="Sales Bonus"/>
+                                    <field name="volume_bonus" readonly="1" sum="Volume Bonus"/>
+                                    <field name="cash_sales" readonly="1" optional="hide"/>
+                                    <field name="cash_gain" readonly="1"
+                                           sum="Cash Gain" optional="show"/>
+                                    <field name="cash_loss" readonly="1"
+                                           sum="Cash Loss" optional="show"/>
+                                    <field name="cash_difference" readonly="1"
+                                           sum="Cash Difference"/>
+                                    <field name="cash_diff_pct" readonly="1" optional="hide"/>
+                                    <field name="cash_penalty_pct" readonly="1"
+                                           optional="show"/>
+                                    <field name="bonus_amount" readonly="1" sum="Total Payable"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer" colspan="2">
+                                <field name="total_sales"/>
+                                <field name="total_sales_bonus"/>
+                                <field name="total_volume_bonus"/>
+                                <field name="total_bonus"/>
+                                <field name="pool_balance"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============ SEARCH ============ -->
+    <record id="view_pos_cashier_bonus_search" model="ir.ui.view">
+        <field name="name">pos.cashier.bonus.search</field>
+        <field name="model">pos.cashier.bonus</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter name="draft" string="Draft" domain="[('state','=','draft')]"/>
+                <filter name="computed" string="Computed" domain="[('state','=','computed')]"/>
+                <filter name="confirmed" string="Confirmed" domain="[('state','=','confirmed')]"/>
+                <separator/>
+                <filter name="g_state" string="Group by Status" context="{'group_by':'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============ ACTION + MENU ============ -->
+    <record id="action_pos_cashier_bonus" model="ir.actions.act_window">
+        <field name="name">Cashier Bonus</field>
+        <field name="res_model">pos.cashier.bonus</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a cashier bonus run</p>
+            <p>Pick a period, set the target and pool, then press
+               <b>Compute from POS Sales</b> to pull sales per cashier.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_pos_cashier_bonus" name="Cashier Bonus"
+              parent="point_of_sale.menu_point_root"
+              action="action_pos_cashier_bonus"
+              groups="point_of_sale.group_pos_manager" sequence="90"/>
+
+</odoo>

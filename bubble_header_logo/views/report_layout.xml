@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="external_layout_bubble_custom"
+              inherit_id="web.external_layout_bubble"
+              name="Custom Bubble Header">
+
+        <xpath expr="//div[contains(@t-attf-class,'header')]" position="replace">
+            <div t-attf-class="header o_company_#{company.id}_layout {{report_type == 'pdf' and 'pt-5'}}"
+                 style="position: relative; padding: 0; margin: 0;">
+
+                <img
+                    t-attf-src="/bubble_header_logo/static/src/img/logo.png"
+                    style="width: 100%; height: 150px; object-fit: cover; display: block;"
+                    alt="Header Background"
+                />
+
+            </div>
+        </xpath>
+
+    </template>
+    <template id="external_layout_external_layout_standard"
+              inherit_id="web.external_layout_standard"
+              name="Custom Bubble Header">
+
+        <xpath expr="//div[contains(@t-attf-class,'header')]" position="replace">
+            <div t-attf-class="header o_company_#{company.id}_layout {{report_type == 'pdf' and 'pt-5'}}"
+                 style="position: relative; padding: 0; margin: 0;">
+
+                <img
+                    t-attf-src="/bubble_header_logo/static/src/img/logo.png"
+                    style="width: 100%; height: 150px; object-fit: cover; display: block;"
+                    alt="Header Background"
+                />
+
+            </div>
+        </xpath>
+
+    </template>
+    <template id="external_layout_external_external_layout_boxed"
+              inherit_id="web.external_layout_bold"
+              name="Custom Bubble Header">
+
+        <xpath expr="//div[contains(@t-attf-class,'header')]" position="replace">
+            <div t-attf-class="header o_company_#{company.id}_layout {{report_type == 'pdf' and 'pt-5'}}"
+                 style="position: relative; padding: 0; margin: 0;">
+
+                <img
+                    t-attf-src="/bubble_header_logo/static/src/img/logo.png"
+                    style="width: 100%; height: 150px; object-fit: cover; display: block;"
+                    alt="Header Background"
+                />
+
+            </div>
+        </xpath>
+
+    </template>
+    <template id="external_layout_external_external_layout_boxed_new"
+              inherit_id="web.external_layout_boxed"
+              name="Custom Bubble Header">
+
+        <xpath expr="//div[contains(@t-attf-class,'header')]" position="replace">
+            <div t-attf-class="header o_company_#{company.id}_layout {{report_type == 'pdf' and 'pt-5'}}"
+                 style="position: relative; padding: 0; margin: 0;">
+
+                <img
+                    t-attf-src="/bubble_header_logo/static/src/img/logo.png"
+                    style="width: 100%; height: 150px; object-fit: cover; display: block;"
+                    alt="Header Background"
+                />
+
+            </div>
+        </xpath>
+
+    </template>
+    <template id="external_layout_external_external_layout_boxed_new_add"
+              inherit_id="web.external_layout_striped"
+              name="Custom Bubble Header">
+        <xpath expr="//div[contains(@t-attf-class,'header')]" position="replace">
+            <div t-attf-class="header o_company_#{company.id}_layout {{report_type == 'pdf' and 'pt-5'}}"
+                 style="position: relative; padding: 0; margin: 0;">
+                <img
+                    t-attf-src="/bubble_header_logo/static/src/img/logo.png"
+                    style="width: 100%; height: 150px; object-fit: cover; display: block;"
+                    alt="Header Background"
+                />
+            </div>
+        </xpath>
+    </template>
+    <template id="external_layout_external_external_layout_external_layout_wave"
+              inherit_id="web.external_layout_wave"
+              name="Custom Bubble Header">
+        <xpath expr="//div[contains(@t-attf-class,'header')]" position="replace">
+            <div t-attf-class="header o_company_#{company.id}_layout {{report_type == 'pdf' and 'pt-5'}}"
+                 style="position: relative; padding: 0; margin: 0;">
+                <img
+                    t-attf-src="/bubble_header_logo/static/src/img/logo.png"
+                    style="width: 100%; height: 150px; object-fit: cover; display: block;"
+                    alt="Header Background"
+                />
+            </div>
+        </xpath>
+    </template>
+    <template id="external_layout_external_external_layout_external_layout_wave"
+              inherit_id="web.external_layout_wave"
+              name="Custom Bubble Header">
+        <xpath expr="//div[contains(@t-attf-class,'header')]" position="replace">
+            <div t-attf-class="header o_company_#{company.id}_layout {{report_type == 'pdf' and 'pt-5'}}"
+                 style="position: relative; padding: 0; margin: 0;">
+                <img
+                    t-attf-src="/bubble_header_logo/static/src/img/logo.png"
+                    style="width: 100%; height: 150px; object-fit: cover; display: block;"
+                    alt="Header Background"
+                />
+            </div>
+        </xpath>
+    </template>
+    <template id="external_layout_external_external_layout_external_layout_external_layout_folder"
+              inherit_id="web.external_layout_folder"
+              name="Custom Bubble Header">
+        <xpath expr="//div[contains(@t-attf-class,'header')]" position="replace">
+            <div t-attf-class="header o_company_#{company.id}_layout {{report_type == 'pdf' and 'pt-5'}}"
+                 style="position: relative; padding: 0; margin: 0;">
+                <img
+                    t-attf-src="/bubble_header_logo/static/src/img/logo.png"
+                    style="width: 100%; height: 150px; object-fit: cover; display: block;"
+                    alt="Header Background"
+                />
+            </div>
+        </xpath>
+    </template>
+</odoo>

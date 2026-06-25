@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_debt_collector_bonus" model="ir.actions.report">
+        <field name="name">Debt Collector Bonus</field>
+        <field name="model">debt.collector.bonus</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">debt_collector_bonus.report_bonus</field>
+        <field name="report_file">debt_collector_bonus.report_bonus</field>
+        <field name="binding_model_id" ref="model_debt_collector_bonus"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_bonus">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div style="border-left:5px solid #C9A227;
+                                    padding-left:12px;margin-bottom:16px;">
+                            <h2 style="color:#0A1F44;margin:0;">
+                                Debt Collector Bonus
+                            </h2>
+                            <div style="color:#0A1F44;font-size:12px;">
+                                <span t-field="doc.name"/> &#8212;
+                                <span t-field="doc.date_from"/> to
+                                <span t-field="doc.date_to"/>
+                            </div>
+                        </div>
+
+                        <table style="width:100%;font-size:11px;
+                                      margin-bottom:14px;">
+                            <tr>
+                                <td style="color:#0A1F44;">
+                                    <strong>Total Recovered:</strong>
+                                    <span t-field="doc.total_recovered"
+                                          t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                </td>
+                                <td style="color:#0A1F44;">
+                                    <strong>Pool (<span t-field="doc.pool_pct"/>%):</strong>
+                                    <span t-field="doc.total_pool"
+                                          t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                </td>
+                                <td style="color:#0A1F44;">
+                                    <strong>Total Bonus:</strong>
+                                    <span t-field="doc.total_bonus"
+                                          t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                </td>
+                                <td style="color:#0A1F44;">
+                                    <strong>Gate:</strong>
+                                    <span t-field="doc.gate_pct"/>% /
+                                    <span t-field="doc.upper_pct"/>%
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table style="width:100%;border-collapse:collapse;
+                                      font-size:10px;">
+                            <thead>
+                                <tr style="background-color:#0A1F44;
+                                           color:#ffffff;">
+                                    <th style="padding:6px 7px;text-align:left;">Collector</th>
+                                    <th style="padding:6px 7px;text-align:right;">Opening Aged Debt</th>
+                                    <th style="padding:6px 7px;text-align:right;">Aged Recovered</th>
+                                    <th style="padding:6px 7px;text-align:right;">Aged Recovery %</th>
+                                    <th style="padding:6px 7px;text-align:right;">Total Recovered</th>
+                                    <th style="padding:6px 7px;text-align:right;">Speed Points</th>
+                                    <th style="padding:6px 7px;text-align:right;">Base</th>
+                                    <th style="padding:6px 7px;text-align:right;">Kicker</th>
+                                    <th style="padding:6px 7px;text-align:right;">Penalty %</th>
+                                    <th style="padding:6px 7px;text-align:right;">Bonus Payable</th>
+                                    <th style="padding:6px 7px;text-align:left;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="doc.line_ids" t-as="line"
+                                    style="border-bottom:1px solid #e0e0e0;">
+                                    <td style="padding:6px 7px;">
+                                        <span t-field="line.user_id"/>
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-field="line.opening_aged_debt"
+                                              t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-field="line.recovered_aged"
+                                              t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-field="line.gate_achievement_pct"/>%
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-field="line.total_recovered"
+                                              t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-field="line.points"/>
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-field="line.base_bonus"
+                                              t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-field="line.kicker_bonus"
+                                              t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;">
+                                        <span t-field="line.conduct_penalty_pct"/>%
+                                    </td>
+                                    <td style="padding:6px 7px;text-align:right;
+                                               font-weight:bold;color:#0A1F44;">
+                                        <span t-field="line.bonus_amount"
+                                              t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                    </td>
+                                    <td style="padding:6px 7px;">
+                                        <span t-field="line.status_label"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="background-color:#C9A227;
+                                           color:#0A1F44;font-weight:bold;">
+                                    <td colspan="9" style="padding:7px 7px;">TOTAL</td>
+                                    <td style="padding:7px 7px;text-align:right;">
+                                        <span t-field="doc.total_bonus"
+                                              t-options="{'widget':'monetary','display_currency':doc.currency_id}"/>
+                                    </td>
+                                    <td style="padding:7px 7px;"/>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <p style="margin-top:14px;font-size:9px;color:#8a8a8a;">
+                            A collector earns no bonus unless aged recovery
+                            exceeds the gate percentage of their opening aged
+                            book. Between the gate and the upper band the pool
+                            is earned proportionally; at or above the upper
+                            band a kicker is added. Points weight each recovery
+                            by collection speed. Figures are read from
+                            reconciled customer payments recorded by each
+                            collector. This is a Ju&#703;&#257;lah-based reward
+                            and is an internal cost, never charged to debtors.
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

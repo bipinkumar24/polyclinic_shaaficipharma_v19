@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates id="template" xml:space="preserve">
+         <t t-name="branch_accounting_report.search_template_branch">
+             <Dropdown
+                   menuClass="'account_report_filter analytic_groupby'"
+            >
+                <button class="btn btn-secondary">
+                    <i class="fa fa-folder-open me-1"/>Branch
+                </button>
+                <t t-set-slot="content">
+                    <div class="dropdown-item gap-2 align-items-center">
+                        <label>Branch</label>
+                        <MultiRecordSelector t-props="getMultiRecordSelectorProps('res.branch', 'branch_ids')"/>
+                    </div>
+                </t>
+            </Dropdown>
+         </t>
+        <t t-name="branch_accounting_report.AccountBranchFilters"
+           t-inherit="account_reports.AccountReportFiltersCustomizable" t-inherit-mode="extension" owl="1">
+            <xpath expr="." position="inside">
+                <div id="filter_branch" class="filter_branch">
+                    <t t-call="branch_accounting_report.search_template_branch"/>
+                </div>
+            </xpath>
+        </t>
+        <t t-name="branch_accounting_report.AgedPartnerBalanceFilters" t-inherit="account_reports.AgedPartnerBalanceFilters" t-inherit-mode="extension"
+       owl="1">
+            <xpath expr="//div[@id='filter_aging_interval']" position="after">
+                <t t-if="'branch_ids' in controller.options">
+                    <div id="filter_branch" class="filter_branch">
+                        <t t-call="branch_accounting_report.search_template_branch"/>
+                    </div>
+                </t>
+            </xpath>
+
+        </t>
+
+   
+</templates>
+
+
