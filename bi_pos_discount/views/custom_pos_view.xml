@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="custom_bi_pos_discount_form_view">
+        <field name="name">res.config.setting.form.extended.view</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='pos_interface_section']" position="before">
+                <h2 name="pos_interface">Discount Configuration in POS</h2>
+                <div class="row mt16 o_settings_container" id="pos_discoun_section">
+                    <div class="col-12 col-lg-6 o_setting_box" id="default_sales_tax_setting">
+                        <div class="o_setting_right_pane">
+                            <div>
+                                <label for="discount_type"/>
+                                <div class="text-muted">
+                                    Define Discount Type
+                                </div>
+                                <div class="content-group mt16">
+                                    <field name="discount_type" colspan="4" nolabel="1" widget="radio"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="pos_sale_order_discount_type">
+        <field name="name">pos.order.view.discount.form</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="discount_type">Discount type</field>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="pos_order_line_inherit">
+        <field name="name">pos.order.line.form</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/notebook/page/field[@name='lines']//list/field[@name='discount']"
+                   position="attributes">
+                <attribute name="string">Discount</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_move_form_inherits" model="ir.ui.view">
+        <field name="name">account.move.form.followup</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="discount_amt" invisible="1" />
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']//list//field[@name='discount']" position="after">
+                <field name="pos_order_line_id" column_invisible="True"/>
+                <field string="Discount Type" name="discount_line_type" column_invisible="not parent.discount_amt"/>
+            </xpath>
+
+            <xpath expr="//field[@name='invoice_line_ids']//list//field[@name='discount']" position="replace">
+                <field name="discount" string="Disc" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <template id="report_saledetails_inherit_discount" inherit_id="point_of_sale.pos_session_sales_details">
+        <xpath expr="//div/div/table" position="replace">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price Unit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="products" t-as="category">
+                        <tr t-foreach="category['products']" t-as="line">
+                            <t t-set="internal_reference" t-value="line['code'] and '[%s] ' % line['code'] or ''"/>
+
+                            <td>
+                                <t t-esc="internal_reference"/>
+                                <t t-esc="line['product_name']"/>
+                            </td>
+                            <td>
+                                <t t-esc="line['quantity']"/>
+                                <t t-if='line["uom"] != "Units"'>
+                                    <t t-esc='line["uom"]'/>
+                                </t>
+                            </td>
+
+                            <td>
+                                <t t-esc='line["price_unit"]'/>
+                                <t t-if='line["discount"] != 0'>
+                                    <t t-if="line['discount_line_type'] == 'Percentage' ">
+                                        Disc:<t t-esc='line["discount"]'/>%
+                                    </t>
+                                    <t t-if="line['discount_line_type'] != 'Percentage' ">
+                                        Disc:
+                                        <t t-esc='line["discount"]'/>
+                                    </t>
+                                </t>
+                            </td>
+                        </tr>
+                    </tr>
+                </tbody>
+            </table>
+        </xpath>
+    </template>
+</odoo>

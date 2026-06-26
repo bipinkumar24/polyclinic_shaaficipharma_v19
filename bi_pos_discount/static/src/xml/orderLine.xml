@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="BiOrderline" t-inherit="point_of_sale.Orderline" t-inherit-mode="extension">
+        <xpath expr="//li[@t-if='vals.discount']" position="replace">
+            <li t-if="vals.discount" class="price-per-unit">
+                <i class="fa fa-tag pe-1"/>
+                <t t-if="['fixed', 'Fixed'].includes(line.discount_line_type || line.config.discount_type)">
+                    <em><t t-esc="vals.discount"/> </em> discount off on <t t-esc="vals.noDiscountPrice"/>
+                </t>
+                <t t-else="">
+                    <em><t t-esc="vals.discount"/>% </em> discount off on <t t-esc="vals.noDiscountPrice"/>
+                </t>
+            </li>
+        </xpath>
+    </t>
+</templates>
