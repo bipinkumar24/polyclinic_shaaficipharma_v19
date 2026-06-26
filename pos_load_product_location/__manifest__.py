@@ -4,7 +4,7 @@
 
 {
     "name": "POS Load Product Location",
-    "version": "19.0.1.1",
+    "version": "19.0.1.2",
     "license": "OPL-1",
     "author": "Kanak Infosystems LLP.",
     "website": "https://www.kanakinfosystems.com",

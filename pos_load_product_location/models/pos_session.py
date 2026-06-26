@@ -17,7 +17,7 @@ class PosSession(models.Model):
     def _loader_params_pos_config(self):
         res = super()._loader_params_pos_config()
         fields = res["search_params"]["fields"]
-        if "stock_location_id" not in fields:
-            fields.append("stock_location_id")
+        if "stock_location_ids" not in fields:
+            fields.append("stock_location_ids")
 
         return res

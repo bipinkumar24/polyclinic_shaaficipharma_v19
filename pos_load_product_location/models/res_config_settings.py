@@ -8,9 +8,9 @@ from odoo import models, fields
 class ResConfigSettings(models.TransientModel):
     _inherit = "res.config.settings"
 
-    stock_location_id = fields.Many2one(
+    stock_location_ids = fields.Many2many(
         "stock.location",
-        string="Stock Location",
-        related="pos_config_id.stock_location_id",
+        string="Stock Locations",
+        related="pos_config_id.stock_location_ids",
         readonly=False,
     )

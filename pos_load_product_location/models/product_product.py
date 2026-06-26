@@ -18,13 +18,14 @@ class ProductTemplate(models.Model):
         """
         base_domain = super()._load_pos_data_domain(data, config)
 
-        if not config.stock_location_id:
+        if not config.stock_location_ids:
             return base_domain
 
-        # Find templates that have available quants at the configured location
+        # Find templates that have available quants in any of the configured locations
         templates = self.search(base_domain)
+        location_ids = config.stock_location_ids.ids
         quants = self.env['stock.quant'].search([
-            ('location_id', 'child_of', config.stock_location_id.id),
+            ('location_id', 'child_of', location_ids),
             ('quantity', '>', 0),
             ('product_id.product_tmpl_id', 'in', templates.ids),
         ])

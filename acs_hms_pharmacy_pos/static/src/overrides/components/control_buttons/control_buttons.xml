@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
     <t t-name="acs_hms_pharmacy_pos.ControlButtons" t-inherit="point_of_sale.ControlButtons" t-inherit-mode="extension">
-        <xpath expr="//t[@t-if='props.showRemainingButtons']/div/OrderlineNoteButton" position="after">
+         <xpath expr="//t[@t-if='props.showRemainingButtons']/div" position="inside">
             <button t-att-class="buttonClass" t-on-click="() => this.onClickPrescription()">
                 <i class="fa fa-link me-1" role="img" aria-label="Set Prescription Order" title="Set Prescription Order" /> Prescription
             </button>

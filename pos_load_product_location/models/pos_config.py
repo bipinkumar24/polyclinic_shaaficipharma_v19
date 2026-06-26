@@ -8,9 +8,12 @@ from odoo import models, fields
 class PosConfig(models.Model):
     _inherit = "pos.config"
 
-    # v15 field: singular Many2one — one stock location per POS config
-    stock_location_id = fields.Many2one(
+    # Many2many — multiple stock locations can be selected per POS config
+    stock_location_ids = fields.Many2many(
         "stock.location",
-        string="Stock Location",
+        "pos_config_stock_location_rel",
+        "pos_config_id",
+        "stock_location_id",
+        string="Stock Locations",
         domain=[("usage", "=", "internal")],
     )

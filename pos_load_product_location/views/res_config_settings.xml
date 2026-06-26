@@ -7,12 +7,13 @@
         <field name="arch" type="xml">
             <xpath expr="//block[@id='pos_inventory_section']/setting[last()]" position="after">
                 <setting
-                    title="Stock Location"
-                    string="Stock Location"
-                    help="Select the stock location whose products will be loaded into POS."
+                    title="Stock Locations"
+                    string="Stock Locations"
+                    help="Select the stock location(s) whose products will be loaded into POS."
                 >
                     <field
-                        name="stock_location_id"
+                        name="stock_location_ids"
+                        widget="many2many_tags"
                         domain="[('usage', '=', 'internal'), ('company_id', '=', company_id)]"
                     />
                 </setting>

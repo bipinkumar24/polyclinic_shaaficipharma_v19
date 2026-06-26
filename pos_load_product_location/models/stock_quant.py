@@ -18,10 +18,10 @@ class StockQuant(models.Model):
 
     @api.model
     def _load_pos_data_domain(self, data, config_id):
-        """Load quants only for the configured stock location (and its children)."""
-        if config_id.stock_location_id:
+        """Load quants only for the configured stock locations (and their children)."""
+        if config_id.stock_location_ids:
             return [
-                ('location_id', 'child_of', config_id.stock_location_id.id),
+                ('location_id', 'child_of', config_id.stock_location_ids.ids),
                 ('quantity', '>', 0),
             ]
         return []
