@@ -21,7 +21,6 @@
 	            </sheet>
 	            <footer>
 	            	<button string="View" name="button_generate_partner_ladger" type="object" class="btn-primary"/>
-	                <!-- <button string="Print" name="button_generate_report" type="object" class="btn-primary"/> -->
 	                <button string="Cancel" class="btn-secondary" special="cancel" />
 	            </footer>
 	        </form>

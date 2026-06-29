@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api,_
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
-from odoo import SUPERUSER_ID
 
 
 class ChartfAccount(models.Model):
@@ -12,8 +11,8 @@ class ChartfAccount(models.Model):
 
     name = fields.Char(string="Name")
     employee_id = fields.Many2one('hr.employee',string="Employee")
-    req_date = fields.Datetime(string="Request Date",default=fields.datetime.now(),readonly=True)
-    req_amount = fields.Monetary(strring="Request Amount")
+    req_date = fields.Datetime(string="Request Date", default=fields.Datetime.now, readonly=True)
+    req_amount = fields.Monetary(string="Request Amount")
     currency_id = fields.Many2one('res.currency',string="Currency",default = lambda self : self.env.user.company_id.currency_id.id,readonly=True)
 
     department_id = fields.Many2one('hr.department',string="Department")
@@ -33,7 +32,7 @@ class ChartfAccount(models.Model):
     hr_manager_id = fields.Many2one('res.users',string="HR Manager")
     director_id = fields.Many2one('res.users',string="Director")
     paid_by_id = fields.Many2one('res.users',string="Paid By")
-    company_id = fields.Many2one('res.company',string="Company")
+    company_id = fields.Many2one('res.company',string="Company", default=lambda self: self.env.company)
 
     partner_id = fields.Many2one('res.partner',string = "Employee Partner")
     payment_method_id = fields.Many2one('account.journal',string="Payment Method",domain=[('type','in',['bank','cash'])])
@@ -51,28 +50,20 @@ class ChartfAccount(models.Model):
     bulk_advance_ids = fields.One2many('bulk.advance.salary', 'advance_id', string="Advance Salary")
     bill_ids = fields.Many2many('account.move', string="Account Moves")
     bill_count = fields.Integer(string="Bill", compute="_compute_bill_count")
-    is_hide_move = fields.Boolean(string="Is hide Move", compute="_compute_is_hide_move")
 
-    def _compute_is_hide_move(self):
-        for rec in self:
-            has_bill_access = rec.env.user.has_group('bi_employee_advance_salary.advance_salary_bill_group_id')
-            if has_bill_access:
-                rec.is_hide_move = False
-            else:
-                rec.is_hide_move = True
 
     @api.depends('bill_ids.amount_total_signed', 'bill_ids.amount_residual', 'bill_ids.amount_total', 'bill_ids')
     def _compute_paid_amount(self):
-        for rec in self.with_user(SUPERUSER_ID):
+        for rec in self:
             if rec.is_bulk_advance_salary:
-                if rec.bill_ids:
-                    amount_paid = sum(rec.bill_ids.mapped('amount_total_signed')) - sum(rec.bill_ids.mapped('amount_residual'))
+                if rec.bill_ids and rec.state in ['partially_paid', 'paid', 'done']:
+                    amount_paid = sum(rec.bill_ids.mapped('amount_total')) - sum(rec.bill_ids.mapped('amount_residual'))
                     rec.paid_amount = amount_paid
                 else:
                     rec.paid_amount = 0
             else:
-                if rec.bill_id:
-                    amount_paid = abs(rec.bill_id.amount_total_signed) - rec.bill_id.amount_residual
+                if rec.bill_id and rec.state in ['partially_paid', 'paid', 'done']:
+                    amount_paid = rec.bill_id.amount_total - rec.bill_id.amount_residual
                     rec.paid_amount = amount_paid
                 else:
                     rec.paid_amount = 0
@@ -89,11 +80,20 @@ class ChartfAccount(models.Model):
                     amount_paid = rec.bill_id.amount_total - rec.bill_id.amount_residual
                     rec.paid_amount = amount_paid
 
+    @api.constrains('is_bulk_advance_salary')
+    def _constrains_is_bulk_advance_salary(self):
+        for order in self:
+            if order.is_bulk_advance_salary and not order.bulk_advance_ids:
+                raise ValidationError(_("Please Select at least one employee."))
+
     @api.constrains('bulk_advance_ids')
     def _check_salary_amount(self):
-        for record in self.bulk_advance_ids:
-            if record.job_id and record.amount > record.job_id.salary_limit:
-                raise ValidationError(_("Employee %s request amount is more than your salary limit") % record.employee_id.name)
+        for advance in self:
+            for record in advance.bulk_advance_ids:
+                if record.job_id and record.amount > record.job_id.salary_limit:
+                    raise ValidationError(_("Employee %s request amount is more than your salary limit") % record.employee_id.name)
+                if record.amount <= 0:
+                    raise ValidationError(_("Please add Employee %s request amount") % record.employee_id.name)
 
     @api.depends('bill_id', 'bill_ids', 'bill_id.amount_total', 'bill_ids.amount_total', 'bill_id.amount_residual', 'bill_ids.amount_residual')
     def _compute_is_amount_status_data(self):
@@ -174,21 +174,38 @@ class ChartfAccount(models.Model):
 
     def unlink(self):
         for order in self:
-            if order.state not in ('draft'):
+            if order.state not in ('draft',):
                 raise ValidationError(_('You can not delete a  confirmed Request .'))
         return super(ChartfAccount, self).unlink()
 
+    def _get_advance_salary_product(self):
+        product = self.env['product.product'].search([
+            ('default_code', '=', 'Advance_salary'),
+            ('detailed_type', '=', 'service'),
+        ], limit=1)
+        if not product:
+            product = self.env['product.product'].create({
+                'name': 'Advance Salary',
+                'default_code': 'Advance_salary',
+                'detailed_type': 'service',
+                'list_price': 0,
+                'taxes_id': False,
+            })
+        return product
+
+    def _get_advance_salary_expense_account(self, product):
+        accounts = product.product_tmpl_id._get_product_accounts()
+        expense_account = product.property_account_expense_id or accounts.get('expense')
+        if not expense_account:
+            raise ValidationError(
+                _("No expense account is configured for product '%s'. Please configure the product or category expense account.")
+                % product.display_name
+            )
+        return expense_account
+
     def action_pay(self):
-        # if self.paid_amount <= 0:
-        #     raise ValidationError(_("Please add paid amount grater than zero."))
-        product_id = self.env['product.product'].search([('default_code', '=', 'Advance_salary'), ('type', '=', 'service')])
-        if not product_id:
-            product_id = self.env['product.product'].create({'name': 'Advance Salary',
-                                               'default_code': 'Advance_salary',
-                                               'type': 'service',
-                                               'list_price': 0,
-                                               'taxes_id': False
-                                               })
+        product_id = self._get_advance_salary_product()
+        expense_account = self._get_advance_salary_expense_account(product_id)
         if self.is_bulk_advance_salary:
             for line in self.bulk_advance_ids:
                 partner_id = line.partner_id 
@@ -198,21 +215,48 @@ class ChartfAccount(models.Model):
                 bill_id = self.env['account.move'].create({
                     'move_type': 'in_invoice',
                     'partner_id': partner_id.id,
-                    'date': fields.datetime.now(),
-                    'invoice_date': fields.datetime.now(),
-                    'is_expense': True,
-                    'is_advance_salary_bill': True,
+                    'date': fields.Datetime.now(),
+                    'invoice_date': fields.Datetime.now(),
                     'invoice_line_ids': [
                         (0, 0, {
                             'product_id' : product_id.id,
-                            'account_id': product_id.property_account_expense_id.id,
+                            'account_id': expense_account.id,
                             'name': product_id.name,
                             'quantity': 1,
                             'price_unit': line.amount
                         })
                     ],
                 })
-                bill_id.with_context(partner_id=True).partner_id = partner_id.id
+                if not line.employee_id.bank_account_id:
+                    raise ValidationError(
+                        _("The employee '%s' does not have a bank account configured. "
+                          "Please configure the bank account before proceeding.")
+                        % (line.employee_id.name)
+                    )
+
+                message = f"""
+                    <div style="background:#d9edf7;
+                                padding:12px;
+                                border-radius:6px;
+                                border-left:5px solid #31708f;
+                                font-family:Arial;
+                                font-size:14px;">
+
+                        <p style="margin:0;"><strong>Dear Cashier,</strong></p>
+
+                        <p style="margin:4px 0 0 0;">
+                            Kindly be informed that the bank account number for employee 
+                            <strong>{line.employee_id.name}</strong> is 
+                            <strong>{line.employee_id.bank_account_id.acc_number}</strong>.
+                        </p>
+
+                    </div>
+                    """
+                bill_id.message_post(
+                    body=message,
+                    message_type='comment',
+                    subtype_xmlid='mail.mt_note'
+                )
                 self.write({'bill_ids': [(4, bill_id.id, 0)]})
             self.write({'state':'approved'})
         else: 
@@ -221,47 +265,72 @@ class ChartfAccount(models.Model):
                 partner_id = self.env['res.partner'].create({'name': self.employee_id.name})
                 self.employee_id.partner_id = partner_id.id
 
+            if not self.employee_id.bank_account_id:
+                raise ValidationError(
+                    _("The employee '%s' does not have a bank account configured. "
+                      "Please configure the bank account before proceeding.")
+                    % (self.employee_id.name)
+                )
             bill_id = self.env['account.move'].create({
                 'move_type': 'in_invoice',
                 'partner_id': partner_id.id,
-                'date': fields.datetime.now(),
-                'invoice_date': fields.datetime.now(),
-                'is_expense': True,
-                'is_advance_salary_bill': True,
+                'date': fields.Datetime.now(),
+                'invoice_date': fields.Datetime.now(),
                 'invoice_line_ids': [
                     (0, 0, {
                         'product_id' : product_id.id,
-                        'account_id': product_id.property_account_expense_id.id,
+                        'account_id': expense_account.id,
                         'name': product_id.name,
                         'quantity': 1,
                         'price_unit': self.req_amount
                     })
                 ],
             })
+            message = f"""
+                <div style="background:#d9edf7;
+                            padding:12px;
+                            border-radius:6px;
+                            border-left:5px solid #31708f;
+                            font-family:Arial;
+                            font-size:14px;">
 
+                    <p style="margin:0;"><strong>Dear Cashier,</strong></p>
+
+                    <p style="margin:4px 0 0 0;">
+                        Kindly be informed that the bank account number for employee 
+                        <strong>{self.employee_id.name}</strong> is 
+                        <strong>{self.employee_id.bank_account_id.acc_number}</strong>.
+                    </p>
+
+                </div>
+            """
+            bill_id.message_post(
+                    body=message,
+                    message_type='comment',
+                    subtype_xmlid='mail.mt_note'
+                )
             if not self.partner_id:
                 self.partner_id = partner_id.id
-            bill_id.with_context(partner_id=True).partner_id = partner_id.id
             self.write({'state':'approved',
-                        # 'paid_by_id': self.env.user.id,
-                        # 'paid_date':fields.datetime.now(),
                         'bill_id': bill_id.id})
 
     def action_confirm(self):
         if not self.is_bulk_advance_salary:
+            if self.req_amount <= 0:
+                raise UserError(_('Please add a valid request amount.'))
             if self.req_amount > self.employee_id.job_id.salary_limit : 
                 raise UserError(_('Your request amount is more than your salary limit.'))
-        self.write({'state':'confirmed','confirm_by_id':self.env.user.id,'confirm_date' : fields.datetime.now()})
+        self.write({'state':'confirmed','confirm_by_id':self.env.user.id,'confirm_date' : fields.Datetime.now()})
 
     def action_approve_dept(self):
-        self.write({'state':'approve_dept','depet_manager_approve_by_id':self.env.user.id,'approve_date_department' : fields.datetime.now()})
+        self.write({'state':'approve_dept','depet_manager_approve_by_id':self.env.user.id,'approve_date_department' : fields.Datetime.now()})
 
     def action_approve_hr(self):
-        self.write({'state':'approve_hr','hr_manager_id':self.env.user.id,'approve_date_hr' : fields.datetime.now()})
+        self.write({'state':'approve_hr','hr_manager_id':self.env.user.id,'approve_date_hr' : fields.Datetime.now()})
 
 
     def action_approve_director(self):
-        self.write({'state':'approve_director','director_id':self.env.user.id,'approve_date_director' : fields.datetime.now()})
+        self.write({'state':'approve_director','director_id':self.env.user.id,'approve_date_director' : fields.Datetime.now()})
 
     def action_done(self):
         employee_id = self.env['hr.employee'].search([('id','=',self.employee_id.id)])
@@ -282,33 +351,39 @@ class Hr_employee_inherit_(models.Model):
     _inherit = "hr.employee"
 
     def get_advancesalary(self, id, start_date, end_date):
-        over_time_rec = self.env['advance.salary'].search([('employee_id', '=', id), ('confirm_date', '>=', start_date),
+        advance_salary_ids = self.env['advance.salary'].search([('employee_id', '=', id), ('confirm_date', '>=', start_date),
                                                            ('confirm_date', '<=', end_date), ('state', '=', 'paid')])
 
         bulk_ids = self.env['bulk.advance.salary'].search([('employee_id', '=', id),
                                                            ('advance_id.confirm_date', '>=', start_date),
                                                            ('advance_id.confirm_date', '<=', end_date),
                                                            ('advance_id.state', '=', 'paid')])
-        print("*************bulk_ids*****************", bulk_ids, over_time_rec)
         total = 0.0
-        for line in over_time_rec:
-            print("----------------------line.paid_amount", line.paid_amount)
-            total = total + line.paid_amount
+        for line in advance_salary_ids:
+            if line.paid_amount > 0:
+                total = total + line.paid_amount
+            else:
+                total = total + (line.paid_amount * -1)
         for line in bulk_ids:
-            print("----------------------line.bulk_ids", (line.amount * -1))
-            total = total + (line.amount * -1)
-        print("============================", total)
-        return total
+            if not line.advance_id.id in advance_salary_ids.ids:
+                if line.amount > 0:
+                    total = total + line.amount
+                else:
+                    total = total + (line.amount * -1)
+        if total > 0:
+            return total * -1
+        else:
+            return total
 
 class AccountPaymentRegister(models.TransientModel):
     _inherit = "account.payment.register"
 
-    # def action_create_payments(self):
-    #     res = super(AccountPaymentRegister, self).action_create_payments()
-    #     for rec in self:
-    #         if rec.payment_difference < 0:
-    #             raise ValidationError(_("You Can Not Pay More Than Payment Amount!"))
-    #     return res
+    def action_create_payments(self):
+        res = super(AccountPaymentRegister, self).action_create_payments()
+        for rec in self:
+            if rec.payment_difference < 0:
+                raise ValidationError(_("You Can Not Pay More Than Payment Amount!"))
+        return res
 
 class BulkAdvanceSalary(models.Model):
     _name = 'bulk.advance.salary'
@@ -333,31 +408,12 @@ class BulkAdvanceSalary(models.Model):
 class AccountMove(models.Model):
     _inherit = "account.move"
 
-    is_advance_salary_bill = fields.Boolean(string="Is Advance Salary Bill", default=False)
     mobile_phone = fields.Char(string="Mobile Number", compute='_compute_mobile_number')
 
-    @api.model
-    def _search(self, domain, offset=0, limit=None, order=None, **kwargs):
-        is_superuser = self.env.su or self.env.user.has_group('base.group_system')
-        has_bill_access = self.env.user.has_group('bi_employee_advance_salary.advance_salary_bill_group_id')
-        if not has_bill_access:
-            domain = [('is_advance_salary_bill', '=', False)] + list(domain)
-        return super()._search(domain, offset=offset, limit=limit, order=order, **kwargs)
-
     def _compute_mobile_number(self):
-        if self.partner_id:
-            employee_id = self.env['hr.employee'].search([('partner_id', '=', self.partner_id.id)], limit=1)
-            self.mobile_phone = employee_id.mobile_phone
-        else:
-            self.mobile_phone = " "
-
-class AccountMoveLine(models.Model):
-    _inherit = "account.move.line"
-
-    @api.model
-    def _search(self, domain, offset=0, limit=None, order=None, **kwargs):
-        is_superuser = self.env.su or self.env.user.has_group('base.group_system')
-        has_bill_access = self.env.user.has_group('bi_employee_advance_salary.advance_salary_bill_group_id')
-        if not has_bill_access:
-            domain = [('move_id.is_advance_salary_bill', '=', False)] + list(domain)
-        return super()._search(domain, offset=offset, limit=limit, order=order, **kwargs)
+        for rec in self:
+            if rec.partner_id:
+                employee_id = self.env['hr.employee'].search([('partner_id', '=', rec.partner_id.id)], limit=1)
+                rec.mobile_phone = employee_id.mobile_phone
+            else:
+                rec.mobile_phone = " "
