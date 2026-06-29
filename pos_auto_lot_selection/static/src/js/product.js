@@ -13,22 +13,15 @@ patch(PosStore.prototype, {
         const usageList = [];
         for (const line of order.lines) {
             if (line.product_id?.id !== productId) continue;
-            const baseUom = line.product_id.uom_id;
+        
             const lineQty = line.qty || 0;
-            const lineUom = line.custom_uom_id || baseUom;
-            let uom = line.product_id.models["uom.uom"].find(
-                    (u) => u.name === lineUom
-                    );
-            let factorInv = uom.factor_inv || 1;
-            const qtyInBase = lineQty * factorInv;
-            const totalOrderedInBaseUom = qtyInBase / baseUom.factor_inv;
             const packLots = line.pack_lot_ids || [];
             for (const pl of packLots) {
                 const lot_name = pl.lot_name || pl.name || "";
                 if (lot_name) {
                     usageList.push({
                         lot_name,
-                        qty: totalOrderedInBaseUom || 1,
+                        qty: lineQty || 1,
                     });
                 }
             }
@@ -78,10 +71,6 @@ patch(PosStore.prototype, {
             merge = false;
         }
 
-        // In Odoo 19 products are added via { product_tmpl_id }, whereas this
-        // override (ported from v18) works on a product.product. Resolve the
-        // variant from the template exactly as core addLineToOrder does, so the
-        // rest of the custom lot logic keeps operating on vals.product_id.
         if (typeof vals.product_tmpl_id === "number") {
             vals.product_tmpl_id = this.data.models["product.template"].get(vals.product_tmpl_id);
         }
@@ -140,7 +129,7 @@ patch(PosStore.prototype, {
             });
             return;
         }
-        debugger
+
         if (values.product_id.isConfigurable() && configure) {
             const payload = await this.openConfigurator(values.product_id, opts);
             if (payload) {
@@ -151,7 +140,6 @@ patch(PosStore.prototype, {
                             payload.attribute_value_ids.includes(v)
                         )
                     );
-
                 Object.assign(values, {
                     attribute_value_ids: payload.attribute_value_ids
                         .filter((a) => {
@@ -418,8 +406,6 @@ patch(PosStore.prototype, {
             });
         }
 
-        // if (configure) this.numberBuffer.reset();
-        // order.recomputeOrderData();
         if (configure) this.numberBuffer.reset();
 
         this.hasJustAddedProduct = true;

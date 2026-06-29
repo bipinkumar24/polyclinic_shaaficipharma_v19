@@ -222,54 +222,54 @@ class StockMove(models.Model):
                     move_dests.write({'branch_id':picking.branch_id.id})
         return res
 
-    def _push_apply(self):
-        new_moves = []
-        for move in self:
-            new_move = self.env['stock.move']
-            warehouse_id = move.warehouse_id or move.picking_id.picking_type_id.warehouse_id
-            ProcurementGroup = self.env['procurement.group']
+    # def _push_apply(self):
+    #     new_moves = []
+    #     for move in self:
+    #         new_move = self.env['stock.move']
+    #         warehouse_id = move.warehouse_id or move.picking_id.picking_type_id.warehouse_id
+    #         ProcurementGroup = self.env['procurement.group']
 
-            if move.location_dest_id.company_id != self.env.company:
-                ProcurementGroup = self.env['procurement.group'].sudo()
-                move = move.with_context(allowed_companies=self.env.user.company_ids.ids)
-                warehouse_id = False
+    #         if move.location_dest_id.company_id != self.env.company:
+    #             ProcurementGroup = self.env['procurement.group'].sudo()
+    #             move = move.with_context(allowed_companies=self.env.user.company_ids.ids)
+    #             warehouse_id = False
 
-            rule = ProcurementGroup._get_push_rule(move.product_id, move.location_dest_id, {
-                'route_ids': move.route_ids, 'product_packaging_id': move.product_packaging_id,
-                'warehouse_id': warehouse_id,
-            })
+    #         rule = ProcurementGroup._get_push_rule(move.product_id, move.location_dest_id, {
+    #             'route_ids': move.route_ids, 'product_packaging_id': move.product_packaging_id,
+    #             'warehouse_id': warehouse_id,
+    #         })
 
-            excluded_rule_ids = []
-            while (rule and rule.push_domain and not move.filtered_domain(literal_eval(rule.push_domain))):
-                excluded_rule_ids.append(rule.id)
-                rule = ProcurementGroup._get_push_rule(move.product_id, move.location_dest_id, {
-                    'route_ids': move.route_ids, 'product_packaging_id': move.product_packaging_id,
-                    'warehouse_id': warehouse_id,
-                    'domain': [('id', 'not in', excluded_rule_ids)],
-                })
+    #         excluded_rule_ids = []
+    #         while (rule and rule.push_domain and not move.filtered_domain(literal_eval(rule.push_domain))):
+    #             excluded_rule_ids.append(rule.id)
+    #             rule = ProcurementGroup._get_push_rule(move.product_id, move.location_dest_id, {
+    #                 'route_ids': move.route_ids, 'product_packaging_id': move.product_packaging_id,
+    #                 'warehouse_id': warehouse_id,
+    #                 'domain': [('id', 'not in', excluded_rule_ids)],
+    #             })
 
-            if rule and (
-                    not move.origin_returned_move_id or move.origin_returned_move_id.location_dest_id.id != rule.location_dest_id.id):
-                new_move = rule._run_push(move)
-                if new_move:
-                    new_moves.append(new_move)
+    #         if rule and (
+    #                 not move.origin_returned_move_id or move.origin_returned_move_id.location_dest_id.id != rule.location_dest_id.id):
+    #             new_move = rule._run_push(move)
+    #             if new_move:
+    #                 new_moves.append(new_move)
 
-            move_to_propagate_ids = set()
-            move_to_mts_ids = set()
-            for m in move.move_dest_ids - new_move:
-                if new_move and move.location_final_id and m.location_id == move.location_final_id:
-                    move_to_propagate_ids.add(m.id)
-                elif not m.location_id._child_of(move.location_dest_id):
-                    move_to_mts_ids.add(m.id)
+    #         move_to_propagate_ids = set()
+    #         move_to_mts_ids = set()
+    #         for m in move.move_dest_ids - new_move:
+    #             if new_move and move.location_final_id and m.location_id == move.location_final_id:
+    #                 move_to_propagate_ids.add(m.id)
+    #             elif not m.location_id._child_of(move.location_dest_id):
+    #                 move_to_mts_ids.add(m.id)
 
-            self.env['stock.move'].browse(move_to_mts_ids)._break_mto_link(move)
-            move.move_dest_ids = [Command.unlink(m_id) for m_id in move_to_propagate_ids]
-            new_move.move_dest_ids = [Command.link(m_id) for m_id in move_to_propagate_ids]
+    #         self.env['stock.move'].browse(move_to_mts_ids)._break_mto_link(move)
+    #         move.move_dest_ids = [Command.unlink(m_id) for m_id in move_to_propagate_ids]
+    #         new_move.move_dest_ids = [Command.link(m_id) for m_id in move_to_propagate_ids]
 
-        new_moves = self.env['stock.move'].concat(*new_moves)
-        new_moves = new_moves.sudo()._action_confirm()
+    #     new_moves = self.env['stock.move'].concat(*new_moves)
+    #     new_moves = new_moves.sudo()._action_confirm()
 
-        if new_moves and new_moves.branch_id:
-            new_moves.picking_id.write({'branch_id': new_moves.branch_id.id})
+    #     if new_moves and new_moves.branch_id:
+    #         new_moves.picking_id.write({'branch_id': new_moves.branch_id.id})
 
-        return new_moves
+    #     return new_moves

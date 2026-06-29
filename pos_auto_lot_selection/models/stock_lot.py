@@ -30,32 +30,16 @@ class StockLot(models.Model):
                               help='If enables this lot number is taken')
 
     @api.model
-    # def get_available_lots_for_pos(self, product_id):
-    #     """Get available lots for a product suitable for the Point of Sale
-    #     (PoS).This method retrieves the available lots for a specific product
-    #     that are suitable for the Point of Sale (PoS) based on the configured
-    #     removal strategy. The lots are sorted based on the expiration date or
-    #     creation date,depending on the removal strategy."""
-    #     company_id = self.env.company.id
-    #     removal_strategy_id = (self.env['product.template'].browse(
-    #         self.env['product.product'].browse(product_id).product_tmpl_id.id)
-    #                            .categ_id.removal_strategy_id.method)
-    #     # if removal_strategy_id == 'fefo':
-    #     #     lots = self.sudo().search(
-    #     #         ["&", ["product_id", "=", product_id],"&",["is_taken","=",False],
-    #     #          "|", ["company_id", "=", company_id],
-    #     #          ["company_id", "=", False]],
-    #     #         order='expiration_date asc')
-    #     # else:
-    #     lots = self.sudo().search(
-    #             ["&", ["product_id", "=", product_id], "|",
-    #              ["company_id", "=", company_id],
-    #              ["company_id", "=", False], ],
-    #             order='create_date asc')
-    #     lots = lots.filtered(lambda l: float_compare(l.product_qty, 0.0, precision_rounding=l.product_uom_id.rounding) > 0)[:1]
-    #     lots.is_taken = True
-    #     return lots.mapped("name")
     def get_available_lots_for_pos(self, product_id, location_ids=None, order_lines=None):
+        """Get available lots/serials for a product, ready for auto-allocation
+        in the Point of Sale.
+
+        Lots are ordered using the product category's removal strategy:
+        FEFO (earliest expiration_date first) if configured, otherwise FIFO
+        (oldest create_date first). Quantities already allocated to a lot
+        within the current POS order (order_lines) are netted off so the
+        same stock isn't offered twice while building one cart.
+        """
         company_id = self.env.company.id
         product = self.env['product.product'].browse(product_id)
         removal_strategy = (

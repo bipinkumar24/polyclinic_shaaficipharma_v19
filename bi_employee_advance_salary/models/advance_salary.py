@@ -12,7 +12,7 @@ class ChartfAccount(models.Model):
 
     name = fields.Char(string="Name")
     employee_id = fields.Many2one('hr.employee',string="Employee")
-    req_date = fields.Datetime(string="Request Date",default=fields.datetime.now(),readonly=True)
+    req_date = fields.Datetime(string="Request Date",default=fields.Datetime.now(),readonly=True)
     req_amount = fields.Monetary(strring="Request Amount")
     currency_id = fields.Many2one('res.currency',string="Currency",default = lambda self : self.env.user.company_id.currency_id.id,readonly=True)
 
