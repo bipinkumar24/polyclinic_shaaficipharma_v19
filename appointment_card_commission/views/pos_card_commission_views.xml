@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pos_card_commission_form_invoice" model="ir.ui.view">
+        <field name="name">pos.card.commission.form.invoice</field>
+        <field name="model">pos.card.commission</field>
+        <field name="inherit_id" ref="do_pos_commission.view_pos_card_commission_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='pos_order_id']" position="after">
+                <field name="invoice_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_pos_card_commission_list_invoice" model="ir.ui.view">
+        <field name="name">pos.card.commission.list.invoice</field>
+        <field name="model">pos.card.commission</field>
+        <field name="inherit_id" ref="do_pos_commission.view_pos_card_commission_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='pos_order_id']" position="after">
+                <field name="invoice_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_appointment_card_commission" model="ir.ui.view">
+        <field name="name">account.move.form.appointment.card.commission</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="acs_commission.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='commissions']" position="after">
+                <page name="appointment_card_commission" string="Commission Card" invisible="move_type not in ('out_invoice', 'out_refund')">
+                    <group>
+                        <group>
+                            <field name="card_commission_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="commission_record_id" invisible="1"/>
+                            <button name="action_view_commission_record"
+                                    string="Open Commission Record"
+                                    type="object"
+                                    class="btn-primary"
+                                    invisible="not commission_record_id"/>
+                        </group>
+
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

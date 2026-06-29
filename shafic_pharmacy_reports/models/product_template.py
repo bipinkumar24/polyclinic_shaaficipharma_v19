@@ -306,11 +306,11 @@ class ProductTemplate(models.Model):
 
         variant_by_tmpl = {}
         for tmpl in self:
-            if not tmpl.id or isinstance(tmpl.id, models.NewId):
+            if not tmpl.id:
                 continue
+
             variant = tmpl.product_variant_ids[:1]
-            if variant and variant.id and \
-                    not isinstance(variant.id, models.NewId):
+            if variant and variant.id:
                 variant_by_tmpl[tmpl.id] = variant.id
 
         if not variant_by_tmpl:

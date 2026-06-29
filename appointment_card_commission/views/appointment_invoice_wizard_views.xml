@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="appointment_invoice_wizard_form_card_commission" model="ir.ui.view">
+        <field name="name">appointment.invoice.wizard.form.card.commission</field>
+        <field name="model">appointment.invoice.wizard</field>
+        <field name="inherit_id" ref="do_insurance_card_balance_system.appointment_invoice_wizard_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='insurance_company_id']" position="after">
+                <field name="card_commission_id" options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
