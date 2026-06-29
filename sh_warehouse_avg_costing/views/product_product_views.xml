@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sh_warehouse_avg_product_product_form" model="ir.ui.view">
+        <field name="name">sh.warehouse.avg.product.product.form</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="test" string="Warehouse-Wise Cost" groups="sh_warehouse_avg_costing.sh_warehouse_avg_costing_group">
+                    <field name="can_edit_warehouse_cost" invisible="1"/>
+                    <field name="warehouse_cost_lines" readonly="not can_edit_warehouse_cost">
+                        <list editable="bottom">
+                            <field name="warehouse_id" />
+                            <field name="sh_onhand_qty"/>
+                            <field name="cost" />
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <record id="sh_warehouse_avg_product_template_form" model="ir.ui.view">
+        <field name="name">sh.warehouse.avg.product.template.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="test" string="Warehouse-Wise Cost" invisible="product_variant_count > 1" groups="sh_warehouse_avg_costing.sh_warehouse_avg_costing_group">
+                    <field name="can_edit_warehouse_cost" invisible="1"/>
+                    <field name="warehouse_cost_lines" readonly="not can_edit_warehouse_cost">
+                        <list editable="bottom">
+                            <field name="warehouse_id" />
+                            <field name="sh_onhand_qty"/>
+                            <field name="cost" />
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- REadonly cost price -->
+
+    <record id="sh_readonly_cost_form_easy_edit_inherit" model="ir.ui.view">
+        <field name="name">readonly.product.cost.form.easy.edit.inherit</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+        <field name="arch" type="xml">
+            <field name="standard_price" position="attributes">
+               <attribute name="readonly">True</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="sh_readonly_template_cost_form_inherit" model="ir.ui.view">
+        <field name="name">sh.readonly.template.cost.form.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view" />
+        <field name="arch" type="xml">
+            <field name="standard_price" position="attributes">
+                <attribute name="readonly">True</attribute>
+            </field>
+        </field>
+    </record>
+</odoo>

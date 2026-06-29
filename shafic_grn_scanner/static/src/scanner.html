@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>GRN Scanner</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.0/tesseract.min.js"></script>
+<style>
+  :root{--blue:#1F4E79;--ok:#1f8a4c;--warn:#b56a00;--bg:#f4f6f8;--line:#dde3e8;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:#16242f;}
+  header{background:var(--blue);color:#fff;padding:12px 14px;position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;}
+  header h1{font-size:17px;margin:0;font-weight:700;}
+  header .sub{font-size:11px;opacity:.85;}
+  main{padding:12px;max-width:680px;margin:0 auto;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .muted{color:#67767f;font-size:12px;}
+  .muted2{color:#67767f;font-size:13px;}
+  .pill{font-size:11px;padding:2px 8px;border-radius:20px;background:#eef3f7;color:var(--blue);}
+  button{font-size:15px;border:0;border-radius:10px;padding:11px 14px;font-weight:600;cursor:pointer;}
+  .btn{background:var(--blue);color:#fff;width:100%;margin-top:8px;}
+  .btn.green{background:var(--ok);}
+  .btn.ghost{background:#eef3f7;color:var(--blue);}
+  .btn.small{width:auto;padding:8px 12px;font-size:13px;}
+  .btn:disabled{opacity:.5;}
+  .name{font-weight:700;font-size:15px;}
+  .qty{font-variant-numeric:tabular-nums;font-weight:700;}
+  label{display:block;font-size:12px;color:#67767f;margin:8px 0 3px;}
+  input{width:100%;font-size:16px;padding:10px;border:1px solid var(--line);border-radius:9px;}
+  #reader{width:100%;border-radius:10px;overflow:hidden;}
+  video,canvas{width:100%;border-radius:10px;background:#000;}
+  .hide{display:none;}
+  .ocrbox{white-space:pre-wrap;font-size:12px;background:#f7f9fb;border:1px dashed var(--line);border-radius:8px;padding:8px;max-height:90px;overflow:auto;}
+  .staged{font-size:13px;border-top:1px dashed var(--line);padding-top:6px;margin-top:6px;}
+  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#16242f;color:#fff;padding:10px 16px;border-radius:24px;font-size:13px;z-index:20;opacity:0;transition:.2s;}
+  .toast.show{opacity:1;}
+  .topbtns{display:flex;gap:8px;}
+  .spin{display:inline-block;width:16px;height:16px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:s .8s linear infinite;vertical-align:-3px;}
+  @keyframes s{to{transform:rotate(360deg)}}
+  .guide{position:relative;}
+  .guide .frame{position:absolute;left:8%;right:8%;top:30%;bottom:30%;border:2px solid #ffd400;border-radius:8px;pointer-events:none;}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>GRN Scanner</h1>
+    <div class="sub" id="ctx">Loading…</div>
+  </div>
+  <div class="topbtns">
+    <button class="btn ghost small" id="homeBtn">Receipts</button>
+  </div>
+</header>
+<main>
+  <!-- LIST -->
+  <section id="viewList">
+    <div class="row" style="margin-bottom:8px;">
+      <div class="muted2">Pending receipts</div>
+      <button class="btn ghost small" id="reloadBtn">Refresh</button>
+    </div>
+    <div id="pickingList"></div>
+    <div class="card hide" id="demoNote">
+      <div class="muted2">Demo mode: showing sample data (not connected to Odoo).</div>
+    </div>
+  </section>
+
+  <!-- DETAIL -->
+  <section id="viewDetail" class="hide">
+    <div class="card">
+      <div class="row"><div class="name" id="pkName">—</div><span class="pill" id="pkState"></span></div>
+      <div class="muted2" id="pkMeta"></div>
+      <div id="pkProgressWrap" style="margin-top:8px;">
+        <div style="height:9px;background:#eef3f7;border-radius:6px;overflow:hidden;">
+          <div id="pkProgressBar" style="height:100%;width:0%;background:var(--ok);transition:width .25s;"></div>
+        </div>
+        <div class="muted2" id="pkProgressTxt" style="margin-top:4px;"></div>
+      </div>
+      <button class="btn" id="scanBtn">📷 Scan a product</button>
+    </div>
+    <div id="lineList"></div>
+    <button class="btn green" id="submitBtn">Submit to Odoo</button>
+    <div style="height:24px;"></div>
+  </section>
+
+  <!-- SCAN: barcode -->
+  <section id="viewBarcode" class="hide">
+    <div class="card">
+      <div class="name">Step 1 — Scan product barcode</div>
+      <div class="muted2">Point at the product barcode. Or pick the line manually below.</div>
+      <div id="reader" style="margin-top:8px;"></div>
+      <button class="btn ghost" id="cancelBarcode">Cancel</button>
+    </div>
+    <div id="manualPick"></div>
+  </section>
+
+  <!-- SCAN: OCR -->
+  <section id="viewOcr" class="hide">
+    <div class="card">
+      <div class="name" id="ocrProduct">—</div>
+      <div class="muted2">Step 2 — Point at the printed <b>Batch</b> and <b>Expiry</b> on the box, keep it inside the yellow frame, then Capture.</div>
+      <div class="guide" style="margin-top:8px;">
+        <video id="ocrVideo" playsinline muted></video>
+        <div class="frame"></div>
+      </div>
+      <canvas id="ocrCanvas" class="hide"></canvas>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn ghost small" id="torchBtn" style="flex:1;">🔦 Light</button>
+        <button class="btn ghost small" id="bwBtn" style="flex:1;">B/W: Off</button>
+      </div>
+      <button class="btn" id="captureBtn">Capture &amp; Read</button>
+      <button class="btn ghost" id="skipOcrBtn">Enter manually</button>
+      <div id="ocrRawWrap" class="hide" style="margin-top:8px;">
+        <label>What the camera read (for reference)</label>
+        <div class="ocrbox" id="ocrRaw"></div>
+      </div>
+    </div>
+
+    <div class="card" id="confirmCard">
+      <div class="name">Confirm</div>
+      <div id="trackHint" class="muted2"></div>
+      <label>Lot / Batch No.</label>
+      <input id="fLot" placeholder="e.g. A24778"/>
+      <label>Expiry date</label>
+      <input id="fExpiry" type="date"/>
+      <label>Quantity received</label>
+      <input id="fQty" type="number" inputmode="decimal" min="0" step="any"/>
+      <button class="btn green" id="addBtn">Add</button>
+      <button class="btn ghost" id="cancelOcr">Cancel</button>
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const API = "/grn/scanner";
+let DEMO = false;
+let state = { picking:null, lines:[], staged:{}, activeLine:null };
+
+// ---------- helpers ----------
+function $(id){return document.getElementById(id);}
+function show(view){
+  ["viewList","viewDetail","viewBarcode","viewOcr"].forEach(v=>$(v).classList.add("hide"));
+  $(view).classList.remove("hide");
+}
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200);}
+function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+async function rpc(path, params){
+  const res = await fetch(API+path,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    credentials:"same-origin",
+    body:JSON.stringify({jsonrpc:"2.0",method:"call",params:params||{}})
+  });
+  const data = await res.json();
+  if(data.error){ throw new Error((data.error.data&&data.error.data.message)||data.error.message||"Server error"); }
+  return data.result;
+}
+
+// ---------- list ----------
+async function loadPickings(){
+  $("pickingList").innerHTML = '<div class="card muted2">Loading…</div>';
+  try{
+    const list = await rpc("/pickings",{});
+    renderPickings(list);
+    $("ctx").textContent = "Connected • "+list.length+" pending";
+    $("demoNote").classList.add("hide");
+  }catch(e){
+    DEMO = true;
+    $("ctx").textContent = "Demo mode";
+    $("demoNote").classList.remove("hide");
+    renderPickings(demoPickings());
+  }
+}
+function renderPickings(list){
+  if(!list.length){ $("pickingList").innerHTML='<div class="card muted2">No pending receipts.</div>'; return; }
+  $("pickingList").innerHTML = list.map(p=>`
+    <div class="card" onclick="openPicking(${p.id})">
+      <div class="row"><div class="name">${esc(p.name)}</div><span class="pill">${esc(p.state)}</span></div>
+      <div class="muted2">${esc(p.partner||"")}${p.origin?(" • "+esc(p.origin)):""}</div>
+      <div class="muted2">${p.line_count} line(s)${p.scheduled_date?(" • "+esc(p.scheduled_date.slice(0,10))):""}</div>
+    </div>`).join("");
+}
+
+// ---------- detail ----------
+async function openPicking(id){
+  let data;
+  try{ data = DEMO ? demoLines(id) : await rpc("/picking/"+id,{}); }
+  catch(e){ toast(e.message); return; }
+  if(data.error){ toast(data.error); return; }
+  state.picking = {id:data.id, name:data.name, state:data.state};
+  state.lines = data.lines; state.staged = {}; state.activeLine = null;
+  $("pkName").textContent = data.name;
+  $("pkState").textContent = data.state;
+  $("pkMeta").textContent = data.lines.length+" line(s) expected";
+  renderLines();
+  show("viewDetail");
+}
+function lineById(mid){ return state.lines.find(l=>l.move_id===mid); }
+function lineStatus(l){
+  const st = state.staged[l.move_id]||[];
+  const added = st.reduce((a,b)=>a+Number(b.qty||0),0);
+  const demand = Number(l.demand||0);
+  let status='none';
+  if(added>0 && demand>0 && added>demand) status='over';
+  else if(demand>0 && added>=demand) status='full';
+  else if(added>0) status='partial';
+  return {added, demand, status};
+}
+function renderLines(){
+  let full=0, over=0, partial=0;
+  const total=state.lines.length;
+  const html = state.lines.map(l=>{
+    const {added, demand, status}=lineStatus(l);
+    if(status==='over'){ over++; full++; }
+    else if(status==='full'){ full++; }
+    else if(status==='partial'){ partial++; }
+    const badge = status==='full' ? '<span class="pill" style="background:#e6f4ea;color:var(--ok)">✓ received</span>'
+                : status==='over' ? '<span class="pill" style="background:#fdecdc;color:var(--warn)">⚠ over</span>'
+                : status==='partial' ? '<span class="pill" style="background:#fff7e6;color:var(--warn)">partial</span>'
+                : '<span class="pill">pending</span>';
+    const st = state.staged[l.move_id]||[];
+    const stagedHtml = st.map((s,idx)=>`<div class="staged">+ ${s.qty} ${esc(l.uom||"")}${s.lot?(" • Lot "+esc(s.lot)):""}${s.expiry?(" • Exp "+esc(s.expiry)):""} <a href="#" onclick="removeEntry(${l.move_id},${idx});return false;" style="color:#b00020;margin-left:6px;">remove</a></div>`).join("");
+    const cardStyle = status==='over' ? 'border-color:#e8a33d;' : status==='full' ? 'border-color:#bfe3cb;' : '';
+    return `<div class="card" style="${cardStyle}">
+      <div class="row"><div class="name">${esc(l.name)}</div>${badge}</div>
+      <div class="muted2">${l.barcode?("Barcode "+esc(l.barcode)+" • "):""}Demand <span class="qty">${demand}</span> ${esc(l.uom||"")}${l.tracking!=="none"?(" • "+esc(l.tracking)):""}${l.use_expiration?" • expiry":""}</div>
+      <div class="muted2">Added so far: <span class="qty">${added}</span> ${esc(l.uom||"")}</div>
+      ${stagedHtml}
+      <button class="btn ghost small" style="margin-top:8px;" onclick="startForLine(${l.move_id})">Add to this line</button>
+    </div>`;
+  }).join("");
+  $("lineList").innerHTML = html;
+  const pct = total ? Math.round((full/total)*100) : 0;
+  $("pkProgressBar").style.width = pct+"%";
+  $("pkProgressBar").style.background = over ? "var(--warn)" : "var(--ok)";
+  let txt = full+" of "+total+" line(s) received";
+  if(partial) txt += " • "+partial+" partial";
+  if(over) txt += " • "+over+" over-received";
+  $("pkProgressTxt").textContent = txt;
+}
+function removeEntry(mid, idx){
+  if(state.staged[mid]){
+    state.staged[mid].splice(idx,1);
+    if(!state.staged[mid].length) delete state.staged[mid];
+    renderLines();
+  }
+}
+
+// ---------- staging ----------
+function stage(moveId, entry){
+  if(!state.staged[moveId]) state.staged[moveId]=[];
+  state.staged[moveId].push(entry);
+}
+async function submitAll(){
+  const lines=[];
+  Object.keys(state.staged).forEach(mid=>{
+    state.staged[mid].forEach(s=>lines.push({move_id:Number(mid),qty:Number(s.qty),lot:s.lot||"",expiry:s.expiry||""}));
+  });
+  if(!lines.length){ toast("Nothing scanned yet."); return; }
+  if(DEMO){ toast("Demo: would submit "+lines.length+" line(s)."); return; }
+  $("submitBtn").disabled=true; $("submitBtn").innerHTML='<span class="spin"></span> Submitting…';
+  try{
+    const r = await rpc("/submit",{picking_id:state.picking.id, lines});
+    if(r.error){ toast(r.error); }
+    else{
+      const fails=(r.results||[]).filter(x=>!x.ok);
+      toast("Saved "+r.created+" line(s) to "+r.picking+(fails.length?(" • "+fails.length+" failed"):""));
+      if(fails.length){ alert("Some lines failed:\n"+fails.map(f=>"• "+(f.msg||"error")).join("\n")); }
+      state.staged={}; renderLines();
+    }
+  }catch(e){ toast(e.message); }
+  finally{ $("submitBtn").disabled=false; $("submitBtn").textContent="Submit to Odoo"; }
+}
+
+// ---------- barcode ----------
+let qr=null;
+function startScan(){
+  show("viewBarcode");
+  $("manualPick").innerHTML = '<div class="card"><div class="muted2">Or pick a line manually:</div>'+
+    state.lines.map(l=>`<button class="btn ghost small" style="display:block;width:100%;text-align:left;margin-top:6px;" onclick="pickLine(${l.move_id})">${esc(l.name)}</button>`).join("")+'</div>';
+  if(typeof Html5Qrcode==="undefined"){ toast("Barcode library not loaded — pick manually."); return; }
+  qr = new Html5Qrcode("reader");
+  qr.start({facingMode:"environment"},{fps:10,qrbox:{width:260,height:160}},
+    (txt)=>{ onBarcode(txt); },
+    ()=>{} ).catch(e=>{ toast("Camera error: "+e); });
+}
+function stopScan(){ if(qr){ qr.stop().then(()=>{qr.clear();qr=null;}).catch(()=>{qr=null;}); } }
+function onBarcode(code){
+  stopScan();
+  const hit = state.lines.find(l=>l.barcode && l.barcode===code) ||
+              state.lines.find(l=>l.default_code && l.default_code===code);
+  if(!hit){ toast("Barcode "+code+" is not on this receipt."); show("viewDetail"); return; }
+  beginLine(hit);
+}
+function pickLine(mid){ stopScan(); beginLine(lineById(mid)); }
+function startForLine(mid){ beginLine(lineById(mid)); }
+
+// ---------- OCR ----------
+let ocrStream=null, ocrTrack=null, torchOn=false, ENHANCE_BW=false, ocrWorker=null;
+function beginLine(line){
+  state.activeLine = line;
+  $("ocrProduct").textContent = line.name;
+  $("fLot").value=""; $("fExpiry").value="";
+  $("fQty").value = (line.demand!=null? line.demand : "");
+  $("ocrRaw").textContent=""; $("ocrRawWrap").classList.add("hide");
+  const needLot = line.tracking!=="none";
+  $("trackHint").textContent = needLot ? "This product is tracked — Lot/Batch is required." : "This product is not lot-tracked.";
+  $("fLot").parentElement.style.opacity = needLot? "1":".5";
+  show("viewOcr");
+  if(line.use_expiration || needLot){ startOcrCamera(); }
+}
+function startOcrCamera(){
+  const v=$("ocrVideo");
+  navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}}).then(s=>{
+    ocrStream=s; v.srcObject=s; v.play();
+    ocrTrack = (s.getVideoTracks&&s.getVideoTracks()[0]) || null;
+  }).catch(()=>{ toast("Camera unavailable — enter manually."); });
+}
+function stopOcrCamera(){
+  torchOn=false;
+  if(ocrStream){ ocrStream.getTracks().forEach(t=>t.stop()); ocrStream=null; ocrTrack=null; }
+}
+function toggleTorch(){
+  if(!ocrTrack){ toast("Camera not ready."); return; }
+  const caps = ocrTrack.getCapabilities ? ocrTrack.getCapabilities() : {};
+  if(!caps || !caps.torch){ toast("Torch not available on this phone."); return; }
+  torchOn=!torchOn;
+  ocrTrack.applyConstraints({advanced:[{torch:torchOn}]})
+    .then(()=>{ $("torchBtn").textContent = torchOn ? "🔦 Light: On" : "🔦 Light"; })
+    .catch(()=>toast("Could not toggle the light."));
+}
+
+async function getWorker(){
+  if(ocrWorker) return ocrWorker;
+  ocrWorker = await Tesseract.createWorker('eng');
+  await ocrWorker.setParameters({
+    tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/.-: ',
+    tessedit_pageseg_mode: '6'
+  });
+  return ocrWorker;
+}
+function _otsu(g){
+  const hist=new Array(256).fill(0);
+  for(let i=0;i<g.length;i++){ let v=g[i]|0; if(v<0)v=0; if(v>255)v=255; hist[v]++; }
+  const total=g.length; let sum=0; for(let t=0;t<256;t++) sum+=t*hist[t];
+  let sumB=0,wB=0,varMax=-1,t1=128,t2=128;
+  for(let t=0;t<256;t++){ wB+=hist[t]; if(!wB) continue; const wF=total-wB; if(!wF) break;
+    sumB+=t*hist[t]; const mB=sumB/wB, mF=(sum-sumB)/wF; const between=wB*wF*(mB-mF)*(mB-mF);
+    if(between>varMax){ varMax=between; t1=t; t2=t; }
+    else if(between===varMax){ t2=t; }
+  }
+  return Math.round((t1+t2)/2);
+}
+function enhance(c, bw){
+  const ctx=c.getContext('2d'), w=c.width, h=c.height;
+  const img=ctx.getImageData(0,0,w,h), d=img.data;
+  let min=255,max=0; const g=new Float32Array(w*h);
+  for(let i=0,j=0;i<d.length;i+=4,j++){ const v=d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114; g[j]=v; if(v<min)min=v; if(v>max)max=v; }
+  const range=Math.max(1,max-min);
+  const thr = bw ? _otsu(g) : 0;
+  for(let i=0,j=0;i<d.length;i+=4,j++){
+    let v = bw ? ((g[j]>=thr)?255:0) : (((g[j]-min)/range)*255);
+    if(v<0)v=0; if(v>255)v=255;
+    d[i]=d[i+1]=d[i+2]=v;
+  }
+  ctx.putImageData(img,0,0);
+}
+async function capture(){
+  const v=$("ocrVideo");
+  if(!v.videoWidth){ toast("Camera not ready."); return; }
+  // crop the centre band (the yellow frame) and upscale x2 for sharper text
+  const cw=v.videoWidth, ch=v.videoHeight;
+  const sx=cw*0.06, sw=cw*0.88, sy=ch*0.28, sh=ch*0.44, scale=2;
+  const c=$("ocrCanvas");
+  c.width=Math.round(sw*scale); c.height=Math.round(sh*scale);
+  const ctx=c.getContext("2d"); ctx.imageSmoothingEnabled=true;
+  ctx.drawImage(v, sx,sy,sw,sh, 0,0,c.width,c.height);
+  enhance(c, ENHANCE_BW);          // grayscale + contrast stretch (or B/W threshold)
+  c.classList.remove("hide");      // show the receiver exactly what was read
+  $("captureBtn").disabled=true; $("captureBtn").innerHTML='<span class="spin"></span> Reading…';
+  try{
+    const worker=await getWorker();
+    const {data}=await worker.recognize(c);
+    const text=(data&&data.text)||"";
+    $("ocrRaw").textContent = text.trim() || "(nothing clear — add more light, try B/W, or type it)";
+    $("ocrRawWrap").classList.remove("hide");
+    applyParse(text);
+  }catch(e){ toast("OCR failed — enter manually."); }
+  finally{ $("captureBtn").disabled=false; $("captureBtn").textContent="Capture & Read"; }
+}
+function applyParse(text){
+  const p = parseBatchExpiry(text);
+  if(p.lot && !$("fLot").value) $("fLot").value=p.lot;
+  if(p.expiry) $("fExpiry").value=p.expiry;
+  toast("Read — please check the values.");
+}
+function lastDay(y,m){ return new Date(y, m, 0).getDate(); }
+function parseBatchExpiry(text){
+  const out={lot:"",expiry:""};
+  const T=text.replace(/[Oo]/g,"0").replace(/[lI]/g,"1"); // light digit fixups
+  // expiry: prefer a line mentioning exp
+  let m = T.match(/exp[^0-9]{0,12}(\d{1,2})\s*[\/\-.]\s*(\d{4})/i);
+  if(!m) m = T.match(/(\d{1,2})\s*[\/\-.]\s*(\d{4})/); // MM/YYYY
+  if(m){ const mo=Math.min(12,Math.max(1,parseInt(m[1],10))); const yr=parseInt(m[2],10);
+         out.expiry = yr+"-"+String(mo).padStart(2,"0")+"-"+String(lastDay(yr,mo)).padStart(2,"0"); }
+  else{
+    let d = T.match(/(\d{1,2})\s*[\/\-.]\s*(\d{1,2})\s*[\/\-.]\s*(\d{2,4})/); // DD/MM/YYYY
+    if(d){ let yr=parseInt(d[3],10); if(yr<100) yr+=2000; const mo=parseInt(d[2],10); const da=parseInt(d[1],10);
+           out.expiry = yr+"-"+String(mo).padStart(2,"0")+"-"+String(da).padStart(2,"0"); }
+  }
+  // batch / lot
+  let b = text.match(/(?:batch|lot|b\.?no|batch\s*nr)[^a-z0-9]{0,6}([A-Z0-9][A-Z0-9\-]{2,})/i);
+  if(b){ out.lot=b[1].toUpperCase(); }
+  return out;
+}
+function addEntry(){
+  const line=state.activeLine;
+  const qty=Number($("fQty").value||0);
+  const lot=$("fLot").value.trim();
+  const expiry=$("fExpiry").value;
+  if(qty<=0){ toast("Enter a quantity."); return; }
+  if(line.tracking!=="none" && !lot){ toast("Lot/Batch is required for this product."); return; }
+  const existing=(state.staged[line.move_id]||[]).reduce((a,b)=>a+Number(b.qty||0),0);
+  const demand=Number(line.demand||0);
+  if(demand>0 && (existing+qty)>demand){
+    const over=(existing+qty)-demand;
+    if(!confirm("This is "+over+" "+(line.uom||"")+" MORE than the demand of "+demand+" for "+line.name+".\n\nAdd anyway?")) return;
+  }
+  stage(line.move_id,{qty,lot,expiry});
+  stopOcrCamera();
+  renderLines();
+  show("viewDetail");
+  toast("Added "+qty+" "+(line.uom||""));
+}
+
+// ---------- demo data ----------
+function demoPickings(){ return [
+  {id:1,name:"WH/IN/00042",partner:"Deva Pharma",origin:"P00125",scheduled_date:"2026-06-08",state:"assigned",line_count:2}
+];}
+function demoLines(){ return {id:1,name:"WH/IN/00042",state:"assigned",lines:[
+  {move_id:11,product_id:101,name:"AMOKLAVIN-BID 625mg (14 tabs)",barcode:"8699...",default_code:"AMOK625",demand:50,done:0,tracking:"lot",use_expiration:true,uom:"Boxes"},
+  {move_id:12,product_id:102,name:"Paracetamol 500mg",barcode:"PCM500",default_code:"PCM500",demand:100,done:0,tracking:"lot",use_expiration:true,uom:"Boxes"}
+]};}
+
+// ---------- wire up ----------
+$("reloadBtn").onclick=loadPickings;
+$("homeBtn").onclick=()=>{stopScan();stopOcrCamera();show("viewList");};
+$("scanBtn").onclick=startScan;
+$("cancelBarcode").onclick=()=>{stopScan();show("viewDetail");};
+$("submitBtn").onclick=submitAll;
+$("captureBtn").onclick=capture;
+$("torchBtn").onclick=toggleTorch;
+$("bwBtn").onclick=()=>{ ENHANCE_BW=!ENHANCE_BW; $("bwBtn").textContent="B/W: "+(ENHANCE_BW?"On":"Off"); };
+$("skipOcrBtn").onclick=()=>{stopOcrCamera();$("ocrRawWrap").classList.add("hide");toast("Enter Lot and Expiry below.");};
+$("addBtn").onclick=addEntry;
+$("cancelOcr").onclick=()=>{stopOcrCamera();show("viewDetail");};
+window.openPicking=openPicking; window.pickLine=pickLine; window.startForLine=startForLine; window.removeEntry=removeEntry;
+loadPickings();
+</script>
+</body>
+</html>

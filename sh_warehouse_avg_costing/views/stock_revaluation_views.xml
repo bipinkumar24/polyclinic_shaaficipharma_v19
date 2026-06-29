@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Odoo 19 migration note: the base wizard ``stock.valuation.layer.revaluation``
+        and its form view were removed with stock.valuation.layer. This is now a
+        standalone warehouse-wise revaluation wizard.
+    -->
+    <record id="sh_warehouse_revaluation_form_view" model="ir.ui.view">
+        <field name="name">sh.warehouse.revaluation.form.view</field>
+        <field name="model">sh.warehouse.revaluation</field>
+        <field name="arch" type="xml">
+            <form string="Warehouse Stock Revaluation">
+                <group>
+                    <group>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="product_id"/>
+                        <field name="warehouse_id"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                    <group>
+                        <field name="current_quantity"/>
+                        <field name="current_cost"/>
+                        <field name="added_value"/>
+                    </group>
+                </group>
+                <group string="Accounting">
+                    <field name="reason"/>
+                    <field name="date"/>
+                    <field name="account_journal_id"/>
+                    <field name="account_id"/>
+                </group>
+                <footer>
+                    <button name="action_validate_revaluation" type="object"
+                            string="Revalue" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sh_warehouse_revaluation" model="ir.actions.act_window">
+        <field name="name">Warehouse Revaluation</field>
+        <field name="res_model">sh.warehouse.revaluation</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_sh_warehouse_revaluation"
+              name="Warehouse Revaluation"
+              parent="stock.menu_stock_warehouse_mgmt"
+              action="action_sh_warehouse_revaluation"
+              groups="sh_warehouse_avg_costing.sh_warehouse_avg_costing_group"
+              sequence="80"/>
+</odoo>

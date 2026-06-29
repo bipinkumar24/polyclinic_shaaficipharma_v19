@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+sh_warehouse_avg_costing.access_sh_warehouse_cost,access_sh_warehouse_cost,sh_warehouse_avg_costing.model_sh_warehouse_cost,base.group_user,1,1,1,1
+sh_warehouse_avg_costing.access_sh_warehouse_revaluation,access_sh_warehouse_revaluation,sh_warehouse_avg_costing.model_sh_warehouse_revaluation,base.group_user,1,1,1,1

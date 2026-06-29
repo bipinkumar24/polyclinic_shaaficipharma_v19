@@ -1,0 +1,271 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sh_warehouse_avg_costing
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0+e-20241001\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-02 10:21+0000\n"
+"PO-Revision-Date: 2024-12-02 10:21+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sh_warehouse_avg_costing
+#. odoo-python
+#: code:addons/sh_warehouse_avg_costing/models/stock_revaluation.py:0
+#, python-format
+msgid " Product cost updated from %(previous)s to %(new_cost)s."
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#. odoo-python
+#: code:addons/sh_warehouse_avg_costing/models/stock_revaluation.py:0
+#: code:addons/sh_warehouse_avg_costing/models/stock_revaluation.py:0
+#, python-format
+msgid ""
+"%(user)s changed stock valuation from  %(previous)s to %(new_value)s - "
+"%(product)s"
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_sh_warehouse_cost__cost
+msgid "Cost"
+msgstr "Giá"
+
+#. module: sh_warehouse_avg_costing
+#. odoo-python
+#: code:addons/sh_warehouse_avg_costing/models/stock_landed_cost.py:0
+#, python-format
+msgid ""
+"Cost and adjustments lines do not match. You should maybe recompute the "
+"landed costs."
+msgstr "Các dòng chi phí và điều chỉnh không khớp nhau. Có lẽ bạn nên tính lại chi phí đã phân bổ."
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_sh_warehouse_cost__create_uid
+msgid "Created by"
+msgstr "Tạo bởi"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_sh_warehouse_cost__create_date
+msgid "Created on"
+msgstr "Tạo vào"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_sh_warehouse_cost__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_sh_warehouse_cost__id
+msgid "ID"
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_stock_move__sh_in_replenshment
+msgid "Is Replenishment"
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model,name:sh_warehouse_avg_costing.model_account_move_line
+msgid "Journal Item"
+msgstr "Hạng mục bút toán"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_sh_warehouse_cost__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_sh_warehouse_cost__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#. odoo-python
+#: code:addons/sh_warehouse_avg_costing/models/product_replenish.py:0
+#: code:addons/sh_warehouse_avg_costing/models/product_replenish.py:0
+#, python-format
+msgid "Manual Replenishment"
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#. odoo-python
+#: code:addons/sh_warehouse_avg_costing/models/stock_revaluation.py:0
+#, python-format
+msgid "Manual Stock Valuation: %s."
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#. odoo-python
+#: code:addons/sh_warehouse_avg_costing/models/stock_revaluation.py:0
+#, python-format
+msgid "Manual Stock Valuation: No Reason Given."
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_sh_warehouse_cost__sh_onhand_qty
+msgid "Onhand Quantity"
+msgstr "Số lượng tồn kho"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model,name:sh_warehouse_avg_costing.model_product_template
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_sh_warehouse_cost__product_id
+msgid "Product"
+msgstr "Sản phẩm"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model,name:sh_warehouse_avg_costing.model_product_replenish
+msgid "Product Replenish"
+msgstr "Bổ sung sản phẩm"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model,name:sh_warehouse_avg_costing.model_product_product
+msgid "Product Variant"
+msgstr "Biến thể sản phẩm"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model,name:sh_warehouse_avg_costing.model_purchase_order
+msgid "Purchase Order"
+msgstr "Đơn mua hàng"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model,name:sh_warehouse_avg_costing.model_purchase_order_line
+msgid "Purchase Order Line"
+msgstr "Dòng đơn mua hàng"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_stock_valuation_layer__warehouse_id
+msgid "Receipt WH"
+msgstr "Nhà kho nhận hàng"
+
+#. module: sh_warehouse_avg_costing
+#. odoo-python
+#: code:addons/sh_warehouse_avg_costing/models/stock_revaluation.py:0
+#, python-format
+msgid "Revaluation of %s"
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model,name:sh_warehouse_avg_costing.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Dòng đơn bán hàng"
+
+#. module: sh_warehouse_avg_costing
+#. odoo-python
+#: code:addons/sh_warehouse_avg_costing/models/stock_revaluation.py:0
+#, python-format
+msgid "Selected Warehouse has no stock for this Product"
+msgstr "Kho hàng đã chọn không có hàng cho Sản phẩm này"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model,name:sh_warehouse_avg_costing.model_stock_landed_cost
+msgid "Stock Landed Cost"
+msgstr "Chi phí nhập kho"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model,name:sh_warehouse_avg_costing.model_stock_move
+msgid "Stock Move"
+msgstr "Dịch chuyển tồn kho"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model,name:sh_warehouse_avg_costing.model_stock_quantity_history
+msgid "Stock Quantity History"
+msgstr "Lịch sử số lượng tồn kho"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model,name:sh_warehouse_avg_costing.model_stock_valuation_layer
+msgid "Stock Valuation Layer"
+msgstr "Lớp giá trị tồn kho"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model,name:sh_warehouse_avg_costing.model_sh_warehouse_cost
+msgid "Stores Cost warehouse Wise"
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#. odoo-python
+#: code:addons/sh_warehouse_avg_costing/models/stock_revaluation.py:0
+#, python-format
+msgid "The added value doesn't have any impact on the stock valuation"
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#. odoo-python
+#: code:addons/sh_warehouse_avg_costing/models/purchase_order_line.py:0
+#, python-format
+msgid ""
+"The quantities on your purchase order indicate less than billed. You should "
+"ask for a refund."
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_purchase_order_line__sh_warehouse_id
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_sh_warehouse_cost__warehouse_id
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_stock_quantity_history__warehouse_id
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_stock_valuation_layer_revaluation__warehouse_id
+msgid "Warehouse"
+msgstr "Kho hàng"
+
+#. module: sh_warehouse_avg_costing
+#: model:res.groups,name:sh_warehouse_avg_costing.sh_warehouse_avg_costing_group
+msgid "Warehouse Average Costing"
+msgstr "Chi phí kho trung bình"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_product_product__warehouse_cost_lines
+#: model:ir.model.fields,field_description:sh_warehouse_avg_costing.field_product_template__warehouse_cost_lines
+msgid "Warehouse Cost Lines"
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#: model_terms:ir.ui.view,arch_db:sh_warehouse_avg_costing.sh_warehouse_avg_product_product_form
+#: model_terms:ir.ui.view,arch_db:sh_warehouse_avg_costing.sh_warehouse_avg_product_template_form
+msgid "Warehouse-Wise Cost"
+msgstr "Giá vốn theo kho"
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model,name:sh_warehouse_avg_costing.model_stock_valuation_layer_revaluation
+msgid "Wizard model to reavaluate a stock inventory for a product"
+msgstr "Mô hình công cụ để tái định giá tồn kho cho một sản phẩm"
+
+#. module: sh_warehouse_avg_costing
+#. odoo-python
+#: code:addons/sh_warehouse_avg_costing/models/purchase_order_line.py:0
+#, python-format
+msgid ""
+"You cannot decrease the ordered quantity below the received quantity.\n"
+"Create a return first."
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#. odoo-python
+#: code:addons/sh_warehouse_avg_costing/models/product_replenish.py:0
+#, python-format
+msgid "You need to select a route to replenish your products"
+msgstr ""
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields,help:sh_warehouse_avg_costing.field_product_pricelist_item__base
+msgid ""
+"Base price for computation.\n"
+"Sales Price: The base price will be the Sales Price.\n"
+"Cost Price: The base price will be the cost price.\n"
+"Warehouse Cost: The base price will be the warehouse cost.\n"
+"Other Pricelist: Computation of the base price based on another Pricelist."
+msgstr ""
+"Giá cơ bản dùng cho tính toán.\n"
+"Giá bán: Giá cơ bản được dùng làm giá bán.\n"
+"Giá vốn: Giá cơ bản được dùng làm giá vốn.\n"
+"Giá vốn theo kho: giá vốn dựa trên định giá tồn kho của kho chứa sản phẩm.\n"
+"Bảng giá khác: Tính giá cơ bản dựa vào bảng giá khác."
+
+#. module: sh_warehouse_avg_costing
+#: model:ir.model.fields.selection,name:sh_warehouse_avg_costing.selection__product_pricelist_item__base__warehouse_cost
+msgid "Warehouse Cost"
+msgstr "Giá vốn theo kho"

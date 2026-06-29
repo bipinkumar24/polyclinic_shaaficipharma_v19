@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_grn_scanner" model="ir.actions.act_url">
+        <field name="name">GRN Scanner</field>
+        <field name="url">/grn/scanner</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_grn_scanner_root"
+              name="GRN Scanner"
+              parent="stock.menu_stock_root"
+              sequence="50"/>
+    <menuitem id="menu_grn_scanner"
+              name="Open Scanner"
+              parent="menu_grn_scanner_root"
+              action="action_grn_scanner"
+              sequence="10"/>
+</odoo>
