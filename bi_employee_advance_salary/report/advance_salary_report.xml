@@ -3,6 +3,7 @@
 	<data>
 		<template id="report_advance_salary_template">
 			<t t-call="web.external_layout">
+				<t t-set="doc" t-value="doc.with_context({})" />
 				<div class="page">
                     <br/><br/><br/><br/>
                     

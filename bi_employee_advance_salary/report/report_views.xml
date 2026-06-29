@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="report_advance_salary_print" model="ir.actions.report">
-        <field name="name">Advance Salary</field>
-        <field name="model">advance.salary</field>
-        <field name="report_type">qweb-pdf</field>
-        <field name="report_name">bi_employee_advance_salary.report_advance_salary</field>
-        <field name="report_file">bi_employee_advance_salary.report_advance_salary</field>
-    </record>
+	<record id="report_advance_salary_print" model="ir.actions.report">
+		<field name="name">Advance Salary</field>
+		<field name="model">advance.salary</field>
+		<field name="report_type">qweb-pdf</field>
+		<field name="report_name">bi_employee_advance_salary.report_advance_salary</field>
+		<field name="report_file">bi_employee_advance_salary.report_advance_salary</field>
+		<field name="binding_model_id" ref="model_advance_salary"/>
+		<field name="binding_type">report</field>
+	</record>
 </odoo>

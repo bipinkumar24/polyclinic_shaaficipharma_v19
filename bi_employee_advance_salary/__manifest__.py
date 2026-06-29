@@ -2,7 +2,7 @@
 # Part of Browseinfo. See LICENSE file for full copyright and licensing details.
 {
     'name': 'Employee Advance Salary Requests In Odoo',
-    'version': '19.0.1.0.0',
+    'version': '19.0.0.1',
     'category': 'Human Resources',
     'summary': 'HR Advance Salary Request for Employee salary Advance Salary Request Approval Director Approval on employee Advance Salary Employee Payslip Advance Employee Advance Payslip Advance Salary for employee Requests Advance Salary for employee Salary approval',
     'description': """This app allows employee to request for advance salary,
@@ -41,9 +41,8 @@ Under HR menu to request advance salary by employee (List view). Normal employee
 	'author': 'BrowseInfo',
     "price": 10,
     "currency": 'EUR',
-    'license': 'LGPL-3',
     'website': 'https://www.browseinfo.in',
-    'depends': ['base','hr','hr_payroll','account','bi_hr_overtime_request','bi_hr_employee_loan'],
+    'depends': ['base','hr','hr_payroll','account','bi_hr_employee_loan','expense_requests'],
     'data': [
             'data/cron.xml',
             'security/groups.xml',
@@ -53,7 +52,7 @@ Under HR menu to request advance salary by employee (List view). Normal employee
             'views/account_move_view.xml',
             'report/advance_salary_action.xml',
             'report/custom_advance_salary_report.xml',
-            # 'views/salary_rule.xml',
+            'views/salary_rule.xml',
             'report/report_views.xml',
             'wizard/advance_salary_wizard_view.xml',
             'report/advance_salary_report.xml'],

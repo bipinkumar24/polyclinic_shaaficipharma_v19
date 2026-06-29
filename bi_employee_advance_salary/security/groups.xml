@@ -3,22 +3,22 @@
 
 	<record id="dept_manager_advance_salary_id" model="res.groups">
 		<field name="name">Department Manager (Advance Salary)</field>
-		<field name="privilege_id" ref="hr_payroll.res_groups_privilege_payroll"/>
 	</record>
 
     <record id="hr_manager_advance_salary_id" model="res.groups">
 		<field name="name">HR Manager (Advance Salary)</field>
-		<field name="privilege_id" ref="hr_payroll.res_groups_privilege_payroll"/>
 	</record>
-   
+
    	<record id="director_manager_advance_salary_id" model="res.groups">
 		<field name="name">Director(Advance Salary)</field>
-		<field name="privilege_id" ref="hr_payroll.res_groups_privilege_payroll"/>
 	</record>
-   
+
     <record id="account_manager_advance_salary_id" model="res.groups">
 		<field name="name">Account Manager(Advance Salary)</field>
-		<field name="privilege_id" ref="hr_payroll.res_groups_privilege_payroll"/>
 	</record>
+
+    <record id="advance_salary_bill_group_id" model="res.groups">
+        <field name="name">Advance Salary Bill User</field>
+    </record>
 
 </odoo>
