@@ -37,6 +37,7 @@ Disbursment using Cash/Bank or Payroll
 Loan Installments and Booking Interest and Booking entry if repayment method = cash/bank
 	 """,
     'author': 'BrowseInfo',
+    'license': 'LGPL-3',
     'website': 'https://www.browseinfo.in',
     "price": 39,
     "currency": 'EUR',

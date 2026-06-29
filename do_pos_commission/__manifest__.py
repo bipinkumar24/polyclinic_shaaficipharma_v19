@@ -5,6 +5,7 @@
     'version': '19.0.0.1',
     'category': 'pos',
     'summary': """""",
+    'author': 'Do Incredible',
     'sequence': 15,
     'depends': ['base', 'point_of_sale', 'acs_commission'],
     'data': [

@@ -41,6 +41,7 @@ Under HR menu to request advance salary by employee (List view). Normal employee
 	'author': 'BrowseInfo',
     "price": 10,
     "currency": 'EUR',
+    'license': 'LGPL-3',
     'website': 'https://www.browseinfo.in',
     'depends': ['base','hr','hr_payroll','account','bi_hr_employee_loan','expense_requests'],
     'data': [
