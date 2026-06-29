@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Inject into Control Buttons -->
+    <t t-name="CommissionButtons"
+       t-inherit="point_of_sale.ControlButtons"
+       t-inherit-mode="extension"
+       owl="1">
+
+        <xpath expr="//SelectPartnerButton" position="after">
+            <SelectCommissionButton card_commission="card_commission" t-if="!props.showRemainingButtons"
+            />
+        </xpath>
+
+    </t>
+
+</templates>

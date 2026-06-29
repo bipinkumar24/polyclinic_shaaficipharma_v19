@@ -1,0 +1,27 @@
+/* Highlight selected clinic */
+.apply-color div {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+}
+
+.apply-color div:hover {
+    background: #f2f2f2;
+}
+
+.apply-color div.selected {
+    background: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+/* Button alignment */
+.footer .button-group {
+    display: flex;
+    justify-content: flex-end; /* pushes buttons to the right */
+    gap: 10px; /* spacing between buttons */
+}
+
+.footer .button {
+    min-width: 80px;
+}

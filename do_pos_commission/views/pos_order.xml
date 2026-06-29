@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pos_order_inherit_form" model="ir.ui.view">
+        <field name="name">res.pos.order.view.form</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form" />
+        <field name="arch" type="xml">
+            <div class="oe_button_box" name="button_box">
+                <button class="oe_stat_button" type="object" name="action_view_pos_card_commission" icon="fa-folder">
+                    <field name="card_commission_record_count" string='Commission Record' widget="statinfo" />
+                </button>
+            </div>
+            <field name="partner_id" position="after">
+                <field name="card_commission_id" />
+            </field>
+        </field>
+    </record>
+</odoo>

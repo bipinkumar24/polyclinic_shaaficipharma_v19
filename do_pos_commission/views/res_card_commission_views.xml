@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_res_commission_form" model="ir.ui.view">
+        <field name="name">res.card.commission.view.form</field>
+        <field name="model">res.card.commission</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <!-- Status bar -->
+                    <button name="action_create_journal_entry"
+                            type="object"
+                            string="Payment Registration"
+                            class="btn-primary"
+                            invisible ="state == 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,state"/>
+
+                    <!-- Confirm button -->
+                    <button name="action_confirm" type="object" string="Confirm" class="btn-primary" invisible ="state != 'draft'" groups="acs_commission.group_acs_commission_user"/>
+
+                    <!-- Reset to Draft -->
+                    <button name="action_reset_to_draft"
+                            type="object"
+                            string="Reset to Draft"
+                            class="btn-secondary"
+                            groups="acs_commission.group_acs_commission_user"
+                            invisible = "state != 'confirmed'"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_pos_clinic_commission" icon="fa-folder">
+                        <field name="clinic_commis_record_count" string='Commission Record' widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_clinic_commission_payment" icon="fa-folder">
+                        <field name="card_commission_payment" string='Payment' widget="statinfo"/>
+                        </button>
+                    </div>
+                    <group >
+                        <group>
+                            <field name="card_number" readonly = "state == 'confirmed'"/>
+                            <field name="percentage" readonly = "state == 'confirmed'"/>
+                            <field name="balance" />
+                            <field name="filter_balance" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="partner_id" readonly = "state == 'confirmed'"/>
+                            <field name="registration_date" readonly = "state == 'confirmed'"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_res_card_commission_list" model="ir.ui.view">
+        <field name="name">res.card.commission.tree"</field>
+        <field name="model">res.card.commission</field>
+        <field name="arch" type="xml">
+        <list>
+               <field name="partner_id"/>
+               <field name="card_number"/>
+               <field name="percentage"/>
+               <field name="registration_date"/>
+               <field name="state" string="Status"/>
+           </list>
+       </field>
+   </record>
+   <record id="view_res_card_commission_search" model="ir.ui.view">
+        <field name="name">res.card.commission.search"</field>
+        <field name="model">res.card.commission</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="card_number"/>
+                <field name="percentage"/>
+                <field name="state"/>
+                <field name="filter_balance"/>
+                <filter name="with_balance" string="Card with Balance" domain="[('filter_balance','&gt;',0)]"/>
+                <filter name="not_balance" string="Not Balance" domain="[('filter_balance','&lt;=',0)]"/>
+                <group>
+                    <filter string="Partner Name" name="partner_id" domain="[]" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Card Number" name="card_number" domain="[]" context="{'group_by': 'card_number'}"/>
+                    <filter string="Percentage" name="percentage" domain="[]" context="{'group_by': 'percentage'}"/>
+                    <filter string="Registration Date" name="registration_date" domain="[]" context="{'group_by':'registration_date'}"/>
+                    <filter string="Status" name="state" domain="[]" context="{'group_by': 'state'}"/>
+                    <filter string="Balance" name="filter_balance" domain="[]" context="{'group_by': 'filter_balance'}"/>
+                </group>
+            </search>
+       </field>
+   </record>
+   <record id="action_card_res_commission" model="ir.actions.act_window">
+        <field name="name">Card Commission</field>
+        <field name="res_model">res.card.commission</field>
+        <field name="view_mode">list,form,search</field>
+        <field name="context">
+        {
+            'search_default_with_balance': 1
+        }
+    </field>
+    </record>
+    <menuitem id="card_commission_menu" name="Card Commissions" sequence="20" parent="acs_commission.main_menu_acs_commission"/>
+    <menuitem id="card_commission_submenu" name="Card Commissions" sequence="01" parent="card_commission_menu" action="action_card_res_commission"/>
+</odoo>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="do_pos_commission.SelectCommissionButton">
+        <button class="set-partner btn btn-light btn-lg lh-lg text-truncate w-auto" t-on-click="() => this.onClickCardCommission()">
+            <t t-log="props"/>
+            <div t-if="props.card_commission?.id" t-esc="props.card_commission.card_number" class="text-truncate text-action" />
+            <t t-else="">Commission</t>
+        </button>
+    </t>
+</templates>
+

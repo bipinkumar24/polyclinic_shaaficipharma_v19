@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_pos_card_commission_form" model="ir.ui.view">
+        <field name="name">pos.card.commission.view.form</field>
+        <field name="model">pos.card.commission</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+               <!--  <header>
+                    <button name="action_create_journal_entry"
+                            type="object"
+                            string="Payment Registration"
+                            class="btn-primary"
+                            invisible ="status == 'paid'"/>
+                    <field name="status" widget="statusbar" statusbar_visible="paid, unpaid"/>
+                </header> -->
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="pos_order_id"/>
+                            <field name="create_date"/>
+                            <field name="customer_name" invisible="1"/>
+                            <field name="partner_id"/>
+                            <field name="card_commission_id"/>
+                            <field name="order_total"/>
+                        </group>
+                        <group>
+                            <field name="commission"/>
+                            <field name="commission_amount"/>
+                            <!-- <field name="payment_id"/> -->
+                            <field name="journal_entry_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_pos_card_commission_list" model="ir.ui.view">
+        <field name="name">pos.card.commission.view.list</field>
+        <field name="model">pos.card.commission</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0">
+                <field name="pos_order_id" />
+                <field name="create_date"/>
+                <field name="customer_name" />
+                <field name="partner_id"/>
+                <field name="card_commission_id" />
+                <field name="order_total" />
+                <field name="commission" />
+                <field name="commission_amount" />
+                <field name="journal_entry_id" />
+                <!-- <field name="status" widget="badge"/> -->
+            </list>
+        </field>
+    </record>
+    <!-- <record id="server_action_register_commission_payment"
+        model="ir.actions.server">
+        <field name="name">Register Commission Payment</field>
+        <field name="model_id" ref="model_pos_card_commission"/>
+        <field name="binding_model_id" ref="model_pos_card_commission"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            action = records.action_register_commission_payment()
+        </field>
+    </record> -->
+    <record id="action_pos_card_commission" model="ir.actions.act_window">
+        <field name="name">Pos/Appointment Card Commission</field>
+        <field name="res_model">pos.card.commission</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem name="Pos Commission" id="pos_commission_menu" parent="card_commission_menu" sequence="2" action="action_pos_card_commission" />
+</odoo>

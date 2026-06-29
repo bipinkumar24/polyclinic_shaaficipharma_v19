@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_res_card_commission,access.res.card.commission,model_res_card_commission,,1,1,1,1
+access_pos_card_commission,access.pos.card.commission,model_pos_card_commission,,1,1,1,1
+access_commission_payment_wizard,access.commission.payment.wizard,model_commission_payment_wizard,,1,1,1,1
