@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="saledetails_inherit_report" inherit_id="point_of_sale.pos_session_sales_details">
+
+            <xpath expr="//div/table" position="replace">
+
+                <table class="table table-sm">
+                        <thead><tr>
+                            <th class="text-start">Product Category</th>
+                            <th class="text-start">Product</th>
+                            <th class="text-end">Quantity</th>
+                            <th class="text-end">UOM</th>
+                            
+                            <th class="text-end">Total (Tax excluded)</th>
+                        </tr></thead>
+                        <tbody>
+                            <tr t-foreach="products" t-as="category">
+                                <td style="background-color: #dadada;"><span t-out="category['name']">Technical Stuffs</span></td>
+                                <td style="background-color: #dadada;"/>
+                                <td class="text-end" style="background-color: #dadada;"><span t-out="category['qty']">5</span></td>
+                                <td style="background-color: #dadada;"></td>
+                                <td class="text-end" style="background-color: #dadada;">
+                                    <t t-if="currency['position']">
+                                        <span t-out="category['total']" t-options="{'widget': 'float', 'precision': currency['precision']}">10000.00</span><span t-out='currency["symbol"]'>$</span>
+                                    </t>
+                                    <t t-else="" >
+                                        <span t-out='currency["symbol"]'>$</span><span t-out="category['total']" t-options="{'widget': 'float', 'precision': currency['precision']}">10000.00</span>
+                                    </t>
+                                </td>
+                                <tr t-foreach="category['products']" t-as="line">
+                                    <td/>
+                                    <t t-set="internal_reference" t-value="line['code'] and '[%s] ' % line['code'] or ''" />
+                                    <td><span t-out="internal_reference">Ref 876787</span><span t-out="line['product_name']">Laptop model x</span></td>
+                                    <td class="text-end">
+                                        <span t-out="line['quantity']">5</span>
+                                        <t t-if='line["uom"] != "Units"'>
+                                            <span t-out='line["uom"]'>Unit</span>
+                                        </t>
+                                    </td>
+                                    
+                                    <td class="text-end">
+                                        <!-- <td/> -->
+                                        <span t-out='line["second_uom"]'></span>
+                                    </td>
+                                    
+                                    <td class="text-end">
+                                        <t t-if="currency['position']">
+                                            <span t-out='line["base_amount"]' t-options="{'widget': 'float', 'precision': currency['precision']}">567789</span><span t-out='currency["symbol"]'>$</span>
+                                        </t>
+                                        <t t-else="" >
+                                            <span t-out='currency["symbol"]'>$</span><span t-out='line["base_amount"]' t-options="{'widget': 'float', 'precision': currency['precision']}">567789</span>
+                                        </t>
+
+                                        <t t-if='line["discount"] != 0'>
+                                            Disc: <span t-out='line["discount"]'>45</span>%
+                                        </t>
+                                    </td>
+                                </tr>
+                            </tr>
+                            <tr>
+                                <td style="background-color: #b1b1b1;"><strong>Total</strong></td>
+                                <td style="background-color: #b1b1b1;"/>
+                                <td class="text-end" style="background-color: #b1b1b1;"><strong><span t-out="products_info['qty']">5</span></strong></td>
+                                <td style="background-color: #b1b1b1;"></td>
+                                <td class="text-end" style="background-color: #b1b1b1;">
+                                    <t t-if="currency['position']">
+                                        <strong><span t-out='products_info["total"]' t-options="{'widget': 'float', 'precision': currency['precision']}">10000</span><span t-out='currency["symbol"]'>$</span></strong>
+                                    </t>
+                                    <t t-else="" >
+                                        <strong><span t-out='currency["symbol"]'>$</span><span t-out='products_info["total"]' t-options="{'widget': 'float', 'precision': currency['precision']}">1000</span></strong>
+                                    </t>   
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </xpath>
+        </template>
+    
+    </data>
+
+</odoo>
+
+

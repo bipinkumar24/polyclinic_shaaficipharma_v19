@@ -1,0 +1,9 @@
+<odoo>
+    <!--
+        Odoo 19 removed the `uom.category` model and its form view
+        (`uom.product_uom_categ_form_view`). The view that exposed the
+        `auto_calculate_sale_price` flag on the UoM category therefore has no
+        target in v19 and is no longer loaded (removed from __manifest__.py).
+        File kept empty intentionally to preserve the module structure.
+    -->
+</odoo>

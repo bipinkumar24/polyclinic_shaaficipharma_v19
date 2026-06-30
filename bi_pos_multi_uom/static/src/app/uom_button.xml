@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="bi_pos_multi_uom.UOMButton" t-inherit="point_of_sale.ControlButtons" t-inherit-mode="extension">
+        <xpath expr="//t[@t-if='props.showRemainingButtons']/div" position="inside">
+            <t t-if="pos.config.product_multi_uom">
+                <button  t-if="pos.config.product_multi_uom" t-att-class="buttonClass" t-on-click="() => this.onClickUom()">
+                    <i class="fa fa-balance-scale" aria-hidden="true"/>
+                    <span>Change UOM</span>
+                </button>
+            </t>
+        </xpath>
+
+    </t>
+</templates>
+
+
+

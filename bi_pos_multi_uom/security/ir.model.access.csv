@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+bi_pos_multi_uom.access_product_template_uom_line,access_product_template_uom_line,bi_pos_multi_uom.model_product_template_uom_line,base.group_user,1,1,1,1

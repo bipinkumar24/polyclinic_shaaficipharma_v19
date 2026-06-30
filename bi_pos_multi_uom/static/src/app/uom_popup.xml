@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="bi_pos_multi_uom.MultiUOMPopup">
+        <Dialog title="props.title">
+            <div class="modal-header">
+                <!-- <h4 class="modal-title"><t t-esc="props.title" /></h4> -->
+                <!-- when modal fixed <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+            </div>
+
+            <div class="modal-body">
+                <div class="selection btn-group-vertical justify-content-start w-100 p-3 overflow-y-auto">
+                    <t t-log="props.list"/>
+                    <t t-foreach="props.list" t-as="item" t-key="item_index">
+                        <div class="selection-item d-flex align-items-center justify-content-between btn btn-lg btn-outline-secondary w-100 p-3 text-start" t-on-click="() => this.selectItem(item.id, item.sale_price, item.label, item.selected_orderline)">
+
+                            <t t-esc="item.symbol"/>
+                            <t t-esc="item.sale_price"/>
+                           
+                            /<t t-esc="item.label"/>
+                            <br/>
+                        </div>
+                    </t>
+                </div>
+            </div>
+
+            <t t-set-slot="footer">
+                <button class="btn btn-secondary btn-lg lh-lg o-default-button" t-on-click="close">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+
+</templates>
