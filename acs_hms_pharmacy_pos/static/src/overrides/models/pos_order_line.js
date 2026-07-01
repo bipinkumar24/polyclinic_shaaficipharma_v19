@@ -34,6 +34,6 @@ patch(PosOrderline.prototype, {
      * @param {'prescription.line'} prescriptionOrderLine
      */
     setQuantityFromPOL(prescriptionOrderLine) {
-        this.set_quantity(prescriptionOrderLine.product_uom_qty);
+        this.setQuantity(prescriptionOrderLine.product_uom_qty);
     },
 });

@@ -15,7 +15,7 @@ class ResCardcommission(models.Model):
     clinic_commis_record_count = fields.Integer(string="Clinic Record Count", compute="_clinic_commis_record_compute")
     registration_date = fields.Date(string="Registration Date", default=fields.Date.context_today)
     state = fields.Selection([('draft', 'Draft'),('confirmed', 'Confirmed')], default='draft', tracking=True)
-    balance = fields.Float('Balance', compute="_compute_balance", store=True, compute_sudo=True)
+    balance = fields.Float('Balance', compute="_compute_balance")
     company_id = fields.Many2one('res.company', ondelete='restrict', string='Company', default=lambda self: self.env.company)
     card_commission_payment = fields.Integer(string='Payment', compute="_payment_record_compute")
     filter_balance= fields.Float('Balance', compute="_compute_balance", store=True, compute_sudo=True)

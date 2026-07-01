@@ -17,8 +17,8 @@ patch(PosStore.prototype, {
 
         const prescription_order = await this._getPrescriptionOrder(clickedOrderId);
 
-        const currentPrescriptionOrigin = this.get_order()
-            .get_orderlines()
+        const currentPrescriptionOrigin = this.getOrder()
+            .getOrderlines()
             .find((line) => line.prescription_order_origin_id)?.prescription_order_origin_id;
 
         if (currentPrescriptionOrigin?.id) {
@@ -40,14 +40,14 @@ patch(PosStore.prototype, {
             );
 
         if (orderFiscalPos) {
-            this.get_order().update({ fiscal_position_id: orderFiscalPos });
+            this.getOrder().update({ fiscal_position_id: orderFiscalPos });
         }
         if (prescription_order.partner_id) {
-            this.get_order().set_partner(prescription_order.partner_id);
+            this.getOrder().setPartner(prescription_order.partner_id);
         }
 
         await this.settlePrescriptionSO(prescription_order, orderFiscalPos);
-        this.selectOrderLine(this.get_order(), this.get_order().lines.at(-1));
+        this.selectOrderLine(this.getOrder(), this.getOrder().lines.at(-1));
     },
 
     async _getPrescriptionOrder(id) {
@@ -56,11 +56,11 @@ patch(PosStore.prototype, {
 
     async settlePrescriptionSO(prescription_order, orderFiscalPos) {
         if (prescription_order.pricelist_id) {
-            this.get_order().set_pricelist(prescription_order.pricelist_id);
+            this.getOrder().set_pricelist(prescription_order.pricelist_id);
         }
 
         let previousProductLine = null;
-        const order = this.get_order();
+        const order = this.getOrder();
 
         for (const line of prescription_order.prescription_line_ids) {
 
@@ -196,8 +196,8 @@ patch(PosStore.prototype, {
             this.selectOrderLine(order, newLine);
 
             newLine.setQuantityFromPOL(line);
-            newLine.set_unit_price(line.price_unit);
-            newLine.set_discount(line.discount);
+            newLine.setUnitPrice(line.price_unit);
+            newLine.setDiscount(line.discount);
             // order.recomputeOrderData();
 
             // Always keep a single order line carrying the full quantity.

@@ -189,7 +189,7 @@ class Prescription(models.Model):
             'partner_id': self.patient_id.partner_id.id,
             'patient_id': self.patient_id.id,
             'prescription_id': self.id,
-            'date': fields.datetime.now(), 
+            'date': fields.datetime.now(),
             'company_id': self.company_id.id,
             'picking_type_id': picking_type_id.id,
             'location_id': location_id.id,
@@ -279,7 +279,7 @@ class AccountMove(models.Model):
                             StockMoveL.with_context(default_immediate_transfer=True).create({
                                 'product_id': kit_line.product_id.id,
                                 'product_uom_id': kit_line.product_id.uom_id.id,
-                                'date': fields.datetime.now(),                    
+                                'date': fields.datetime.now(),
                                 'picking_id': picking.id,
                                 'picking_type_id': picking.picking_type_id.id,
                                 'state': 'assigned',
@@ -288,14 +288,13 @@ class AccountMove(models.Model):
                                 'acs_account_move_line_id': line.id, 
                                 'quantity': kit_line.product_qty,
                                 'company_id': picking.company_id.id,
-                                'package_level_id': False,
                             })
                 else:
                     StockMoveL.with_context(default_immediate_transfer=True).create({
                         'product_id': line.product_id.id,
                         #'product_uom_qty': line.quantity,
                         'product_uom_id': line.product_uom_id.id,
-                        'date': fields.datetime.now(),                    
+                        'date': fields.Datetime.now(),
                         'picking_id': picking.id,
                         'picking_type_id': picking.picking_type_id.id,
                         'state': 'assigned',
@@ -306,7 +305,6 @@ class AccountMove(models.Model):
                         'acs_account_move_line_id': line.id, 
                         'quantity': line.quantity,
                         'company_id': picking.company_id.id,
-                        'package_level_id': False,
                     })
 
 

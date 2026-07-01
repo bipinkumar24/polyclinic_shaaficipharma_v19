@@ -114,7 +114,7 @@ class AccountMove(models.Model):
                 StockMoveL.with_context(default_immediate_transfer=True).create({
                     'product_id': line.product_id.id,
                     'product_uom_id': line.product_uom_id.id,
-                    'date': fields.datetime.now(),                    
+                    'date': fields.Datetime.now(),
                     'picking_id': picking.id,
                     'picking_type_id': picking.picking_type_id.id,
                     'state': 'assigned',
@@ -125,14 +125,13 @@ class AccountMove(models.Model):
                     'acs_account_move_line_id': line.id, 
                     'quantity': line.quantity,
                     'company_id': picking.company_id.id,
-                    'package_level_id': False,
                 })
 
     @api.model
     def acs_create_picking(self, picking_type_id, location_id, location_dest_id):
         picking_id = self.env['stock.picking'].with_context(default_immediate_transfer=True).create({
             'partner_id': self.partner_id.id,
-            'date': fields.datetime.now(), 
+            'create_date': fields.Datetime.now(),
             'company_id': self.company_id.id,
             'picking_type_id': picking_type_id.id,
             'location_id': location_id.id,
