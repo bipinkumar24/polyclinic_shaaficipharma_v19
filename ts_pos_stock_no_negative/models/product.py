@@ -1,34 +1,38 @@
 # -*- coding: utf-8 -*-
-from odoo import models, api
-import logging
+#############################################################################
+#
+#    Techvaria Solutions Pvt. Ltd.
+#
+#    Copyright (C) 2025-Techvaria Solutions(<https://techvaria.com>)
+#    Author: Techvaria Solutions Pvt. Ltd.(info@techvaria.com)
+#
+#    You can modify it under the terms of the GNU AFFERO
+#    GENERAL PUBLIC LICENSE (AGPL v3), Version 3.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU AFFERO GENERAL PUBLIC LICENSE (AGPL v3) for more details.
+#
+#    You should have received a copy of the GNU AFFERO GENERAL PUBLIC LICENSE
+#    (AGPL v3) along with this program.
+#    If not, see <http://www.gnu.org/licenses/>.
+#
+#############################################################################
 
-_logger = logging.getLogger(__name__)
-
-# In Odoo 19 the _load_pos_data_fields signature uses (self, config)
-# where config is the pos.config record (not config_id like in Odoo 16/17).
-# The field is_storable is already loaded by Odoo 19's product.template
-# (see odoo/addons/point_of_sale/models/product_template.py line 167).
-# We only need to additionally load qty_available.
-
-
-class ProductTemplate(models.Model):
-    _inherit = 'product.template'
-
-    @api.model
-    def _load_pos_data_fields(self, config):
-        fields_list = super()._load_pos_data_fields(config)
-        # qty_available: global ORM value; JS will override with location-specific qty from quants
-        if 'qty_available' not in fields_list:
-            fields_list.append('qty_available')
-        return fields_list
-
+from odoo import models
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
-    @api.model
-    def _load_pos_data_fields(self, config):
-        fields_list = super()._load_pos_data_fields(config)
-        if 'qty_available' not in fields_list:
-            fields_list.append('qty_available')
-        return fields_list
+    def _load_pos_data_fields(self, config_id):
+        # v19: add the fields the POS negative-stock check needs on the
+        # product.product (variant) record. qty_available is the aggregated
+        # on-hand; stock_quant_ids gives the per-location breakdown (only
+        # populated when stock.quant is loaded into the POS, which
+        # pos_load_product_location does).
+        fields = super(ProductProduct, self)._load_pos_data_fields(config_id)
+        for fname in ('qty_available', 'stock_quant_ids'):
+            if fname not in fields:
+                fields.append(fname)
+        return fields

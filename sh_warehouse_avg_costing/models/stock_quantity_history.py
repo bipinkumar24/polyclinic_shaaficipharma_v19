@@ -1,24 +1,20 @@
 # -*- coding: utf-8 -*-
 # Part of Softhealer Technologies.
-#
-# Odoo 19 migration note
-# ----------------------
-# ``stock.quantity.history.open_at_date`` no longer opens a
-# ``stock.valuation.layer`` action (the model was removed). It now opens the
-# product list with a ``to_date`` context so that the valuation is computed at the
-# chosen date by the native engine. We simply inject the selected warehouse into
-# the context so the at-date quantities/values are restricted to that warehouse.
-
-from odoo import fields, models
+from odoo import fields, models, _
+from odoo.tools.misc import format_datetime
 
 
 class StockQuantityHistory(models.TransientModel):
+    """Stock Quantity History"""
     _inherit = 'stock.quantity.history'
 
     warehouse_id = fields.Many2one('stock.warehouse', string="Warehouse")
 
     def open_at_date(self):
+        """Open at date"""
         action = super().open_at_date()
-        if self.warehouse_id and isinstance(action, dict) and action.get('context') is not None:
-            action['context'] = dict(action['context'], warehouse_id=self.warehouse_id.id)
+        if self.warehouse_id:
+            product_ids = self.env['product.product'].search([('type', '=', 'storable')]).with_context(warehouse=self.warehouse_id.id).filtered(lambda p: p.qty_available != 0)
+            action['domain'] = [('id', 'in', product_ids.ids)]
+            action['display_name'] = _('Products in %s at %s') % (self.warehouse_id.name, format_datetime(self.env, self.inventory_datetime))
         return action

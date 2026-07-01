@@ -5,9 +5,8 @@
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//block[@id='pos_inventory_section']" position="inside">
-                <setting string="Restrict Negative Quantity"
-                         help="Restrict selling product over available quantity.">
+             <xpath expr="//block[@id='pos_inventory_section']" position="inside">
+               <setting string="Restrict Negative Quantity" help="Restrict selling product over available quantity.">
                     <field name="is_restrict_negative"/>
                 </setting>
             </xpath>

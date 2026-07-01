@@ -1,35 +1,13 @@
-17.0.1 (30th Sept 2023)
-------------------------
-
+19.0.1.0.0 (12st Sept 2025)
+--------------------------
 - Initial Release
 
-17.0.2 (23th Dec 2023)
-------------------------
 
-- [FIX] stock move line field qty_done to quantity as per v17
-
-17.0.3 (30th Dec 2023)
-------------------------
-
--[Fix] Correct Valuation Entry
-
-17.0.4 (16th Jan 2024)
------------------------
-
--[Fix] Remove Warning of Product Template
-
-17.0.5 (21st March 2024)
-------------------------
-
--[Fix] Landed cost issue of multiple times being added
-
-17.0.6 (23rd May 2024)
------------------------
-
-- [Add] Margin cost based on warehouse
+19.0.2.0.0 (18th Nov 2025)
+-------------------------
+- [Fix] Update field name
 
 
-17.0.7 (27th June 2024)
------------------------
-
-[Add] : Warehouse costing based on Replenish
+19.0.3.0.0 (23th dec 2025)
+-------------------------
+- [Add] Report Warehouse wise Stock

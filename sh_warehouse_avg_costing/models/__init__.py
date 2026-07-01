@@ -8,7 +8,7 @@ from . import stock_landed_cost
 from . import stock_quantity_history
 from . import purchase_order
 from . import purchase_order_line
-from . import stock_revaluation
+from . import account_move_line
 from . import sale_order_line
 from . import product_replenish
-from . import product_pricelist_item
+from . import product_value

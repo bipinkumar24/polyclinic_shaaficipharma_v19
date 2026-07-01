@@ -4,21 +4,22 @@ import { PartnerList } from "@point_of_sale/app/screens/partner_list/partner_lis
 patch(PartnerList.prototype, {
 
     // ── Local (already-loaded) partner filtering ──────────────────────────
-    getPartners() {
-        const query = (this.state.query || "").trim().toLowerCase();
+    // getPartners() {
+    //     const query = (this.state.query || "").trim().toLowerCase();
 
-        const partners = this.pos.models["res.partner"]
-            .getAll()
-            .filter((p) => !p.hide_in_pos);
+    //     const partners = this.pos.models["res.partner"]
+    //         .getAll()
+    //         .filter((p) => !p.hide_in_pos);
 
-        if (!query) {
-            return partners.slice(0, 1000);
-        }
+    //     if (!query) {
+    //         return partners.slice(0, 1000);
+    //     }
 
-        return partners.filter((p) =>
-            (p.searchString || "").toLowerCase().includes(query)
-        );
-    },
+    //     return partners.filter((p) =>
+    //         (p.searchString || "").toLowerCase().includes(query)
+    //     );
+    // },
+    
 
     // ── Remote "load more" search ─────────────────────────────────────────
     async getNewPartners() {

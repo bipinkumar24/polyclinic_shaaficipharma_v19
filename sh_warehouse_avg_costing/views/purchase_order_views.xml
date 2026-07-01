@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="purchase.purchase_order_form" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']//list//field[@name='product_qty']" position="before">
-                <field name="sh_warehouse_id" readonly="0" column_invisible="1" required="1"/>
+                <field name="sh_warehouse_id" readonly="0"/>
             </xpath>
         </field>
     </record>

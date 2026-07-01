@@ -120,6 +120,7 @@ access_product_effective_cost_pharmacist,product.effective.cost.pharmacist,model
 access_product_effective_cost_manager,product.effective.cost.manager,model_product_effective_cost,group_branch_manager,1,0,0,0
 access_product_effective_cost_finance,product.effective.cost.finance,model_product_effective_cost,group_finance_team,1,0,0,0
 access_product_effective_cost_admin,product.effective.cost.admin,model_product_effective_cost,group_pharmacy_admin,1,0,0,0
+access_pharmacy_product_category_all,pharmacy.product.category.all.users,model_pharmacy_product_category,base.group_user,1,0,0,0
 access_pharmacy_product_category_user,pharmacy.product.category.user,model_pharmacy_product_category,group_pharmacy_cashier,1,0,0,0
 access_pharmacy_product_category_manager,pharmacy.product.category.manager,model_pharmacy_product_category,group_branch_manager,1,1,1,0
 access_pharmacy_product_category_admin,pharmacy.product.category.admin,model_pharmacy_product_category,group_pharmacy_admin,1,1,1,1

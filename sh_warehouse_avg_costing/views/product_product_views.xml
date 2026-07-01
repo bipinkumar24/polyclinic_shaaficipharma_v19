@@ -7,8 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
                 <page name="test" string="Warehouse-Wise Cost" groups="sh_warehouse_avg_costing.sh_warehouse_avg_costing_group">
-                    <field name="can_edit_warehouse_cost" invisible="1"/>
-                    <field name="warehouse_cost_lines" readonly="not can_edit_warehouse_cost">
+                    <field name="warehouse_cost_lines" readonly="true">
                         <list editable="bottom">
                             <field name="warehouse_id" />
                             <field name="sh_onhand_qty"/>
@@ -26,8 +25,7 @@
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
                 <page name="test" string="Warehouse-Wise Cost" invisible="product_variant_count > 1" groups="sh_warehouse_avg_costing.sh_warehouse_avg_costing_group">
-                    <field name="can_edit_warehouse_cost" invisible="1"/>
-                    <field name="warehouse_cost_lines" readonly="not can_edit_warehouse_cost">
+                    <field name="warehouse_cost_lines" readonly="true">
                         <list editable="bottom">
                             <field name="warehouse_id" />
                             <field name="sh_onhand_qty"/>
