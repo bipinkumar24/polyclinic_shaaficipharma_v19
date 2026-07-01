@@ -4,7 +4,8 @@
 import pytz
 from datetime import timedelta
 from odoo import fields, models, api, _
-from odoo.osv.expression import AND
+# v19: odoo.osv.expression is deprecated in favour of odoo.fields.Domain.
+from odoo.fields import Domain
 
 
 class ResConfigSettings(models.TransientModel):
@@ -33,7 +34,7 @@ class ReportSaleDetailsinherit(models.AbstractModel):
 		"""
 		domain = [('state', 'in', ['paid', 'invoiced', 'done'])]
 		if (session_ids):
-			domain = AND([domain, [('session_id', 'in', session_ids)]])
+			domain = Domain.AND([domain, [('session_id', 'in', session_ids)]])
 		else:
 			if date_start:
 				date_start = fields.Datetime.from_string(date_start)
@@ -52,13 +53,13 @@ class ReportSaleDetailsinherit(models.AbstractModel):
 				# stop by default today 23:59:59
 				date_stop = date_start + timedelta(days=1, seconds=-1)
 
-			domain = AND([domain,
+			domain = Domain.AND([domain,
 				[('date_order', '>=', fields.Datetime.to_string(date_start)),
 				('date_order', '<=', fields.Datetime.to_string(date_stop))]
 			])
 
 			if config_ids:
-				domain = AND([domain, [('config_id', 'in', config_ids)]])
+				domain = Domain.AND([domain, [('config_id', 'in', config_ids)]])
 
 		orders = self.env['pos.order'].search(domain)
 

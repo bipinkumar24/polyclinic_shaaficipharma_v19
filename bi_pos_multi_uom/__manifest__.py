@@ -35,7 +35,8 @@
             'bi_pos_multi_uom/static/src/app/uom_button.xml',
             'bi_pos_multi_uom/static/src/app/uom_popup.js',
             'bi_pos_multi_uom/static/src/app/uom_popup.xml',
-           
+            'bi_pos_multi_uom/static/src/app/orderline.xml',
+
         ],
     },
     'license': 'OPL-1',

@@ -109,6 +109,7 @@ patch(PosStore.prototype, {
             }
         }
         if (product.point_of_sale_uom && onhandQtyInLocation < values.qty) {
+            debugger
             let orderqty = values.qty;
             values.qty = onhandQtyInLocation;
             this.dialog.add(AlertDialog, {

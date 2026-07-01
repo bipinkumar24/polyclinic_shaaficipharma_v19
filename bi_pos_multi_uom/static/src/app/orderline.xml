@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!--
+        v19: the core Orderline component was rewritten and no longer renders
+        getDisplayData().unit (which older core templates used to show the POS
+        line UOM). This extension restores the display of the selected multi-UOM
+        on both the order screen and the printed receipt. `line` is the live
+        PosOrderline model instance, so we read line.custom_uom_id directly (no
+        props patch). Shown only when a non-base UOM was actually selected.
+    -->
+    <!-- <t t-name="bi_pos_multi_uom.Orderline" t-inherit="point_of_sale.Orderline" t-inherit-mode="extension">
+        <xpath expr="//ul[hasclass('info-list')]" position="inside">
+            <li t-if="line.custom_uom_id and line.custom_uom_id != line.product_id.uom_id.name"
+                class="price-per-unit">
+                <i class="fa fa-balance-scale me-1" role="img" aria-label="UoM" title="UoM"/>
+                <t t-esc="line.custom_uom_id"/>
+            </li>
+        </xpath>
+    </t> -->
+
+</templates>

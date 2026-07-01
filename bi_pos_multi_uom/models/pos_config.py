@@ -80,12 +80,12 @@ class PosOrderLine(models.Model):
 			else:
 				quantity_to_use = line.qty
 				
-			if line._is_product_storable_fifo_avco() and stock_moves:
-				product_cost = product._compute_average_price(0, quantity_to_use, line._get_stock_moves_to_consider(stock_moves, product))
-				if (product.cost_currency_id.is_zero(product_cost) and line.order_id.shipping_date and line.refunded_orderline_id):
-					product_cost = line.refunded_orderline_id.total_cost / line.refunded_orderline_id.qty
-			else:
-				product_cost = product.standard_price
+			# if line._is_product_storable_fifo_avco() and stock_moves:
+			# 	product_cost = product._compute_average_price(0, quantity_to_use, line._get_stock_moves_to_consider(stock_moves, product))
+			# 	if (product.cost_currency_id.is_zero(product_cost) and line.order_id.shipping_date and line.refunded_orderline_id):
+			# 		product_cost = line.refunded_orderline_id.total_cost / line.refunded_orderline_id.qty
+			# else:
+			product_cost = product.standard_price
 				
 			line.total_cost = quantity_to_use * product.cost_currency_id._convert(
 				from_amount=product_cost,
@@ -158,7 +158,7 @@ class ProductProduct(models.Model):
 	@api.model
 	def _load_pos_data_fields(self, config_id):
 		params = super()._load_pos_data_fields(config_id)
-		params += ['point_of_sale_uom', 'product_uom_ids']
+		params += ['point_of_sale_uom', 'product_uom_ids', 'stock_quant_ids']
 		return params
 
 

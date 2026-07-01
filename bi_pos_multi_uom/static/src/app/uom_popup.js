@@ -60,6 +60,7 @@ export class MultiUOMPopup extends Component {
         selected_orderline.setUnitPrice(item_sale_price);
         selected_orderline.set_custom_uom_id(item_label);
         selected_orderline.set_custom_uom_number_id(itemId);
+        
         this.props.close();
     }
 
