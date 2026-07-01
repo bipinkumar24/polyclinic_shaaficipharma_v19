@@ -35,7 +35,8 @@ class ProductValue(models.Model):
 
         products = self.env['product.product'].browse(product_ids)
         if products:
-            moves_by_product = products._get_remaining_moves(warehouse_id=self.warehouse_id.id)
+            # moves_by_product = products._get_remaining_moves(warehouse_id=self.warehouse_id.id)
+            moves_by_product = products._get_remaining_moves()
             for qty_by_move in moves_by_product.values():
                 move_ids.update(self.env['stock.move'].concat(*qty_by_move.keys()).ids)
 

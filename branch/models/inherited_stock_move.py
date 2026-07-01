@@ -172,7 +172,9 @@ class StockMove(models.Model):
 
     def _get_new_picking_values(self):
         vals = super(StockMove, self)._get_new_picking_values()
-        vals['branch_id'] = self.group_id.sale_id.branch_id.id
+        branch_id = self.reference_ids.sale_ids.branch_id
+        vals['branch_id'] = branch_id.id
+        # vals['branch_id'] = self.group_id.sale_id.branch_id.id
         return vals
 
     def _create_account_move_line(self, credit_account_id, debit_account_id, journal_id, qty, description, svl_id, cost):
