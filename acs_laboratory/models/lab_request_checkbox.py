@@ -192,7 +192,8 @@ class AcsLabTestView(models.Model):
         res = super().create(vals_list)
         self._update_lab_test_groups_view()
         # actions.get_bindings() depends on action records
-        self.env['ir.actions.actions'].clear_caches()
+        self.env.registry.clear_cache()
+        # self.env['ir.actions.actions'].clear_caches()
         return res
 
     def write(self, values):

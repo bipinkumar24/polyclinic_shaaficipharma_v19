@@ -47,7 +47,6 @@ class AccountPayment(models.Model):
         return self.discount_amount
 
     def _prepare_move_line_default_vals(self, write_off_line_vals=None, force_balance=None):
-        o0000000
         self.ensure_one()
 
         if write_off_line_vals is None:

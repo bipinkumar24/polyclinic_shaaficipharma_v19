@@ -304,7 +304,7 @@ class ShaficPulseDashboard(models.TransientModel):
                                "compute script capture.")
         today = fields.Date.context_today(self)
         first = today.replace(day=1)
-        rows = self.env["shafic.script.capture"].sudo().read_group(
+        rows = self.env["shafic.script.capture"].sudo()._read_group(
             [("date", ">=", fields.Date.to_string(first)),
              ("date", "<=", fields.Date.to_string(today))],
             ["captured_value:sum", "prescribed_value:sum",
@@ -360,7 +360,7 @@ class ShaficPulseDashboard(models.TransientModel):
         else:                                     # older fallback
             storable_dom = [("product_id.type", "=", "product")]
         # rank top sellers by quantity over the window
-        grp = self.env["pos.order.line"].read_group(
+        grp = self.env["pos.order.line"]._read_group(
             [("order_id.date_order", ">=", fields.Datetime.to_string(since)),
              ("order_id.state", "in", ["paid", "done", "invoiced"]),
              ("product_id", "!=", False)] + storable_dom,
@@ -374,7 +374,7 @@ class ShaficPulseDashboard(models.TransientModel):
             t["sub"] = "SKUs out"
             return t
         # on-hand for those products in internal locations
-        onhand = self.env["stock.quant"].read_group(
+        onhand = self.env["stock.quant"]._read_group(
             [("product_id", "in", prod_ids), ("location_id.usage", "=", "internal")],
             ["quantity:sum"], ["product_id"])
         oh_map = {g["product_id"][0]: g["quantity"] for g in onhand if g.get("product_id")}

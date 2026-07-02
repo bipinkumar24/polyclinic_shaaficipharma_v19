@@ -91,7 +91,6 @@ class ResPartner(models.Model):
         for record in self:
             amount_due = 0
             unreconciled_aml_ids = MoveLine.sudo().search([('reconciled', '=', False),
-               ('account_id.deprecated', '=', False),
                ('account_id.account_type', '=', 'asset_receivable'),
                ('move_id.state', '=', 'posted'),
                ('partner_id', '=', record.id),

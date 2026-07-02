@@ -108,6 +108,7 @@ class Loan_Request(models.Model):
         for loan in loan_ids:
             loan.name = self.env['ir.sequence'].next_by_code('loan.request') or '/'
 
+
     def action_resettodraft(self):
         self.write({'stage': 'draft'})
 
@@ -420,56 +421,59 @@ class Loan_Request(models.Model):
                 'context' : ctx,
                 'target': 'new'
             }            
-                            
-    @api.model
-    def create(self, vals):
-        if 'employee_id' in vals:
-            vals['name'] = self.env['ir.sequence'].next_by_code('loan.request') or '/'
-            emp = self.env['hr.employee'].browse(vals.get('employee_id'))
-            count = 0
-            total = 0 
-            if emp.id:
-                if 'loan_type_id' in vals:
-                    loan_type = self.env['loan.type'].browse(vals.get('loan_type_id'))
-                    if loan_type.id:
-                        if emp.id not in loan_type.employee_ids.ids and emp.sudo().category_ids not in loan_type.sudo().employee_category_ids:
-                            raise ValidationError(_("Employee is not allowed to request for this loan type."))    
-                if vals.get('loan_images_ids'):            
+                
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('name') or vals.get('name') == '/':
+                vals['name'] = self.env['ir.sequence'].next_by_code('loan.request') or '/'
+            if 'employee_id' in vals:
+                vals['name'] = self.env['ir.sequence'].next_by_code('loan.request') or '/'
+                emp = self.env['hr.employee'].browse(vals.get('employee_id'))
+                count = 0
+                total = 0
+                if emp.id:
+                    if 'loan_type_id' in vals:
+                        loan_type = self.env['loan.type'].browse(vals.get('loan_type_id'))
+                        if loan_type.id:
+                            if emp.id not in loan_type.employee_ids.ids and emp.sudo().category_ids not in loan_type.sudo().employee_category_ids:
+                                raise ValidationError(_("Employee is not allowed to request for this loan type."))
+                    if vals.get('loan_images_ids'):
 
-                    for test in vals.get('loan_images_ids'):
-                        result =  test   
-                        desired_id = result[2]["loan_type_ids"][0][2]
-                        for rec in desired_id:
-                            if vals.get('loan_proof_ids'):
-                                for record in vals.get('loan_proof_ids'):
-                                    if rec in record[2]:
-                                        proof = self.env['loan.proof'].search([('id','=',rec)])
-                                        if proof.mandatory == True:
-                                            count+=1
+                        for test in vals.get('loan_images_ids'):
+                            result =  test   
+                            desired_id = result[2]["loan_type_ids"][0][2]
+                            for rec in desired_id:
+                                if vals.get('loan_proof_ids'):
+                                    for record in vals.get('loan_proof_ids'):
+                                        if rec in record[2]:
+                                            proof = self.env['loan.proof'].search([('id','=',rec)])
+                                            if proof.mandatory == True:
+                                                count+=1
 
-                    if vals.get('loan_proof_ids'):                   
-                        for record in vals.get('loan_proof_ids'):
-                            for value in record[2]:
-                                proof = self.env['loan.proof'].search([('id','=',value)])
-                                if proof.mandatory == True:
+                        if vals.get('loan_proof_ids'):                   
+                            for record in vals.get('loan_proof_ids'):
+                                for value in record[2]:
+                                    proof = self.env['loan.proof'].search([('id','=',value)])
+                                    if proof.mandatory == True:
 
-                                    total+=1
-                                else:
-                                    pass        
-                    if total == count:
-                        pass
+                                        total+=1
+                                    else:
+                                        pass        
+                        if total == count:
+                            pass
+                        else:
+                            raise ValidationError(_("Please Upload Loan Mandatory Document."))
                     else:
-                        raise ValidationError(_("Please Upload Loan Mandatory Document."))
-                else:
-                    if vals.get('loan_proof_ids'):
-                        for record in vals.get('loan_proof_ids'):
-                            for value in record[2]:
-                                proof = self.env['loan.proof'].search([('id','=',value)])
-                                if proof.mandatory == True:
-                                    raise ValidationError(_("Please Upload Loan Mandatory Document."))
-                                else:
-                                    pass
-        return super(Loan_Request, self).create(vals)
+                        if vals.get('loan_proof_ids'):
+                            for record in vals.get('loan_proof_ids'):
+                                for value in record[2]:
+                                    proof = self.env['loan.proof'].search([('id','=',value)])
+                                    if proof.mandatory == True:
+                                        raise ValidationError(_("Please Upload Loan Mandatory Document."))
+                                    else:
+                                        pass
+        return super(Loan_Request, self).create(vals_list)
 
     def compute_loan(self):
         amount = sum(self.installment_ids.mapped('principal_amount'))

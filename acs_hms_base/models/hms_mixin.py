@@ -192,11 +192,11 @@ class ACSHmsMixin(models.AbstractModel):
     def consume_material(self, source_location_id, dest_location_id, product_data):
         product = product_data['product']
         move = self.env['stock.move'].sudo().create({
-            'name' : self.name or product.name,
+            # 'name' : self.name or product.name,
             'product_id': product.id,
             'product_uom': product.uom_id.id,
             'product_uom_qty': product_data.get('qty',1.0),
-            'date': product_data.get('date',fields.datetime.now()),
+            'date': product_data.get('date',fields.Datetime.now()),
             'location_id': source_location_id,
             'location_dest_id': dest_location_id,
             'state': 'draft',

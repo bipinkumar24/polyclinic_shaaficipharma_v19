@@ -17,9 +17,8 @@ class AcsHospitalBedService(models.Model):
 
 class Bed(models.Model):
     _name = 'hospital.bed'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['acs.hms.mixin', 'mail.thread', 'mail.activity.mixin']
     _description = 'Bed'
-    _inherit = 'acs.hms.mixin'
 
     def _get_patient(self):
         for rec in self:

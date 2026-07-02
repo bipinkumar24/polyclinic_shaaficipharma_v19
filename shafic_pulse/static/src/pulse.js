@@ -22,6 +22,7 @@ class ShaficPulse extends Component {
 
     async load() {
         this.state.loading = true;
+        this.state.data = null
         try {
             const method = this.state.view === "operations" ? "get_operations"
                 : this.state.view === "physicians" ? "get_physicians" : "get_pulse";
