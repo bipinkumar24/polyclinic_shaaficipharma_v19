@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record id="hospitalization_branch_rule_manager" model="ir.rule">
+        <field name="name">Hospitalization Manager - Full Access</field>
+        <field name="model_id" ref="acs_hms_hospitalization.model_acs_hospitalization"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[
+            (4, ref('acs_hms_hospitalization.group_acs_hms_hospitalization_executive')),
+            (4, ref('acs_hms_hospitalization.group_acs_hms_hospitalization_manager'))
+        ]"/>
+    </record>
+
+    <record id="hospitalization_branch_rule" model="ir.rule">
+        <field name="name">Hospitalization Branch</field>
+        <field name="model_id" ref="acs_hms_hospitalization.model_acs_hospitalization"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('branch_id','=',False),('branch_id','in',branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('acs_hms_hospitalization.group_acs_hms_hospitalization_user'))]"/>
+    </record>
+
+    <record id="surgery_branch_rule_manager" model="ir.rule">
+        <field name="name">Surgery Manager - Full Access</field>
+        <field name="model_id" ref="acs_hms_surgery.model_hms_surgery"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[
+            (4, ref('acs_hms_surgery.group_acs_hms_surgery_approver')),
+            (4, ref('acs_hms_surgery.group_acs_hms_surgery_manager'))
+        ]"/>
+    </record>
+
+    <record id="surgery_branch_rule" model="ir.rule">
+        <field name="name">Surgery Branch</field>
+        <field name="model_id" ref="acs_hms_surgery.model_hms_surgery"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('branch_id','=',False),('branch_id','in',branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('acs_hms_surgery.group_acs_hms_surgery_user'))]"/>
+    </record>
+
+    <record id="acs_branch_prescription_rule" model="ir.rule">
+        <field name="name">Prescription Branch</field>
+        <field name="model_id" ref="acs_hms.model_prescription_order"/>
+        <field name="domain_force">
+            [
+                    '&amp;',
+                        '|',
+                            ('physician_id.user_id', '=', user.id),
+                            ('physician_id', '=', False),
+                        '|',
+                            ('branch_id', 'in', branch_ids),
+                            ('branch_id', '=', False),
+                ]
+            <!-- ['|',('branch_id','=',False),('branch_id','in',branch_ids)] -->
+        </field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="group_hms_all_procedure" model="res.groups">
+        <field name="name">All Procedure</field>
+        <!-- <field name="category_id" ref="acs_hms_base.module_category_hms_extra"/> -->
+        <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <record id="acs_all_procedure_rule" model="ir.rule">
+        <field name="name">Procedure Manager</field>
+        <field name="model_id" ref="acs_hms.model_acs_patient_procedure"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[(4, ref('acs_hospital_branch_access.group_hms_all_procedure'))]"/>
+    </record>
+
+    <record id="acs_branch_procedure_rule" model="ir.rule">
+        <field name="name">Procedure Branch</field>
+        <field name="model_id" ref="acs_hms.model_acs_patient_procedure"/>
+        <field name="domain_force">['|',('branch_id','=',False),('branch_id','in',branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="acs_branch_procedure_rule" model="ir.rule">
+        <field name="name">Procedure Branch</field>
+        <field name="model_id" ref="acs_hms.model_acs_patient_procedure"/>
+        <field name="domain_force">['|',('branch_id','=',False),('branch_id','in',branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="vaccination_branch_rule_manager" model="ir.rule">
+        <field name="name">Vaccination Manager - Full Access</field>
+        <field name="model_id" ref="acs_hms_vaccination.model_acs_vaccination"/>
+        <field name="domain_force">[(1,'=',1)]</field>
+        <field name="groups" eval="[
+            (4, ref('acs_hms_vaccination.group_hms_vaccination')),
+        ]"/>
+    </record>
+
+    <record id="vaccination_branch_rule" model="ir.rule">
+        <field name="name">Vaccination Branch</field>
+        <field name="model_id" ref="acs_hms_vaccination.model_acs_vaccination"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('branch_id','=',False),('branch_id','in',branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('acs_hms_vaccination.group_vaccination'))]"/>
+    </record>
+
+    <record id="group_hide_discount_customer" model="res.groups">
+        <field name="name">Hide Discount &amp; Customer Type</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_of_payment_register_form_lab_request" model="ir.ui.view">
+            <field name="name">Account Payment Register Form</field>
+            <field name="model">account.payment.laboratry</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="lab_request" invisible="1"/>
+                        <field name="radiology_request" invisible="1"/>
+                        <field name="journal_id" required="1"/>
+                        <field name="lab_request_id" readonly="1" invisible="not lab_request"/>
+                        <field name="is_procedure" invisible="1"/>
+                        <field name="produre_id" invisible="not is_procedure"/>
+                        <field name="is_surgery" invisible="1"/>
+                        <field name="suregery_id" invisible="not is_surgery"/>
+                        <field name="radiology_request_id" readonly="1" invisible="not radiology_request"/>
+                        <field name="partner_id"/>
+                        <field name="payment_amount"/>
+                        <field name="payment_date"/>
+                    </group>
+                    <footer>
+                        <button string="Register Payment" type="object" name="register_a_payment" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

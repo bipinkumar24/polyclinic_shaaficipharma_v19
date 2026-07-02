@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+acs_hospital_branch_access.access_account_payment_laboratry,access_account_payment_laboratry,acs_hospital_branch_access.model_account_payment_laboratry,base.group_user,1,1,1,1

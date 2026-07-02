@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="view_hms_prescription_order_form" model="ir.ui.view">
+        <field name="name">prescription.order.from</field>
+        <field name="model">prescription.order</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_prescription_order_form"/>
+        <field name="arch" type="xml">
+            <field name="appointment_id" position="after">
+                <field name="branch_id"/>
+            </field>
+        </field>
+    </record>
+    <record id="view_hms_appointment_form_branch" model="ir.ui.view">
+        <field name="name">hms.appointment.form</field>
+        <field name="model">hms.appointment</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_appointment_form"/>
+        <field name="arch" type="xml">
+            <field name="treatment_id" position="after">
+                <field name="branch_id"/>
+            </field>
+        </field>
+    </record>
+    <record id="view_hms_appointment_form_branch_list" model="ir.ui.view">
+        <field name="name">hms.appointment.form</field>
+        <field name="model">hms.appointment</field>
+        <field name="inherit_id" ref="acs_hms.view_hms_appointment_list"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="daily_number"/>
+            </field>
+        </field>
+    </record>
+    <record id="branch_res_branch_view_form_add_sequnce" model="ir.ui.view">
+        <field name="name">res.branch.form</field>
+        <field name="model">res.branch</field>
+        <field name="inherit_id" ref="branch.branch_res_branch_view_form"/>
+        <field name="arch" type="xml">
+            <field name="telephone" position="after">
+                <field name="appointment_sequence_id"/>
+                <field name="appointment_daily_sequence_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>
+

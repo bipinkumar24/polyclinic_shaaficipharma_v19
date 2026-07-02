@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="patient_laboratory_test_request_form" model="ir.ui.view">
+        <field name="name">Test Requests</field>
+        <field name="model">acs.laboratory.request</field>
+        <field name="inherit_id" ref="acs_laboratory.patient_laboratory_test_request_form"/>
+        <field name="arch" type="xml">
+            <field name="patient_id" position="after">
+                <field name="hide_customer_discount" invisible="1"/>
+                <!-- <field name="based_on" invisible="state == 'draft' or hide_customer_discount" required="state == 'requested' and not hide_customer_discount"/> -->
+            </field>
+            <field name="patient_id" position="after">
+            </field>
+            <field name="discount_type" position="replace">
+                <field name="discount_type" widget="radio" invisible="1"/>
+            </field>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <field name="laboratory_payment_id" invisible="1"/>
+                <button name="view_payment"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-money"
+                    string="Payment"
+                    invisible="not laboratory_payment_id"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="patient_radiology_test_request_form" model="ir.ui.view">
+        <field name="name">acs.radiology.request.from</field>
+        <field name="model">acs.radiology.request</field>
+        <field name="inherit_id" ref="acs_radiology.patient_radiology_test_request_form"/>
+        <field name="arch" type="xml">
+            <field name="patient_id" position="after">
+                <field name="hide_customer_discount" invisible="1"/>
+                <!-- <field name="based_on" invisible="state == 'draft' or hide_customer_discount" required="state == 'requested' and not hide_customer_discount"/> -->
+            </field>
+            <field name="discount_type" position="replace">
+                <field name="discount_type" widget="radio" invisible="1"/>
+            </field>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <field name="radiology_payment_id" invisible="1"/>
+                <button name="view_payment"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-money"
+                    string="Payment"
+                    invisible="not radiology_payment_id"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_acs_patient_procedure_form" model="ir.ui.view">
+        <field name="name">acs.patient.procedure.form</field>
+        <field name="model">acs.patient.procedure</field>
+        <field name="inherit_id" ref="acs_hms.view_acs_patient_procedure_form"/>
+        <field name="arch" type="xml">
+            <button name="action_schedule" position="after">
+                <button name="button_accept" invisible="state!='requested'" string="Accept" type="object" class="oe_highlight" groups="acs_hms_cashier.group_acs_cashier"/>
+            </button>
+            <!-- <field name="patient_id" position="after">
+                <field name="based_on"/>
+            </field> -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <field name="procedure_payment_id" invisible="1"/>
+                <button name="view_payment"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-money"
+                    string="Payment"
+                    invisible="not procedure_payment_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="ir_cron_reset_daily_appointment_sequence_phyisan" model="ir.cron">
+        <field name="name">Reset Daily Appointment Sequence</field>
+        <field name="model_id" ref="acs_hms.model_hms_physician"/>
+        <field name="state">code</field>
+        <field name="code">model.create_daily_range_for_sequence()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

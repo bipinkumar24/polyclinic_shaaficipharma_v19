@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<odoo>
+	<record id="view_acs_patient_procedure_form" model="ir.ui.view">
+        <field name="name">acs.patient.procedure.form</field>
+        <field name="model">acs.patient.procedure</field>
+        <field name="inherit_id" ref='acs_hms.view_acs_patient_procedure_form'/>
+        <field name="arch" type="xml">
+            <field name="notes" position="after">
+                <field name="branch_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>

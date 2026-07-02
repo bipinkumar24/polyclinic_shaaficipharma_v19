@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<odoo>
+     <record id="view_vaccination_vac_form_add_branch" model="ir.ui.view">
+        <field name="name">acs.vaccination.form</field>
+        <field name="model">acs.vaccination</field>
+        <field name="inherit_id" ref='acs_hms_vaccination.view_vaccination_vac_form'/>
+        <field name="arch" type="xml">
+            <field name="batch_image" position="before">
+                <field name="branch_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>

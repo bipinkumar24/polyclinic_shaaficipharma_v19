@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<odoo>
+    <!-- <Laboratory> -->
+    <record id="hms_surgery_view_new" model="ir.ui.view">
+        <field name="name">hms.surgery.from</field>
+        <field name="model">hms.surgery</field>
+        <field name="inherit_id" ref="acs_hms_surgery.hms_surgery_view"/>
+        <field name="arch" type="xml">
+        	<field name="department_id" position="after">
+        		<field name="branch_id"/>
+            </field>
+            <field name="patient_id" position="after">
+                <field name="based_on" invisible="1"/>
+            </field>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <field name="surgery_payment_id" invisible="1"/>
+                <button name="view_payment"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-money"
+                    string="Payment"
+                    invisible="not surgery_payment_id"/>
+            </xpath>
+            <button name="action_confirm" position="after">
+                <button name="button_accept" invisible="state!='requested'" string="Accept" type="object" class="oe_highlight" groups="acs_hms_cashier.group_acs_cashier"/>
+            </button>
+        </field>
+    </record>
+
+</odoo>
