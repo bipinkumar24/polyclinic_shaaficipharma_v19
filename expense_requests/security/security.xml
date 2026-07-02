@@ -2,25 +2,25 @@
 <odoo>
     <data>
         <record id="expensess_manager" model="res.groups">
-            <field name="name">Manage department Expenses</field>
+            <field name="name">Expense Manage department Expenses</field>
         </record>
         <record id="all_expensess_manager" model="res.groups">
-            <field name="name">Manage All Expenses</field>
+            <field name="name">Expense Manage All Expenses</field>
         </record>
         <record id="can_request_expenses" model="res.groups">
-            <field name="name">Request Expense</field>
+            <field name="name">Expense Request Expense</field>
         </record>
         <record id="department_approver" model="res.groups">
-            <field name="name">Department Expense Approver</field>
+            <field name="name">Expense Department Expense Approver</field>
         </record>
         <record id="hr_approver" model="res.groups">
-            <field name="name">HR Expense Approver</field>
+            <field name="name">Expense HR Expense Approver</field>
         </record>
         <record id="Finance_approver" model="res.groups">
-            <field name="name">Fianance Expense Approver</field>
+            <field name="name">Expense Fianance Expense Approver</field>
         </record>
         <record id="GM_approver" model="res.groups">
-            <field name="name">GM Approver</field>
+            <field name="name">Expense GM Approver</field>
         </record>
     </data>
 </odoo>

@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-     <data noupdate="1">
+     <data noupdate="0">
 
-        <record id="acs_surgery_category" model="ir.module.category">
+       <!--  <record id="acs_surgery_category" model="ir.module.category">
             <field name="name">Surgery</field>
             <field name="description">Manage Surgery Operations.</field>
             <field name="sequence">10</field>
             <field name="parent_id" ref="acs_hms_base.module_category_hms"/>
-        </record>
+        </record> -->
 
         <record id="privilege_acs_surgery_category" model="res.groups.privilege">
             <field name="name">Surgery</field>
-            <field name="category_id" ref="acs_surgery_category"/>
+            <field name="sequence">01</field>
+            <field name="category_id" ref="acs_hms_base.module_category_hms"/>
         </record>
 
         <record id="group_acs_hms_surgery_user" model="res.groups">

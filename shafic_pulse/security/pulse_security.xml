@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="module_category_shafic_pulse" model="ir.module.category">
+    <!-- <record id="module_category_shafic_pulse" model="ir.module.category">
         <field name="name">Shafic Pulse</field>
         <field name="sequence">90</field>
-    </record>
+    </record> -->
 
     <!-- v19: res.groups lost category_id; categories now live on
          res.groups.privilege, which the group points to via privilege_id.
          Pattern mirrored from addons/account/security/account_security.xml. -->
     <record id="privilege_shafic_pulse" model="res.groups.privilege">
         <field name="name">Shafic Pulse</field>
-        <field name="category_id" ref="module_category_shafic_pulse"/>
+        <field name="category_id" ref="acs_hms_base.module_category_other"/>
         <field name="sequence">90</field>
     </record>
 

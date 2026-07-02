@@ -302,7 +302,7 @@ class Loan_Request(models.Model):
         #         mail_mail_obj.send([msg_id])
 
 
-        self.write({'stage':'applied','applied_date' : fields.datetime.now()})
+        self.write({'stage':'applied','applied_date' : fields.Datetime.now()})
         return
 
     def action_department_approve(self):
@@ -314,7 +314,7 @@ class Loan_Request(models.Model):
                     max_days = self.policy_id.days
             if max_days > 0 :
                 end_date = self.applied_date + relativedelta(days=+max_days)
-                if end_date > fields.datetime.today().date() :
+                if end_date > fields.Datetime.today().date() :
                     raise ValidationError(_("You can approve this loan after  %s ") % end_date ) 
 
         # template_id = self.env['ir.model.data'].get_object_reference(
@@ -338,7 +338,7 @@ class Loan_Request(models.Model):
         #     msg_id = mail_mail_obj.sudo().create(values)
         #     if msg_id:
         #         mail_mail_obj.send([msg_id])
-        self.write({'stage':'waiting_depart','approve_date' : fields.datetime.now()})
+        self.write({'stage':'waiting_depart','approve_date' : fields.Datetime.now()})
 
         return                
 
@@ -353,7 +353,7 @@ class Loan_Request(models.Model):
 
             if max_days > 0 :
                 end_date = self.applied_date + relativedelta(days=+max_days)
-                if end_date > fields.datetime.today().date() :
+                if end_date > fields.Datetime.today().date() :
                     raise ValidationError(_("You can approve this loan after  %s ") % end_date ) 
         self.write({'hr_employee_id':self.env.user.employee_id.id })
         # template_id = self.env['ir.model.data'].get_object_reference(
@@ -377,7 +377,7 @@ class Loan_Request(models.Model):
         #     if msg_id:
         #         mail_mail_obj.send([msg_id])
 
-        request_id.write({'stage':'waiting','approve_date' : fields.datetime.now()})
+        request_id.write({'stage':'waiting','approve_date' : fields.Datetime.now()})
         
         return
 
@@ -635,9 +635,9 @@ class Loan_Request(models.Model):
                 jounral = self.env['account.move'].create({
                     'move_type': 'in_invoice',
                     'partner_id': partner_id.id,
-                    'date': fields.datetime.now(),
+                    'date': fields.Datetime.now(),
                     'is_expense': True,
-                    'invoice_date': fields.datetime.now(),
+                    'invoice_date': fields.Datetime.now(),
                     'invoice_line_ids': [(0, 0, {
                         'name': loan_product_id.name,
                         'product_id': loan_product_id.id,
@@ -705,7 +705,7 @@ class Loan_Request(models.Model):
 
         move_line = [debit_line,credit_line]
 
-        jounral = res.create({'date': fields.datetime.now(),
+        jounral = res.create({'date': fields.Datetime.now(),
                     'journal_id' :self.disburse_journal_id.id,
                     'ref' : str(self.name) ,
                     'loan_ids': self,
@@ -724,7 +724,7 @@ class Loan_Request(models.Model):
             msg_id = mail_mail_obj.sudo().create(values)
             if msg_id:
                 mail_mail_obj.send([msg_id])   
-        self.write({'stage' : 'disbursed','account_entery_id':jounral.id ,'disbursement_date' : fields.datetime.now()})
+        self.write({'stage' : 'disbursed','account_entery_id':jounral.id ,'disbursement_date' : fields.Datetime.now()})
 
 class ir_attachment(models.Model):
     _inherit='ir.attachment'

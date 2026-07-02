@@ -198,8 +198,8 @@ class ChartfAccount(models.Model):
                 bill_id = self.env['account.move'].create({
                     'move_type': 'in_invoice',
                     'partner_id': partner_id.id,
-                    'date': fields.datetime.now(),
-                    'invoice_date': fields.datetime.now(),
+                    'date': fields.Datetime.now(),
+                    'invoice_date': fields.Datetime.now(),
                     'is_expense': True,
                     'is_advance_salary_bill': True,
                     'invoice_line_ids': [
@@ -224,8 +224,8 @@ class ChartfAccount(models.Model):
             bill_id = self.env['account.move'].create({
                 'move_type': 'in_invoice',
                 'partner_id': partner_id.id,
-                'date': fields.datetime.now(),
-                'invoice_date': fields.datetime.now(),
+                'date': fields.Datetime.now(),
+                'invoice_date': fields.Datetime.now(),
                 'is_expense': True,
                 'is_advance_salary_bill': True,
                 'invoice_line_ids': [
@@ -251,17 +251,17 @@ class ChartfAccount(models.Model):
         if not self.is_bulk_advance_salary:
             if self.req_amount > self.employee_id.job_id.salary_limit : 
                 raise UserError(_('Your request amount is more than your salary limit.'))
-        self.write({'state':'confirmed','confirm_by_id':self.env.user.id,'confirm_date' : fields.datetime.now()})
+        self.write({'state':'confirmed','confirm_by_id':self.env.user.id,'confirm_date' : fields.Datetime.now()})
 
     def action_approve_dept(self):
-        self.write({'state':'approve_dept','depet_manager_approve_by_id':self.env.user.id,'approve_date_department' : fields.datetime.now()})
+        self.write({'state':'approve_dept','depet_manager_approve_by_id':self.env.user.id,'approve_date_department' : fields.Datetime.now()})
 
     def action_approve_hr(self):
-        self.write({'state':'approve_hr','hr_manager_id':self.env.user.id,'approve_date_hr' : fields.datetime.now()})
+        self.write({'state':'approve_hr','hr_manager_id':self.env.user.id,'approve_date_hr' : fields.Datetime.now()})
 
 
     def action_approve_director(self):
-        self.write({'state':'approve_director','director_id':self.env.user.id,'approve_date_director' : fields.datetime.now()})
+        self.write({'state':'approve_director','director_id':self.env.user.id,'approve_date_director' : fields.Datetime.now()})
 
     def action_done(self):
         employee_id = self.env['hr.employee'].search([('id','=',self.employee_id.id)])

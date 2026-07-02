@@ -5,7 +5,7 @@
         <record model="ir.module.category" id="document_category">
             <field name="name">Document Management System</field>
             <field name="description">Manage your Company Documents.</field>
-            <field name="sequence">11</field>
+            <field name="sequence">90</field>
         </record>
 
         <!-- Odoo 19: res.groups.category_id replaced by privilege_id (res.groups.privilege). -->

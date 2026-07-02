@@ -2,16 +2,17 @@
 <odoo>
     <data noupdate="0">
 
-        <record id="acs_radiology_category" model="ir.module.category">
+       <!--  <record id="acs_radiology_category" model="ir.module.category">
             <field name="name">Radiology System</field>
             <field name="description">Manage Radiology Documents.</field>
-            <field name="sequence">11</field>
+            <field name="sequence">9</field>
             <field name="parent_id" ref="acs_hms_base.module_category_hms"/>
-        </record>
+        </record> -->
 
         <record id="privilege_acs_radiology_category" model="res.groups.privilege">
             <field name="name">Radiology System</field>
-            <field name="category_id" ref="acs_radiology_category"/>
+            <field name="sequence">03</field>
+            <field name="category_id" ref="acs_hms_base.module_category_hms"/>
         </record>
 
         <record id="group_laboratory_user" model="res.groups">

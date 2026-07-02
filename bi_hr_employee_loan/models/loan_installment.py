@@ -64,13 +64,21 @@ class Loan_Installment(models.Model):
             else:
                 loan.loan_amount_balance = loan.emi_installment
 
-    @api.depends('installment_number','loan_id')
+    # @api.depends('installment_number','loan_id')
+    # def _compute_name(self):
+    #     for line in self :
+    #         line.name = ""
+    #         if line.loan_id and line.installment_number :
+    #             line.name = line.loan_id.name + '/' + str(line.installment_number)
+    #     return
+    @api.depends("installment_number", "loan_id.name")
     def _compute_name(self):
-        for line in self :
-            line.name = ""
-            if line.loan_id and line.installment_number :
-                line.name = line.loan_id.name + '/' + str(line.installment_number)
-        return
+        for line in self:
+            line.name = (
+                f"{line.loan_id.name}/{line.installment_number}"
+                if line.loan_id.name and line.installment_number
+                else line.loan_id.name or ""
+            )
 
 
     def approve_payment(self):
@@ -104,7 +112,7 @@ class Loan_Installment(models.Model):
 
         move_line = [debit_line,credit_line]
 
-        jounral = res.create({'date': fields.datetime.now(),
+        jounral = res.create({'date': fields.Datetime.now(),
                     'journal_id' :self.loan_id.interest_journal_id.id,
                     'ref' : str(self.installment_number) ,
                     'loan_ids': self.loan_id,
@@ -136,7 +144,7 @@ class Loan_Installment(models.Model):
                             })
 
         move_line = [debit_line,credit_line]
-        jounral = res.create({'date': fields.datetime.now(),
+        jounral = res.create({'date': fields.Datetime.now(),
                     'journal_id' :self.loan_id.disburse_journal_id.id,
                     'ref' : str(self.installment_number) ,
                     'loan_ids': self.loan_id,

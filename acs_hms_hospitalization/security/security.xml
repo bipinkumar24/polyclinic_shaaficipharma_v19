@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="acs_hospitalization_category" model="ir.module.category">
+    <!-- <record id="acs_hospitalization_category" model="ir.module.category">
         <field name="name">Hospitalization</field>
         <field name="description">Manage Hospitalization operations.</field>
         <field name="sequence">10</field>
         <field name="parent_id" ref="acs_hms_base.module_category_hms"/>
-    </record>
+    </record> -->
 
     <record id="privilege_acs_hospitalization_category" model="res.groups.privilege">
         <field name="name">Hospitalization</field>
-        <field name="category_id" ref="acs_hospitalization_category"/>
+        <field name="sequence">03</field>
+        <field name="category_id" ref="acs_hms_base.module_category_hms"/>
     </record>
 
     <record id="group_acs_hms_hospitalization_user" model="res.groups">
