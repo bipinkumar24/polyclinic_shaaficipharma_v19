@@ -15,3 +15,11 @@ class PosConfig(models.Model):
     global_discount_type = fields.Selection(string="Global Discount Type", selection=[("percentage", "Percentage"), ("amount", "Amount"), ("both", "Both")], default="percentage")
     global_discount_product_id = fields.Many2one('product.product', string="Global Discount Product")
     enable_discount = fields.Boolean(string="Enable Discount")
+
+    def _get_special_products(self):
+
+        products = super()._get_special_products()
+        discount_products = self.env['pos.config'].sudo().search(
+            [('global_discount_product_id', '!=', False)]
+        ).global_discount_product_id
+        return products | discount_products

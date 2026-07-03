@@ -179,7 +179,6 @@ patch(ControlButtons.prototype, {
     async apply_discount(pc) {
         const order = this.pos.getOrder();
         const product = this.pos.config.global_discount_product_id;
-
         if (!product) {
             this.dialog.add(AlertDialog, {
                 title: _t("No discount product found"),

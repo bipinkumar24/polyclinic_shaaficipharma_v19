@@ -88,30 +88,31 @@ class AccountPayment(models.Model):
         )
 
         target_line_found = False
-
         for line in res:
-            # Inbound payment -> reduce debit liquidity line
+            balance = line.get('balance', 0.0)
+
+            # Inbound payment -> reduce the debit (positive-balance) liquidity line
             if self.payment_type == 'inbound':
-                if line.get('debit', 0.0) > 0:
-                    if line['debit'] < discount_balance:
+                if balance > 0:
+                    if balance < discount_balance:
                         raise UserError(
                             _("Discount exceeds payment amount.")
                         )
 
-                    line['debit'] -= discount_balance
+                    line['balance'] = balance - discount_balance
                     line['amount_currency'] = line.get('amount_currency', 0.0) - discount
                     target_line_found = True
                     break
 
-            # Outbound payment -> reduce credit liquidity line
+            # Outbound payment -> reduce the credit (negative-balance) liquidity line
             elif self.payment_type == 'outbound':
-                if line.get('credit', 0.0) > 0:
-                    if line['credit'] < discount_balance:
+                if balance < 0:
+                    if -balance < discount_balance:
                         raise UserError(
                             _("Discount exceeds payment amount.")
                         )
 
-                    line['credit'] -= discount_balance
+                    line['balance'] = balance + discount_balance
                     line['amount_currency'] = line.get('amount_currency', 0.0) + discount
                     target_line_found = True
                     break
@@ -129,8 +130,8 @@ class AccountPayment(models.Model):
                 'partner_id': self.partner_id.id,
                 'currency_id': self.currency_id.id,
                 'amount_currency': discount,
-                'debit': discount_balance,
-                'credit': 0.0,
+                # v19: positive balance == debit
+                'balance': discount_balance,
             }
 
         elif self.payment_type == 'outbound':
@@ -140,8 +141,8 @@ class AccountPayment(models.Model):
                 'partner_id': self.partner_id.id,
                 'currency_id': self.currency_id.id,
                 'amount_currency': -discount,
-                'debit': 0.0,
-                'credit': discount_balance,
+                # v19: negative balance == credit
+                'balance': -discount_balance,
             }
 
         else:
