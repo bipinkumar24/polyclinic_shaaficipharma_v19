@@ -37,10 +37,10 @@
             <field name="category_id" ref="module_category_hms"/>
         </record>
 
-        <record id="privilege_hms_extra" model="res.groups.privilege">
+        <!-- <record id="privilege_hms_extra" model="res.groups.privilege">
             <field name="name">Hospital Extra</field>
             <field name="category_id" ref="module_category_hms_extra"/>
-        </record>
+        </record> -->
 
         <!-- <record id="privilege_hms_department" model="res.groups.privilege">
             <field name="name">Hospital (Department)</field>
