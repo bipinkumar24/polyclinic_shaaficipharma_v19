@@ -11,7 +11,7 @@
     """,
     'category': 'Healthcare',
     'license': 'LGPL-3',
-
+    'author': 'Do Incredible',
     'depends': [
         'base',
         'acs_hms_vaccination',

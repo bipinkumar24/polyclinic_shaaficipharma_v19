@@ -4,6 +4,7 @@
     'name': 'Appointment Card Commission',
     'version': '19.0.1.0.0',
     'category': 'Accounting',
+    'author': 'Do Incredible',
     'summary': 'Add appointment card commission field on customer invoice.',
     'depends': [
         'acs_hms',

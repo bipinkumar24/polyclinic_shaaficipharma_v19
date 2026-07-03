@@ -10,7 +10,7 @@ class HmsAppointment(models.Model):
     insurance_covers_amount = fields.Float('Insurance Covers')
     insurancecard_total_amount = fields.Float('Total Amount', compute='_compute_insurance_bill_payamount', store=True)
     patient_pay_amount = fields.Float('Patient Pay Amount',store=True)
-    new_insurance_company_id = fields.Many2one('hms.insurance.company', string="Insurance Company")
+    new_insurance_company_id = fields.Many2one('hms.insurance.company', string="Insurance Company ")
     card_insurance_company_id = fields.Many2one('res.partner', related="new_insurance_company_id.partner_id", string="Name")
     insurance_readonly = fields.Boolean(string="Insurance Readonly", compute="_compute_insurance_readonly", store=True)
 

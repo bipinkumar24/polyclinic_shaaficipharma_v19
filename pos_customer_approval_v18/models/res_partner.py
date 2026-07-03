@@ -83,6 +83,19 @@ class ResPartner(models.Model):
         domain.append(('pos_allow_in_pos', '=', True))
         return domain
 
+    @api.model
+    def get_new_partner(self, config_id, domain, offset):
+        # v19: the POS PartnerList fetches non-preloaded partners (search box +
+        # "load more") through this backend method, NOT through a frontend
+        # `searchDomain` getter (that v18 hook no longer exists in v19). We must
+        # therefore enforce the "only approved customers in POS" rule here so it
+        # applies to search and lazy-loading, exactly like _load_pos_data_domain
+        # does for the initial preload. Appending the leaf also makes the
+        # otherwise-empty "load more" domain non-empty, so approved customers
+        # that are not in the limited preload set become reachable too.
+        domain = list(domain or []) + [('pos_allow_in_pos', '=', True)]
+        return super().get_new_partner(config_id, domain, offset)
+
     # ── Onchange warning ──────────────────────────────────────────────────
     @api.onchange('pos_allow_in_pos', 'pos_credit_limit')
     def _onchange_pos_activation_fields(self):

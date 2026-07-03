@@ -1,79 +1,26 @@
-import { patch } from "@web/core/utils/patch";
-import { PartnerList } from "@point_of_sale/app/screens/partner_list/partner_list";
+/** @odoo-module **/
 
-patch(PartnerList.prototype, {
-
-    // ── Local (already-loaded) partner filtering ──────────────────────────
-    // getPartners() {
-    //     const query = (this.state.query || "").trim().toLowerCase();
-
-    //     const partners = this.pos.models["res.partner"]
-    //         .getAll()
-    //         .filter((p) => !p.hide_in_pos);
-
-    //     if (!query) {
-    //         return partners.slice(0, 1000);
-    //     }
-
-    //     return partners.filter((p) =>
-    //         (p.searchString || "").toLowerCase().includes(query)
-    //     );
-    // },
-    
-
-    // ── Remote "load more" search ─────────────────────────────────────────
-    async getNewPartners() {
-        const limit = 30;
-
-        // Base: always exclude hidden partners
-        let domain = [["hide_in_pos", "=", false]];
-
-        if (this.state.query) {
-            const q = this.state.query;
-
-            // Only use char/text fields — Many2one fields (state_id,
-            // country_id) cannot be searched with ilike on a plain string.
-            const searchFields = [
-                "name",
-                "parent_name",
-                "phone",
-                "mobile",
-                "email",
-                "barcode",
-                "street",
-                "zip",
-                "city",
-                "vat",
-            ];
-
-            // Build a correct OR chain:
-            // ["|", "|", ...(n-1 pipes), [f1,ilike,q], [f2,ilike,q], ...]
-            const orPipes = Array(searchFields.length - 1).fill("|");
-            const conditions = searchFields.map((field) => [
-                field,
-                "ilike",
-                `%${q}%`,
-            ]);
-
-            // Combine with hide_in_pos using "&"
-            domain = [
-                "&",
-                ["hide_in_pos", "=", false],
-                ...orPipes,
-                ...conditions,
-            ];
-        }
-
-        const result = await this.pos.data.searchRead(
-            "res.partner",
-            domain,
-            [],
-            {
-                limit,
-                offset: this.state.currentOffset,
-            }
-        );
-
-        return result;
-    },
-});
+// Intentionally left as a no-op.
+//
+// This module used to patch PartnerList.getPartners() and getNewPartners()
+// with Odoo-18 semantics. Those overrides are incompatible with the Odoo 19
+// PartnerList and broke customer search:
+//
+//   * v19 renders TWO reactive lists — getPartners(this.state.initialPartners)
+//     and getPartners(this.state.loadedPartners). The old getPartners() ignored
+//     its argument and returned models["res.partner"].getAll(), so every
+//     preloaded partner rendered twice (duplicate t-key / duplicate IDs) and
+//     searched partners never appeared.
+//
+//   * v19 getNewPartners() must call get_new_partner via pos.data.callRelated
+//     (which inserts ResPartner instances into the store) and push them into
+//     this.state.loadedPartners so the list re-renders reactively. The old
+//     override called pos.data.searchRead(... load:false ...), which returns raw
+//     dicts, inserts nothing into the store, and never touched loadedPartners —
+//     so a searched customer was "found" but never rendered.
+//
+// The "hide_in_pos" filter is now enforced entirely on the backend
+// (res.partner._load_pos_data_domain for the preload and
+//  res.partner.get_new_partner for search / lazy-loading), so hidden customers
+// never reach the frontend and no client-side override is needed. Letting core
+// PartnerList run unmodified restores correct rendering, reactivity and search.

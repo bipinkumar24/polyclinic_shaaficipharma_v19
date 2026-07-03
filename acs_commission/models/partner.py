@@ -5,7 +5,7 @@ from odoo import fields, models, api, SUPERUSER_ID
 class ResPartner(models.Model):
     _inherit = "res.partner"
 
-    commission_role_id = fields.Many2one('acs.commission.role', string='Role')
+    commission_role_id = fields.Many2one('acs.commission.role', string='Role ')
     commission_ids = fields.One2many('acs.commission', 'partner_id', 'Business Commission')
     provide_commission = fields.Boolean('Give Commission')
     commission_percentage = fields.Float('Percentage')

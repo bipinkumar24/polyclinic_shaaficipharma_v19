@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_product_remote_server_form" model="ir.ui.view">
+        <field name="name">product.remote.server.form</field>
+        <field name="model">product.remote.server</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_test_connection" type="object"
+                            string="Test Connection" class="btn-secondary"/>
+                    <button name="action_sync_one_product" type="object"
+                            string="Sync 1 Product (Test)" class="btn-secondary"/>
+                    <button name="action_sync_test_batch" type="object"
+                            string="Sync Test Batch" class="btn-secondary"/>
+                    <button name="action_sync_products" type="object"
+                            string="Sync Products Now" class="btn-primary"/>
+                    <button name="action_sync_one_partner" type="object"
+                            string="Sync 1 Partner (Test)" class="btn-secondary"/>
+                    <button name="action_sync_partner_test_batch" type="object"
+                            string="Sync Partner Test Batch" class="btn-secondary"/>
+                    <button name="action_sync_partners" type="object"
+                            string="Sync Partners Now" class="btn-primary"/>
+                    <button name="action_sync_uom" type="object"
+                            string="Sync UoM" class="btn-primary"/>
+                    <button name="action_sync_onhand" type="object"
+                            string="Sync On-Hand Qty" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_products" type="object"
+                                class="oe_stat_button" icon="fa-cubes">
+                            <field name="product_count" widget="statinfo"
+                                   string="Products"/>
+                        </button>
+                        <button name="action_view_partners" type="object"
+                                class="oe_stat_button" icon="fa-users">
+                            <field name="partner_count" widget="statinfo"
+                                   string="Partners"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Headquarters Odoo"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Connection">
+                            <field name="url" placeholder="https://erp.example.com"/>
+                            <field name="db"/>
+                            <field name="username"/>
+                            <field name="password" password="True"/>
+                        </group>
+                        <group string="Options">
+                            <field name="batch_size"/>
+                            <field name="stock_location_id"/>
+                            <field name="test_limit"/>
+                            <field name="sync_inactive"/>
+                            <field name="active"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="last_sync"/>
+                        </group>
+                    </group>
+                    <group string="On-Hand Errors"
+                           invisible="not onhand_error_log">
+                        <field name="onhand_error_log" nolabel="1"
+                               readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_product_remote_server_list" model="ir.ui.view">
+        <field name="name">product.remote.server.list</field>
+        <field name="model">product.remote.server</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="url"/>
+                <field name="db"/>
+                <field name="product_count"/>
+                <field name="last_sync"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_product_remote_server" model="ir.actions.act_window">
+        <field name="name">Remote Servers</field>
+        <field name="res_model">product.remote.server</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a remote Odoo server
+            </p>
+            <p>
+                Configure a connection to a remote Odoo server to synchronize its
+                product templates into this database.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_product_remote_sync_root"
+              name="Data Sync"
+              sequence="90"/>
+
+    <menuitem id="menu_product_remote_server"
+              name="Remote Servers"
+              parent="menu_product_remote_sync_root"
+              action="action_product_remote_server"
+              sequence="10"/>
+
+</odoo>

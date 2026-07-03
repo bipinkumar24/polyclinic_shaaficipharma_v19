@@ -22,3 +22,14 @@ class Resuser(models.Model):
         domain.append(('hide_in_pos', '=', False))
         return domain
 
+    @api.model
+    def get_new_partner(self, config_id, domain, offset):
+        # v19: POS search / "load more" fetches non-preloaded partners through
+        # this backend method (the frontend has no `searchDomain`/`getNewPartners`
+        # hook to filter on anymore). Enforce the "hidden customers stay out of
+        # POS" rule here so it applies to search & lazy-loading exactly like
+        # _load_pos_data_domain does for the initial preload. This leaf ANDs
+        # cleanly with the pos_allow_in_pos leaf added by pos_customer_approval_v18.
+        domain = list(domain or []) + [('hide_in_pos', '=', False)]
+        return super().get_new_partner(config_id, domain, offset)
+

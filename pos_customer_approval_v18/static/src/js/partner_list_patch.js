@@ -13,10 +13,10 @@ patch(PartnerList.prototype, {
         this.dialog = useService("dialog");
     },
 
-    get searchDomain() {
-        const base = super.searchDomain || [];
-        return [...base, ["pos_allow_in_pos", "=", true]];
-    },
+    // NOTE: the v18 `searchDomain` getter was removed — Odoo 19's PartnerList
+    // has no such hook, so overriding it did nothing. The "only approved"
+    // restriction for search / lazy-loading is now enforced on the backend in
+    // res.partner.get_new_partner (see models/res_partner.py).
 
     async onClickApproveCustomers() {
         const pendingList = await this.customerApprovalService.getPendingActivations();
