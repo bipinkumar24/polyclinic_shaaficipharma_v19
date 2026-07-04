@@ -6,6 +6,22 @@ import { PosStore } from "@point_of_sale/app/services/pos_store";
 
 patch(PosStore.prototype, {
 
+    // pos_hr's `employeeIsAdmin` getter (point_of_sale/pos_hr's own
+    // static/src/app/services/pos_store.js) does `this.getCashier()._role`
+    // with no null check. Core's Navbar.setup() calls
+    // `this.pos.allowProductCreation()` unconditionally in onMounted, and
+    // pos_hr's override of that method reads `employeeIsAdmin` before the
+    // employee-login redirect (handleUrlParams/checkPreviousLoggedCashier)
+    // has had a chance to run, so on the very first render of a
+    // module_pos_hr session - before any cashier has logged in -
+    // getCashier() returns undefined and the getter throws, crashing the
+    // whole Navbar mount. Guard for that instead of assuming a cashier is
+    // always set.
+    get employeeIsAdmin() {
+        const cashier = this.getCashier();
+        return !!cashier && cashier._role === "manager";
+    },
+
     async onClickPrescriptionOrder(clickedOrderId) {
         const selectedOption = await makeAwaitable(this.dialog, SelectionPopup, {
             title: _t("What do you want to do?"),

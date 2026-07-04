@@ -34,10 +34,9 @@ class PharmacyBranch(models.Model):
         'res.currency', related='company_id.currency_id', readonly=True)
     note = fields.Text(string='Notes')
 
-    _sql_constraints = [
-        ('code_company_uniq', 'unique(code, company_id)',
-         'The branch code must be unique per company.'),
-    ]
+    _code_company_uniq = models.Constraint(
+        'unique(code, company_id)',
+        'The branch code must be unique per company.')
 
     @api.constrains('warehouse_id', 'company_id')
     def _check_warehouse_company(self):

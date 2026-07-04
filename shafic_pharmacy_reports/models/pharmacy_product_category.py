@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
-from odoo.osv import expression
 
 
 class PharmacyProductCategory(models.Model):
@@ -35,10 +34,9 @@ class PharmacyProductCategory(models.Model):
     product_count = fields.Integer(
         string='Products', compute='_compute_product_count')
 
-    _sql_constraints = [
-        ('code_uniq', 'unique(code)',
-         'The category code must be unique.'),
-    ]
+    _code_uniq = models.Constraint(
+        'unique(code)',
+        'The category code must be unique.')
 
     def _compute_product_count(self):
         # Batched count grouped by category — one query for the whole set.

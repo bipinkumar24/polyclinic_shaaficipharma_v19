@@ -546,10 +546,9 @@ class CollectionBonusCashier(models.Model):
         help="This cashier's own tier table. Leave empty to use the rule's "
              "shared tiers.")
 
-    _sql_constraints = [
-        ('uniq_cashier_per_config', 'unique(config_id, user_id)',
-         'Each cashier can appear only once per bonus rule.'),
-    ]
+    _uniq_cashier_per_config = models.Constraint(
+        'unique(config_id, user_id)',
+        'Each cashier can appear only once per bonus rule.')
 
     @api.depends('user_id')
     def _compute_display_name(self):

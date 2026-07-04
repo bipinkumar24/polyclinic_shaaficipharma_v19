@@ -112,6 +112,15 @@
             <field name="privilege_id" ref="acs_hms_base.privilege_manage_ethnic_religion_tribe"/>
             <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
+        <record id="privilege_show_consumed_product_prices" model="res.groups.privilege">
+            <field name="name">Show Consumed Product Prices</field>
+            <field name="category_id" ref="module_category_hms_extra"/>
+        </record>
+        <record id="acs_group_show_consumed_product_prices" model="res.groups">
+            <!-- <field name="name">Show Consumed Product Prices</field> -->
+            <field name="privilege_id" ref="acs_hms_base.privilege_show_consumed_product_prices"/>
+            <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
 
     </data>
 </odoo>

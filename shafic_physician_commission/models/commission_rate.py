@@ -26,7 +26,6 @@ class PhysicianCommissionRate(models.Model):
              'Expense Rate is ticked.')
     active = fields.Boolean(default=True)
 
-    _sql_constraints = [
-        ('physician_uniq', 'unique(physician_id)',
-         'There is already a commission rate for this physician.'),
-    ]
+    _physician_uniq = models.Constraint(
+        'unique(physician_id)',
+        'There is already a commission rate for this physician.')

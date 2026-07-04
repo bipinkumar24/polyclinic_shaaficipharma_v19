@@ -44,11 +44,9 @@ class PharmacyDataRule(models.Model):
              'have been cleaned.')
     description = fields.Text(string='Rule Description')
 
-    _sql_constraints = [
-        ('uniq_field_key',
-         'unique(field_key)',
-         'Only one rule per field is allowed.'),
-    ]
+    _uniq_field_key = models.Constraint(
+        'unique(field_key)',
+        'Only one rule per field is allowed.')
 
     @api.depends('field_key')
     def _compute_name(self):

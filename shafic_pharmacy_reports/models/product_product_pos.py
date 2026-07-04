@@ -118,7 +118,7 @@ class ProductProduct(models.Model):
         today = fields.Date.context_today(self)
         lots = []
         for lot_id, lot_name, expiry, qty in rows:
-            days_to_expiry = (expiry - today).days if expiry else None
+            days_to_expiry = (expiry.date() - today).days if expiry else None
             lots.append({
                 'lot_id': lot_id,
                 'lot_name': lot_name or '',

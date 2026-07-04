@@ -112,9 +112,7 @@ class Loan_Type(models.Model):
 
 
 
-	_sql_constraints = [
-			('name_uniq', 'unique (code)', _('The code must be unique !')),
-		]
+	_name_uniq = models.Constraint('unique (code)', _('The code must be unique !'))
 
 
 
@@ -133,9 +131,7 @@ class Loan_Policies(models.Model):
 	days = fields.Integer(string="Days",default=90)
 	employee_category_ids = fields.Many2many('hr.employee.category','rel_hr_employee_category_policies',string="Employee Category")
 	employee_ids = fields.Many2many('hr.employee','rel_hr_employee_policies_id',string="Employees")
-	_sql_constraints = [
-			('name_uniq', 'unique (code)', _('The code must be unique !')),
-		]
+	_name_uniq = models.Constraint('unique (code)', _('The code must be unique !'))
 
 	@api.onchange('employee_category_ids')
 	def _onchange_employee_category(self):

@@ -27,11 +27,9 @@ class PharmacyStockValueDaily(models.Model):
     month = fields.Integer(string='Month', compute='_compute_year_month',
                            store=True, index=True)
 
-    _sql_constraints = [
-        ('uniq_date_company',
-         'unique(capture_date, company_id)',
-         'Only one stock value snapshot per day and company.'),
-    ]
+    _uniq_date_company = models.Constraint(
+        'unique(capture_date, company_id)',
+        'Only one stock value snapshot per day and company.')
 
     @api.depends('capture_date')
     def _compute_year_month(self):

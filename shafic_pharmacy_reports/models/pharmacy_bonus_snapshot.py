@@ -61,11 +61,9 @@ class PharmacyBonusSnapshot(models.Model):
         help='Total uncontrollable losses that were excluded from the '
              'expiry rate denominator for this period.')
 
-    _sql_constraints = [
-        ('uniq_period_company',
-         'unique(year, month, company_id)',
-         'Only one bonus snapshot per month and company.'),
-    ]
+    _uniq_period_company = models.Constraint(
+        'unique(year, month, company_id)',
+        'Only one bonus snapshot per month and company.')
 
     _MONTH_NAMES = [
         '', 'January', 'February', 'March', 'April', 'May', 'June',

@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, UserError
-from odoo.osv import expression
+from odoo.fields import Domain
 
 
 class AcsLaboratoryRequest(models.Model):
@@ -60,7 +60,7 @@ class AcsLaboratoryRequest(models.Model):
             any(user.has_group(g) for g in LAB_GROUPS)
             and not any(user.has_group(g) for g in EXCLUDED_GROUPS)
         ):
-            domain = expression.AND([
+            domain = Domain.AND([
                 domain,
                 [('state', 'not in', ['draft', 'requested'])]
             ])
@@ -143,7 +143,7 @@ class AcsRadiologyRequest(models.Model):
             any(user.has_group(g) for g in LAB_GROUPS)
             and not any(user.has_group(g) for g in EXCLUDED_GROUPS)
         ):
-            domain = expression.AND([
+            domain = Domain.AND([
                 domain,
                 [('state', 'not in', ['draft', 'requested'])]
             ])
