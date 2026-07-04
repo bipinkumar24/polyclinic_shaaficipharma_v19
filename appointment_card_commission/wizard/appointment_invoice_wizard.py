@@ -26,7 +26,8 @@ class AppointmentInvoiceWizard(models.TransientModel):
         if self.card_commission_id and invoice:
             invoice.card_commission_id = self.card_commission_id.id
         if invoice:
-            journal = self.env['account.journal'].search([('name', '=', 'Clinic Customer')], limit=1)
+            journal = self.env['account.journal'].search(
+                [('is_appointment_commission_journal', '=', True)], limit=1)
             if journal:
                 invoice.journal_id = journal.id
         return res

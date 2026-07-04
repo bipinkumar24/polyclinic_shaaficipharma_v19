@@ -13,6 +13,7 @@
         'do_insurance_card_balance_system',
     ],
     'data': [
+        'views/account_journal_views.xml',
         'views/account_move_views.xml',
         'views/pos_card_commission_views.xml',
         'views/hms_appointment_views.xml',
