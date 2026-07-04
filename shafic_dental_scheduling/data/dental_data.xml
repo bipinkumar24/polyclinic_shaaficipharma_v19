@@ -2,13 +2,14 @@
 <odoo>
     <data noupdate="1">
 
-        <!-- Dental department (gives the 'dental' department_type a home;
-             new appointments opened from the Dental Schedule default to
-             it via the acs_department_type context). -->
-        <record id="department_dental" model="hr.department">
-            <field name="name">Dental</field>
-            <field name="department_type">dental</field>
-        </record>
+        <!-- No department record is created here: the 'dental' department_type
+             already has a home on the pre-existing "Odontology" department
+             (acs_hms_dental demo data), which staff are actually assigned to.
+             A second department with department_type='dental' here made the
+             Dental Schedule's default_get() (an unordered, limit=1 search by
+             department_type - see acs_hms/models/appointment.py) resolve
+             non-deterministically, sometimes picking a department the acting
+             user wasn't assigned to and blocking appointment creation. -->
 
         <!-- Starter chairs -->
         <record id="cabin_dental_chair_1" model="appointment.cabin">

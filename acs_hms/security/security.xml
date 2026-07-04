@@ -169,6 +169,7 @@
             <field name="name">Departments Appointments</field>
             <field name="model_id" ref="model_hms_appointment"/>
             <field name="domain_force">['|', ('department_id', '=', False), ('department_id', 'in', [dep.id for dep in user.department_ids])]</field>
+            <field name="groups" eval="[(4, ref('group_hms_receptionist'))]"/>
         </record>
 
         <record id="hms_appointment_nurse_rule" model="ir.rule">

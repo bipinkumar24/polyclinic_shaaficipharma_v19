@@ -78,102 +78,11 @@ patch(PosStore.prototype, {
                 continue;
             }
 
-            let pack_lot_ids = [];
-
-            // if (line.product_id.isTracked()) {
-            //     try {
-            //         const result = await this.env.services.orm.call(
-            //             "stock.lot",
-            //             "get_available_lots_for_pos",
-            //             [],
-            //             { product_id: line.product_id.id }
-            //         );
-            //         // Normalize: handle both string[] and {name}[] from server
-            //         const lotNames = (result[0] || [])
-            //             .map((item) =>
-            //                 typeof item === "string"
-            //                     ? item
-            //                     : (item?.name || item?.lot_name || "")
-            //             )
-            //             .filter(Boolean);
-
-            //         // Odoo 18 ORM format to create related records inline:
-            //         // ["create", { field: value }]
-            //         pack_lot_ids = lotNames.map((lotName) => [
-            //             "create",
-            //             { lot_name: lotName },
-            //         ]);
-
-            //     } catch (err) {
-            //         console.error("[Prescription] lot fetch failed:", err);
-            //         pack_lot_ids = [];
-            //     }
-
-            //     // Fallback: if server returned nothing, use lots from the
-            //     // prescription order line itself
-            //     if (pack_lot_ids.length === 0 && line.pack_lot_ids?.length > 0) {
-            //         const lotNames = line.lot_names || [];
-            //         pack_lot_ids = lotNames.map((name) => [
-            //             "create",
-            //             { lot_name: name },
-            //         ]);
-            //     }
-
-            //     if (pack_lot_ids.length === 0) {
-            //         console.warn(
-            //             "[Prescription] No lots found for:",
-            //             line.product_id.display_name,
-            //             "id:", line.product_id.id
-            //         );
-            //     }
-            // }
-            if (line.product_id.isTracked()) {
-                try {
-                    const result = await this.env.services.orm.call(
-                        "stock.lot",
-                        "get_available_lots_for_pos",
-                        [],
-                        { product_id: line.product_id.id }
-                    );
-                    const requiredQty = line.product_uom_qty;
-                    const totalAvailableQty = (result || []).reduce(
-                        (sum, lot) => sum + (lot.qty || 0),
-                        0
-                    );
-                    let remainingQty = requiredQty;
-                    pack_lot_ids = [];
-
-                    for (const lot of result) {
-                        if (remainingQty <= 0) break;
-
-                        const useQty = Math.min(remainingQty, lot.qty);
-                        pack_lot_ids.push([
-                            "create",
-                            {
-                                lot_name: lot.lot_name || lot.name,
-                                qty: useQty,
-                            },
-                        ]);
-                        // for (let i = 0; i < useQty; i++) {
-                        //     pack_lot_ids.push([
-                        //         "create",
-                        //         { lot_name: lot.lot_name || lot.name },
-                        //     ]);
-                        // }
-
-                        remainingQty -= useQty;
-                    }
-
-                } catch (err) {
-                    console.error("[Prescription] lot fetch failed:", err);
-                    pack_lot_ids = [];
-                }
-            }
-
             const newLineValues = {
                 product_id: line.product_id,
                 qty: line.product_uom_qty,
                 price_unit: line.price_unit,
+                discount: line.discount,
                 price_type: "automatic",
                 custom_uom_id: line.product_uom?.name,
                 custom_uom_number_id: line.product_uom.id,
@@ -186,23 +95,30 @@ patch(PosStore.prototype, {
                 customer_note: line.customer_note,
                 description: line.name,
                 order_id: order,
-                pack_lot_ids: pack_lot_ids,
             };
 
-            console.log("[Prescription] newLineValues with lots:", newLineValues);
-            const newLine = await this.addLineToCurrentOrder(newLineValues, {}, false);
+            // Route through the SAME auto lot-assignment logic used for
+            // manually-added products (pos_auto_lot_selection's addLineToOrder
+            // override) instead of duplicating/reimplementing lot lookup here.
+            // That override only runs its lot-allocation branch when
+            // `configure` or `opts.code` is truthy (see
+            // pos_auto_lot_selection/static/src/js/product.js); passing a
+            // non-"lot"-typed code triggers the automatic multi-lot
+            // allocation path (_getLotAllocationPlan) while configure stays
+            // false, so this bulk/automated load never pops the product
+            // configurator/combo/scale dialogs that `configure: true` would.
+            // For a tracked product needing more quantity than one lot holds,
+            // that path creates multiple order lines (one per lot) and
+            // returns only the last one - so no further quantity/price
+            // post-processing must run here, or it would clobber the split.
+            const newLine = await this.addLineToCurrentOrder(
+                newLineValues,
+                { code: { type: "prescription_auto_lot" } },
+                false
+            );
             previousProductLine = newLine;
 
             this.selectOrderLine(order, newLine);
-
-            newLine.setQuantityFromPOL(line);
-            newLine.setUnitPrice(line.price_unit);
-            newLine.setDiscount(line.discount);
-            // order.recomputeOrderData();
-
-            // Always keep a single order line carrying the full quantity.
-            // (Previously, products whose UoM is not pos-groupable were split
-            // into one line per unit, e.g. qty 3 -> 3 lines of qty 1.)
         }
     },
 });

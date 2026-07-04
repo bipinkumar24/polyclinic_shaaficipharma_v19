@@ -312,7 +312,6 @@ class HmsAppointment(models.Model):
                 raise UserError(_("Please select a branch first."))
 
             if vals.get('name', 'New') == 'New':
-                print('1111111111111 branch', branch.appointment_sequence_id)
                 if not branch.appointment_sequence_id:
                     raise UserError(_(
                         "No appointment sequence configured for branch %s."
@@ -320,17 +319,22 @@ class HmsAppointment(models.Model):
 
                 vals['name'] = branch.appointment_sequence_id.next_by_id()
 
-            # 🔥 Physician-based Counter Logic
+            # Physician-based Counter Logic
             physician = self.env['hms.physician'].browse(vals.get('physician_id'))
 
             if not physician:
                 raise UserError(_("Please select a physician first."))
 
-            # increment counter
-            physician.appointment_counter += 1
+            # sudo(): this counter is an internal bookkeeping side-effect of
+            # booking an appointment, not a user-driven edit of the physician
+            # record - it must not require the acting user's own write access
+            # to hms.physician (receptionists/nurses/jr doctors only have
+            # read=1 there).
+            physician_sudo = physician.sudo()
+            physician_sudo.appointment_counter += 1
 
             # assign 3-digit value
-            vals['daily_number'] = str(physician.appointment_counter).zfill(3)
+            vals['daily_number'] = str(physician_sudo.appointment_counter).zfill(3)
 
         return super().create(vals_list)
 
