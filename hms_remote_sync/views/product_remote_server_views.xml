@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_product_remote_server_form_hms" model="ir.ui.view">
+        <field name="name">product.remote.server.form.hms</field>
+        <field name="model">product.remote.server</field>
+        <field name="inherit_id" ref="product_remote_sync.view_product_remote_server_form"/>
+        <field name="arch" type="xml">
+            <button name="action_sync_onhand" position="after">
+                <button name="action_sync_hms_lookups" type="object"
+                        string="Sync HMS Lookups" class="btn-secondary"/>
+                <button name="action_sync_hms_departments" type="object"
+                        string="Sync Departments" class="btn-secondary"/>
+                <button name="action_sync_hms_physician_test_batch" type="object"
+                        string="Sync Physician Test Batch" class="btn-secondary"/>
+                <button name="action_sync_hms_physicians" type="object"
+                        string="Sync Physicians Now" class="btn-primary"/>
+                <button name="action_sync_hms_patient_test_batch" type="object"
+                        string="Sync Patient Test Batch" class="btn-secondary"/>
+                <button name="action_sync_hms_patients" type="object"
+                        string="Sync Patients Now" class="btn-primary"/>
+                <button name="action_sync_hms_test_batch" type="object"
+                        string="Sync All HMS (Test Batch)" class="btn-secondary"/>
+                <button name="action_sync_hms_all" type="object"
+                        string="Sync All HMS Data" class="btn-primary"/>
+            </button>
+            <div name="button_box" position="inside">
+                <button name="action_view_hms_patients" type="object"
+                        class="oe_stat_button" icon="fa-user-md">
+                    <field name="hms_patient_count" widget="statinfo"
+                           string="Patients"/>
+                </button>
+                <button name="action_view_hms_physicians" type="object"
+                        class="oe_stat_button" icon="fa-stethoscope">
+                    <field name="hms_physician_count" widget="statinfo"
+                           string="Physicians"/>
+                </button>
+                <button name="action_view_hms_departments" type="object"
+                        class="oe_stat_button" icon="fa-hospital-o">
+                    <field name="hms_department_count" widget="statinfo"
+                           string="Departments"/>
+                </button>
+            </div>
+        </field>
+    </record>
+
+</odoo>

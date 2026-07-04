@@ -1121,6 +1121,10 @@ class ProductRemoteServer(models.Model):
         domain = [] if self.sync_inactive else [("active", "=", True)]
         offset = 0
         created = updated = failed = 0
+        # Categorized failure tally for this run: {reason -> [(remote_id, name)]}.
+        # Lets the end-of-run summary group failures by root cause instead of
+        # only reporting an opaque total.
+        failures_by_reason = {}
         while True:
             page_size = batch_size
             if limit:
@@ -1158,14 +1162,34 @@ class ProductRemoteServer(models.Model):
                             created += 1
                 except Exception as exc:
                     failed += 1
+                    name = (
+                        data.get("default_code")
+                        or data.get("ref")
+                        or data.get("name")
+                    )
+                    # Normalize the error to a stable category (exception type +
+                    # first message line) so failures group cleanly regardless of
+                    # the per-record id/name embedded in the message.
+                    reason = (
+                        "%s: %s"
+                        % (
+                            type(exc).__name__,
+                            (str(exc).strip().splitlines() or [""])[0],
+                        )
+                    )[:200]
+                    first_of_kind = reason not in failures_by_reason
+                    failures_by_reason.setdefault(reason, []).append(
+                        (data.get("id"), name)
+                    )
+                    # Full traceback once per distinct reason (avoids dumping
+                    # thousands of identical stacks); a concise line otherwise.
                     _logger.warning(
                         "Remote sync (%s): failed for remote id %s (%s): %s",
                         model,
                         data.get("id"),
-                        data.get("default_code")
-                        or data.get("ref")
-                        or data.get("name"),
-                        exc,
+                        name,
+                        reason,
+                        exc_info=first_of_kind,
                     )
             offset += len(records)
             # Persist this batch before fetching the next one. For a manual/UI
@@ -1193,6 +1217,31 @@ class ProductRemoteServer(models.Model):
             updated,
             failed,
         )
+        # Grouped failure summary: one line per distinct root cause, largest
+        # first, with a few sample records so the operator can act per category
+        # (e.g. complete a prerequisite sync, fix a constraint) instead of
+        # sifting the raw log for an opaque count.
+        if failures_by_reason:
+            _logger.warning(
+                "Remote sync (%s) from %s: %s failed record(s) in %s categor"
+                "y(ies):",
+                model,
+                self.name,
+                failed,
+                len(failures_by_reason),
+            )
+            for reason, items in sorted(
+                failures_by_reason.items(), key=lambda kv: len(kv[1]), reverse=True
+            ):
+                sample = ", ".join(
+                    "%s(%s)" % (rid, nm) for rid, nm in items[:5]
+                )
+                _logger.warning(
+                    "  [%s record(s)] %s | e.g. remote ids: %s",
+                    len(items),
+                    reason,
+                    sample,
+                )
         return {"created": created, "updated": updated, "failed": failed}
 
     @api.model
