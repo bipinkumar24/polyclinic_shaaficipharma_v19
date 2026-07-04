@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- Root menu -->
+    <menuitem id="menu_payment_request_root"
+              name="Payment Requests"
+              sequence="90"/>
+
+    <!-- ── My Requests ─────────────────────────── -->
+    <menuitem id="menu_payment_request_my"
+              name="My Requests"
+              parent="menu_payment_request_root"
+              sequence="10"/>
+    <menuitem id="menu_payment_request_my_all"
+              name="All My Requests"
+              parent="menu_payment_request_my"
+              action="action_payment_request_mine"
+              sequence="10"/>
+
+    <!-- ── Manager ─────────────────────────────── -->
+    <menuitem id="menu_payment_request_manager"
+              name="Manager"
+              parent="menu_payment_request_root"
+              groups="payment_request.group_payment_request_manager"
+              sequence="20"/>
+    <menuitem id="menu_payment_request_to_review"
+              name="To Review"
+              parent="menu_payment_request_manager"
+              action="action_payment_request_to_review"
+              sequence="10"
+              groups="payment_request.group_payment_request_manager"/>
+
+    <!-- ── Finance ─────────────────────────────── -->
+    <menuitem id="menu_payment_request_finance"
+              name="Finance"
+              parent="menu_payment_request_root"
+              groups="payment_request.group_payment_request_finance"
+              sequence="30"/>
+    <menuitem id="menu_payment_request_to_verify"
+              name="To Verify"
+              parent="menu_payment_request_finance"
+              action="action_payment_request_to_verify"
+              sequence="10"
+              groups="payment_request.group_payment_request_finance"/>
+
+    <!-- ── GM Approver ─────────────────────────── -->
+    <menuitem id="menu_payment_request_approver"
+              name="Approvals"
+              parent="menu_payment_request_root"
+              groups="payment_request.group_payment_request_approver"
+              sequence="40"/>
+    <menuitem id="menu_payment_request_to_approve"
+              name="To Approve"
+              parent="menu_payment_request_approver"
+              action="action_payment_request_to_approve"
+              sequence="10"
+              groups="payment_request.group_payment_request_approver"/>
+
+    <!-- ══════════════════════════════════════════
+         LOANS
+    ══════════════════════════════════════════ -->
+    <menuitem id="menu_loan_management"
+              name="Loans"
+              parent="menu_payment_request_root"
+              groups="payment_request.group_payment_request_finance"
+              sequence="50"/>
+    <menuitem id="menu_loan_report"
+              name="Loan Report"
+              parent="menu_loan_management"
+              action="action_loan_report"
+              sequence="10"
+              groups="payment_request.group_payment_request_finance"/>
+    <menuitem id="menu_loan_instalment_all"
+              name="All Instalments"
+              parent="menu_loan_management"
+              action="action_loan_instalment_all"
+              sequence="20"
+              groups="payment_request.group_payment_request_finance"/>
+    <menuitem id="menu_loan_instalment_by_employee"
+              name="Schedule by Employee"
+              parent="menu_loan_management"
+              action="action_loan_instalment_by_employee"
+              sequence="30"
+              groups="payment_request.group_payment_request_finance"/>
+    <menuitem id="menu_loan_instalment_due"
+              name="Pending Instalments"
+              parent="menu_loan_management"
+              action="action_loan_instalment_due"
+              sequence="40"
+              groups="payment_request.group_payment_request_finance"/>
+    <menuitem id="menu_loan_instalment_overdue"
+              name="Overdue Instalments"
+              parent="menu_loan_management"
+              action="action_loan_instalment_overdue"
+              sequence="50"
+              groups="payment_request.group_payment_request_finance"/>
+
+    <!-- ══════════════════════════════════════════
+         SALARY ADVANCES
+    ══════════════════════════════════════════ -->
+    <menuitem id="menu_advance_management"
+              name="Salary Advances"
+              parent="menu_payment_request_root"
+              groups="payment_request.group_payment_request_finance"
+              sequence="60"/>
+    <menuitem id="menu_advance_report_all"
+              name="All Advances"
+              parent="menu_advance_management"
+              action="action_advance_report_all"
+              sequence="10"
+              groups="payment_request.group_payment_request_finance"/>
+    <menuitem id="menu_advance_report_approved"
+              name="Approved Advances"
+              parent="menu_advance_management"
+              action="action_advance_report_approved"
+              sequence="20"
+              groups="payment_request.group_payment_request_finance"/>
+    <menuitem id="menu_advance_report_pending"
+              name="Pending Advances"
+              parent="menu_advance_management"
+              action="action_advance_report_pending"
+              sequence="30"
+              groups="payment_request.group_payment_request_finance"/>
+
+    <!-- ══════════════════════════════════════════
+         BULK REQUESTS
+    ══════════════════════════════════════════ -->
+    <menuitem id="menu_bulk_requests"
+              name="Bulk Requests"
+              parent="menu_payment_request_root"
+              groups="payment_request.group_payment_request_manager"
+              sequence="55"/>
+    <menuitem id="menu_bulk_advance"
+              name="Bulk Salary Advance"
+              parent="menu_bulk_requests"
+              action="action_bulk_advance_wizard"
+              sequence="10"
+              groups="payment_request.group_payment_request_manager"/>
+    <menuitem id="menu_bulk_overtime"
+              name="Bulk Overtime"
+              parent="menu_bulk_requests"
+              action="action_bulk_overtime_wizard"
+              sequence="20"
+              groups="payment_request.group_payment_request_manager"/>
+
+    <!-- ══════════════════════════════════════════
+         OVERTIME
+    ══════════════════════════════════════════ -->
+    <menuitem id="menu_overtime_management"
+              name="Overtime"
+              parent="menu_payment_request_root"
+              groups="payment_request.group_payment_request_finance"
+              sequence="70"/>
+    <menuitem id="menu_overtime_report_all"
+              name="All Overtime"
+              parent="menu_overtime_management"
+              action="action_overtime_report_all"
+              sequence="10"
+              groups="payment_request.group_payment_request_finance"/>
+    <menuitem id="menu_overtime_report_approved"
+              name="Approved Overtime"
+              parent="menu_overtime_management"
+              action="action_overtime_report_approved"
+              sequence="20"
+              groups="payment_request.group_payment_request_finance"/>
+    <menuitem id="menu_overtime_report_pending"
+              name="Pending Overtime"
+              parent="menu_overtime_management"
+              action="action_overtime_report_pending"
+              sequence="30"
+              groups="payment_request.group_payment_request_finance"/>
+
+    <!-- ══════════════════════════════════════════
+         ADMINISTRATION
+    ══════════════════════════════════════════ -->
+    <menuitem id="menu_payment_request_admin"
+              name="Administration"
+              parent="menu_payment_request_root"
+              groups="payment_request.group_payment_request_admin"
+              sequence="90"/>
+    <menuitem id="menu_payment_request_all"
+              name="All Requests"
+              parent="menu_payment_request_admin"
+              action="action_payment_request_all"
+              sequence="10"
+              groups="payment_request.group_payment_request_admin"/>
+    <menuitem id="menu_payment_request_approved_hist"
+              name="Approved History"
+              parent="menu_payment_request_admin"
+              action="action_payment_request_approved"
+              sequence="20"
+              groups="payment_request.group_payment_request_admin"/>
+    <menuitem id="menu_loan_instalment_admin"
+              name="All Instalments"
+              parent="menu_payment_request_admin"
+              action="action_loan_instalment_all"
+              sequence="30"
+              groups="payment_request.group_payment_request_admin"/>
+
+</data>
+</odoo>

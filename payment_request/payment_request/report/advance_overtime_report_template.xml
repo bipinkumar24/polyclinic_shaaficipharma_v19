@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════════════
+     SALARY ADVANCE SLIP TEMPLATE
+══════════════════════════════════════════════════════════ -->
+<template id="report_advance_document">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <style>
+                        .slip-header{border-bottom:3px solid #1a5276;padding-bottom:12px;margin-bottom:18px}
+                        .slip-title{font-size:22px;font-weight:bold;color:#1a5276}
+                        .slip-sub{font-size:13px;color:#555;margin-top:4px}
+                        .status-badge{display:inline-block;padding:3px 14px;border-radius:12px;font-size:12px;font-weight:bold}
+                        .badge-draft{background:#e9ecef;color:#495057}
+                        .badge-submitted{background:#cfe2ff;color:#084298}
+                        .badge-reviewed{background:#fff3cd;color:#664d03}
+                        .badge-verified{background:#e0cffc;color:#3d0a91}
+                        .badge-approved{background:#d1e7dd;color:#0a3622}
+                        .badge-rejected{background:#f8d7da;color:#58151c}
+                        .section-h{font-size:11px;font-weight:bold;text-transform:uppercase;
+                            letter-spacing:.06em;color:#1a5276;border-bottom:2px solid #1a5276;
+                            padding-bottom:4px;margin:16px 0 10px}
+                        .info-tbl{width:100%;border-collapse:collapse}
+                        .info-tbl td{padding:7px 10px;font-size:12px;vertical-align:top;
+                            border-bottom:1px solid #f0f0f0}
+                        .info-tbl td.lbl{font-weight:bold;color:#555;width:200px;background:#fafafa}
+                        .amount-panel{background:#eaf4fb;border:1px solid #aed6f1;border-radius:8px;
+                            padding:16px 24px;text-align:center;margin:16px 0}
+                        .amount-big{font-size:28px;font-weight:bold;color:#1a5276}
+                        .amount-lbl{font-size:11px;color:#777;text-transform:uppercase;margin-top:4px}
+                        .approval-row{display:flex;align-items:center;padding:8px 10px;
+                            border-bottom:1px solid #f0f0f0;font-size:12px}
+                        .step-dot{width:12px;height:12px;border-radius:50%;margin-right:10px;flex-shrink:0}
+                        .dot-done{background:#198754}
+                        .dot-pending{background:#dee2e6}
+                        .dot-rejected{background:#dc3545}
+                        .sig-area{margin-top:40px;display:flex;justify-content:space-between}
+                        .sig-box{width:190px;text-align:center}
+                        .sig-line{border-top:1px solid #333;padding-top:6px;font-size:11px;color:#444}
+                    </style>
+
+                    <!-- Header -->
+                    <div class="slip-header">
+                        <div class="slip-title">Salary Advance Slip</div>
+                        <div class="slip-sub">
+                            <t t-esc="o.name"/> &#160;|&#160;
+                            <span t-attf-class="status-badge badge-#{o.state}">
+                                <t t-esc="dict([('draft','Draft'),('submitted','Submitted'),('reviewed','Reviewed'),('verified','Verified'),('approved','Approved'),('rejected','Rejected'),('cancelled','Cancelled')]).get(o.state,o.state)"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Approved amount panel -->
+                    <div class="amount-panel">
+                        <div class="amount-lbl">Advance Amount</div>
+                        <div class="amount-big">
+                            <t t-esc="o.currency_id.symbol"/>
+                            <t t-esc="'{:,.2f}'.format(o.amount_approved or o.amount_requested)"/>
+                        </div>
+                        <div class="amount-lbl" style="margin-top:8px">
+                            For month:
+                            <strong>
+                                <t t-esc="dict([('01','January'),('02','February'),('03','March'),('04','April'),('05','May'),('06','June'),('07','July'),('08','August'),('09','September'),('10','October'),('11','November'),('12','December')]).get(o.advance_month or '','&#8212;')"/>
+                                <t t-esc="o.advance_year or ''"/>
+                            </strong>
+                        </div>
+                    </div>
+
+                    <!-- Employee info -->
+                    <div class="section-h">Employee Information</div>
+                    <table class="info-tbl">
+                        <tr>
+                            <td class="lbl">Employee Name</td>
+                            <td><t t-esc="o.employee_id.name"/></td>
+                            <td class="lbl">Department</td>
+                            <td><t t-esc="o.department_id.name or '&#8212;'"/></td>
+                        </tr>
+                        <tr>
+                            <td class="lbl">Requested By</td>
+                            <td><t t-esc="o.requested_by.name"/></td>
+                            <td class="lbl">Request Date</td>
+                            <td><t t-esc="o.date_request"/></td>
+                        </tr>
+                        <tr>
+                            <td class="lbl">Billing Partner</td>
+                            <td colspan="3"><t t-esc="o.partner_id.name or '&#8212;'"/></td>
+                        </tr>
+                    </table>
+
+                    <!-- Advance details -->
+                    <div class="section-h">Advance Details</div>
+                    <table class="info-tbl">
+                        <tr>
+                            <td class="lbl">Advance Month</td>
+                            <td>
+                                <t t-esc="dict([('01','January'),('02','February'),('03','March'),('04','April'),('05','May'),('06','June'),('07','July'),('08','August'),('09','September'),('10','October'),('11','November'),('12','December')]).get(o.advance_month or '','&#8212;')"/>
+                                <t t-esc="o.advance_year or ''"/>
+                            </td>
+                            <td class="lbl">% of Salary</td>
+                            <td><t t-esc="'{:.1f}'.format(o.advance_percentage or 0)"/>%</td>
+                        </tr>
+                        <tr>
+                            <td class="lbl">Amount Requested</td>
+                            <td><t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.2f}'.format(o.amount_requested)"/></td>
+                            <td class="lbl">Amount Approved</td>
+                            <td style="font-weight:bold;color:#0a3622">
+                                <t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.2f}'.format(o.amount_approved or 0)"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="lbl">Justification</td>
+                            <td colspan="3"><t t-esc="o.description"/></td>
+                        </tr>
+                    </table>
+
+                    <t t-if="o.bill_id">
+                    <div style="background:#d1e7dd;border:1px solid #a3cfbb;border-radius:6px;padding:10px 14px;margin-top:12px;font-size:12px">
+                        <strong>Vendor Bill Generated:</strong> <t t-esc="o.bill_id.name"/>
+                        &#160;|&#160; Payment Status: <t t-esc="o.bill_id.payment_state or '&#8212;'"/>
+                    </div>
+                    </t>
+
+                    <!-- Approval trail -->
+                    <div class="section-h">Approval Trail</div>
+                    <t t-foreach="[
+                        ('Requester', o.requested_by, o.date_request, True),
+                        ('Dept. Manager', o.reviewed_by, o.date_reviewed, bool(o.reviewed_by)),
+                        ('Finance Officer', o.verified_by, o.date_verified, bool(o.verified_by)),
+                        ('GM Approver', o.approved_by, o.date_approved, bool(o.approved_by))]" t-as="step">
+                    <div class="approval-row">
+                        <span t-attf-class="step-dot dot-#{('done' if step[3] else 'pending')}"/>
+                        <span>
+                            <strong><t t-esc="step[0]"/></strong>
+                            <t t-if="step[1]"> &#8212; <t t-esc="step[1].name"/></t>
+                            <t t-if="step[2]">
+                                &#160;<span style="color:#888;font-size:11px">(<t t-esc="step[2]"/>)</span>
+                            </t>
+                        </span>
+                    </div>
+                    </t>
+                    <t t-if="o.state == 'rejected'">
+                    <div style="background:#f8d7da;border:1px solid #f5c2c7;border-radius:6px;padding:10px;margin-top:10px;font-size:12px">
+                        <strong>Rejected by <t t-esc="o.rejected_by.name"/>:</strong>
+                        <t t-esc="o.rejection_reason or '&#8212;'"/>
+                    </div>
+                    </t>
+
+                    <!-- Signatures -->
+                    <div class="sig-area">
+                        <div class="sig-box">
+                            <div class="sig-line">Employee<br/><t t-esc="o.employee_id.name"/></div>
+                        </div>
+                        <div class="sig-box">
+                            <div class="sig-line">Finance Officer<br/><t t-esc="o.verified_by.name or '&#8212;'"/></div>
+                        </div>
+                        <div class="sig-box">
+                            <div class="sig-line">Approved By<br/><t t-esc="o.approved_by.name or '&#8212;'"/></div>
+                        </div>
+                    </div>
+
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     OVERTIME PAYMENT SLIP TEMPLATE
+══════════════════════════════════════════════════════════ -->
+<template id="report_overtime_document">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <style>
+                        .ot-header{border-bottom:3px solid #784212;padding-bottom:12px;margin-bottom:18px}
+                        .ot-title{font-size:22px;font-weight:bold;color:#784212}
+                        .ot-sub{font-size:13px;color:#555;margin-top:4px}
+                        .status-badge{display:inline-block;padding:3px 14px;border-radius:12px;font-size:12px;font-weight:bold}
+                        .badge-draft{background:#e9ecef;color:#495057}
+                        .badge-submitted{background:#cfe2ff;color:#084298}
+                        .badge-reviewed{background:#fff3cd;color:#664d03}
+                        .badge-verified{background:#e0cffc;color:#3d0a91}
+                        .badge-approved{background:#d1e7dd;color:#0a3622}
+                        .badge-rejected{background:#f8d7da;color:#58151c}
+                        .section-h{font-size:11px;font-weight:bold;text-transform:uppercase;
+                            letter-spacing:.06em;color:#784212;border-bottom:2px solid #784212;
+                            padding-bottom:4px;margin:16px 0 10px}
+                        .info-tbl{width:100%;border-collapse:collapse}
+                        .info-tbl td{padding:7px 10px;font-size:12px;vertical-align:top;
+                            border-bottom:1px solid #f0f0f0}
+                        .info-tbl td.lbl{font-weight:bold;color:#555;width:200px;background:#fafafa}
+                        .calc-panel{background:#fef9e7;border:1px solid #f9ca24;border-radius:8px;
+                            padding:16px;margin:16px 0}
+                        .calc-row{display:flex;justify-content:space-between;align-items:center;
+                            padding:6px 0;font-size:13px;border-bottom:1px solid #fde68a}
+                        .calc-row:last-child{border-bottom:none;font-weight:bold;font-size:15px;
+                            padding-top:10px;color:#784212}
+                        .calc-label{color:#555}
+                        .calc-value{font-weight:500}
+                        .approval-row{display:flex;align-items:center;padding:8px 10px;
+                            border-bottom:1px solid #f0f0f0;font-size:12px}
+                        .step-dot{width:12px;height:12px;border-radius:50%;margin-right:10px;flex-shrink:0}
+                        .dot-done{background:#198754}
+                        .dot-pending{background:#dee2e6}
+                        .dot-rejected{background:#dc3545}
+                        .sig-area{margin-top:40px;display:flex;justify-content:space-between}
+                        .sig-box{width:190px;text-align:center}
+                        .sig-line{border-top:1px solid #333;padding-top:6px;font-size:11px;color:#444}
+                    </style>
+
+                    <!-- Header -->
+                    <div class="ot-header">
+                        <div class="ot-title">Overtime Payment Slip</div>
+                        <div class="ot-sub">
+                            <t t-esc="o.name"/> &#160;|&#160;
+                            <span t-attf-class="status-badge badge-#{o.state}">
+                                <t t-esc="dict([('draft','Draft'),('submitted','Submitted'),('reviewed','Reviewed'),('verified','Verified'),('approved','Approved'),('rejected','Rejected'),('cancelled','Cancelled')]).get(o.state,o.state)"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Employee info -->
+                    <div class="section-h">Employee Information</div>
+                    <table class="info-tbl">
+                        <tr>
+                            <td class="lbl">Employee Name</td>
+                            <td><t t-esc="o.employee_id.name"/></td>
+                            <td class="lbl">Department</td>
+                            <td><t t-esc="o.department_id.name or '&#8212;'"/></td>
+                        </tr>
+                        <tr>
+                            <td class="lbl">Requested By</td>
+                            <td><t t-esc="o.requested_by.name"/></td>
+                            <td class="lbl">Request Date</td>
+                            <td><t t-esc="o.date_request"/></td>
+                        </tr>
+                        <tr>
+                            <td class="lbl">Billing Partner</td>
+                            <td colspan="3"><t t-esc="o.partner_id.name or '&#8212;'"/></td>
+                        </tr>
+                    </table>
+
+                    <!-- Overtime details -->
+                    <div class="section-h">Overtime Details</div>
+                    <table class="info-tbl">
+                        <tr>
+                            <td class="lbl">Work Date</td>
+                            <td><t t-esc="o.overtime_date or '&#8212;'"/></td>
+                            <td class="lbl">Request Date</td>
+                            <td><t t-esc="o.date_request"/></td>
+                        </tr>
+                        <tr>
+                            <td class="lbl">Justification</td>
+                            <td colspan="3"><t t-esc="o.description"/></td>
+                        </tr>
+                    </table>
+
+                    <!-- Calculation breakdown -->
+                    <div class="section-h">Payment Calculation</div>
+                    <div class="calc-panel">
+                        <div class="calc-row">
+                            <span class="calc-label">Overtime Hours</span>
+                            <span class="calc-value"><t t-esc="'{:.2f}'.format(o.overtime_hours or 0)"/> hrs</span>
+                        </div>
+                        <div class="calc-row">
+                            <span class="calc-label">Hourly Rate</span>
+                            <span class="calc-value">
+                                <t t-esc="o.currency_id.symbol"/>
+                                <t t-esc="'{:,.2f}'.format(o.overtime_rate or 0)"/>
+                            </span>
+                        </div>
+                        <div class="calc-row">
+                            <span class="calc-label">Amount Requested</span>
+                            <span class="calc-value">
+                                <t t-esc="o.currency_id.symbol"/>
+                                <t t-esc="'{:,.2f}'.format(o.amount_requested)"/>
+                            </span>
+                        </div>
+                        <div class="calc-row">
+                            <span class="calc-label">Amount Approved</span>
+                            <span class="calc-value" style="color:#0a3622">
+                                <t t-esc="o.currency_id.symbol"/>
+                                <t t-esc="'{:,.2f}'.format(o.amount_approved or 0)"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <t t-if="o.bill_id">
+                    <div style="background:#d1e7dd;border:1px solid #a3cfbb;border-radius:6px;padding:10px 14px;margin-top:12px;font-size:12px">
+                        <strong>Vendor Bill Generated:</strong> <t t-esc="o.bill_id.name"/>
+                        &#160;|&#160; Payment Status: <t t-esc="o.bill_id.payment_state or '&#8212;'"/>
+                    </div>
+                    </t>
+
+                    <!-- Approval trail -->
+                    <div class="section-h">Approval Trail</div>
+                    <t t-foreach="[
+                        ('Requester', o.requested_by, o.date_request, True),
+                        ('Dept. Manager', o.reviewed_by, o.date_reviewed, bool(o.reviewed_by)),
+                        ('Finance Officer', o.verified_by, o.date_verified, bool(o.verified_by)),
+                        ('GM Approver', o.approved_by, o.date_approved, bool(o.approved_by))]" t-as="step">
+                    <div class="approval-row">
+                        <span t-attf-class="step-dot dot-#{('done' if step[3] else 'pending')}"/>
+                        <span>
+                            <strong><t t-esc="step[0]"/></strong>
+                            <t t-if="step[1]"> &#8212; <t t-esc="step[1].name"/></t>
+                            <t t-if="step[2]">
+                                &#160;<span style="color:#888;font-size:11px">(<t t-esc="step[2]"/>)</span>
+                            </t>
+                        </span>
+                    </div>
+                    </t>
+                    <t t-if="o.state == 'rejected'">
+                    <div style="background:#f8d7da;border:1px solid #f5c2c7;border-radius:6px;padding:10px;margin-top:10px;font-size:12px">
+                        <strong>Rejected by <t t-esc="o.rejected_by.name"/>:</strong>
+                        <t t-esc="o.rejection_reason or '&#8212;'"/>
+                    </div>
+                    </t>
+
+                    <!-- Signatures -->
+                    <div class="sig-area">
+                        <div class="sig-box">
+                            <div class="sig-line">Employee<br/><t t-esc="o.employee_id.name"/></div>
+                        </div>
+                        <div class="sig-box">
+                            <div class="sig-line">Finance Officer<br/><t t-esc="o.verified_by.name or '&#8212;'"/></div>
+                        </div>
+                        <div class="sig-box">
+                            <div class="sig-line">Approved By<br/><t t-esc="o.approved_by.name or '&#8212;'"/></div>
+                        </div>
+                    </div>
+
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+
+</data>
+</odoo>

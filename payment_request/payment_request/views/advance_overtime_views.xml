@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════
+     SALARY ADVANCE — LIST VIEW
+══════════════════════════════════════════════════ -->
+<record id="view_advance_report_list" model="ir.ui.view">
+    <field name="name">payment.request.advance.report.list</field>
+    <field name="model">payment.request</field>
+    <field name="arch" type="xml">
+        <list string="Salary Advance Report">
+            <field name="name" string="Reference"/>
+            <field name="employee_id"/>
+            <field name="department_id"/>
+            <field name="date_request" string="Request Date"/>
+            <field name="advance_month" string="Month"/>
+            <field name="advance_year" string="Year"/>
+            <field name="advance_percentage" string="% Salary"/>
+            <field name="amount_requested" widget="monetary" string="Requested"/>
+            <field name="amount_approved" widget="monetary" string="Approved"/>
+            <field name="currency_id" column_invisible="1"/>
+            <field name="state" string="Status"/>
+            <field name="bill_id" string="Bill" optional="show"/>
+        </list>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════
+     SALARY ADVANCE — PIVOT VIEW
+══════════════════════════════════════════════════ -->
+<record id="view_advance_pivot" model="ir.ui.view">
+    <field name="name">payment.request.advance.pivot</field>
+    <field name="model">payment.request</field>
+    <field name="arch" type="xml">
+        <pivot string="Salary Advance Analysis">
+            <field name="department_id" type="row"/>
+            <field name="advance_month" type="col"/>
+            <field name="amount_approved" type="measure" string="Approved Amount"/>
+            <field name="amount_requested" type="measure" string="Requested Amount"/>
+        </pivot>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════
+     SALARY ADVANCE — GRAPH VIEW
+══════════════════════════════════════════════════ -->
+<record id="view_advance_graph" model="ir.ui.view">
+    <field name="name">payment.request.advance.graph</field>
+    <field name="model">payment.request</field>
+    <field name="arch" type="xml">
+        <graph string="Salary Advance Analysis" type="bar">
+            <field name="employee_id" type="row"/>
+            <field name="amount_approved" type="measure" string="Approved Amount"/>
+        </graph>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════
+     OVERTIME — LIST VIEW
+══════════════════════════════════════════════════ -->
+<record id="view_overtime_report_list" model="ir.ui.view">
+    <field name="name">payment.request.overtime.report.list</field>
+    <field name="model">payment.request</field>
+    <field name="arch" type="xml">
+        <list string="Overtime Report">
+            <field name="name" string="Reference"/>
+            <field name="employee_id"/>
+            <field name="department_id"/>
+            <field name="overtime_date" string="Work Date"/>
+            <field name="overtime_hours" string="Hours" sum="Total Hours"/>
+            <field name="overtime_rate" string="Hourly Rate"/>
+            <field name="amount_requested" widget="monetary" string="Requested"/>
+            <field name="amount_approved" widget="monetary" string="Approved" sum="Total Approved"/>
+            <field name="currency_id" column_invisible="1"/>
+            <field name="state" string="Status"/>
+            <field name="bill_id" string="Bill" optional="show"/>
+        </list>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════
+     OVERTIME — PIVOT VIEW
+══════════════════════════════════════════════════ -->
+<record id="view_overtime_pivot" model="ir.ui.view">
+    <field name="name">payment.request.overtime.pivot</field>
+    <field name="model">payment.request</field>
+    <field name="arch" type="xml">
+        <pivot string="Overtime Analysis">
+            <field name="department_id" type="row"/>
+            <field name="employee_id" type="row"/>
+            <field name="amount_approved" type="measure" string="Amount"/>
+            <field name="overtime_hours" type="measure" string="Hours"/>
+        </pivot>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════
+     OVERTIME — GRAPH VIEW
+══════════════════════════════════════════════════ -->
+<record id="view_overtime_graph" model="ir.ui.view">
+    <field name="name">payment.request.overtime.graph</field>
+    <field name="model">payment.request</field>
+    <field name="arch" type="xml">
+        <graph string="Overtime Analysis" type="bar">
+            <field name="employee_id" type="row"/>
+            <field name="overtime_hours" type="measure" string="Hours"/>
+        </graph>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════
+     ACTIONS — ADVANCE
+══════════════════════════════════════════════════ -->
+
+<record id="action_advance_report_all" model="ir.actions.act_window">
+    <field name="name">Salary Advance Report</field>
+    <field name="res_model">payment.request</field>
+    <field name="view_mode">list,graph,pivot,form</field>
+    <field name="view_ids" eval="[(5,0,0),
+        (0,0,{'view_mode':'list','view_id':ref('view_advance_report_list')}),
+        (0,0,{'view_mode':'graph','view_id':ref('view_advance_graph')}),
+        (0,0,{'view_mode':'pivot','view_id':ref('view_advance_pivot')}),
+    ]"/>
+    <field name="domain">[('request_type','=','advance')]</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">No salary advance requests found</p>
+    </field>
+</record>
+
+<record id="action_advance_report_approved" model="ir.actions.act_window">
+    <field name="name">Approved Advances</field>
+    <field name="res_model">payment.request</field>
+    <field name="view_mode">list,graph,pivot,form</field>
+    <field name="view_ids" eval="[(5,0,0),
+        (0,0,{'view_mode':'list','view_id':ref('view_advance_report_list')}),
+        (0,0,{'view_mode':'graph','view_id':ref('view_advance_graph')}),
+        (0,0,{'view_mode':'pivot','view_id':ref('view_advance_pivot')}),
+    ]"/>
+    <field name="domain">[('request_type','=','advance'),('state','=','approved')]</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">No approved advances found</p>
+    </field>
+</record>
+
+<record id="action_advance_report_pending" model="ir.actions.act_window">
+    <field name="name">Pending Advances</field>
+    <field name="res_model">payment.request</field>
+    <field name="view_mode">list,form</field>
+    <field name="view_ids" eval="[(5,0,0),
+        (0,0,{'view_mode':'list','view_id':ref('view_advance_report_list')}),
+    ]"/>
+    <field name="domain">[('request_type','=','advance'),('state','in',['submitted','reviewed','verified'])]</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">No pending advances</p>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════
+     ACTIONS — OVERTIME
+══════════════════════════════════════════════════ -->
+
+<record id="action_overtime_report_all" model="ir.actions.act_window">
+    <field name="name">Overtime Report</field>
+    <field name="res_model">payment.request</field>
+    <field name="view_mode">list,graph,pivot,form</field>
+    <field name="view_ids" eval="[(5,0,0),
+        (0,0,{'view_mode':'list','view_id':ref('view_overtime_report_list')}),
+        (0,0,{'view_mode':'graph','view_id':ref('view_overtime_graph')}),
+        (0,0,{'view_mode':'pivot','view_id':ref('view_overtime_pivot')}),
+    ]"/>
+    <field name="domain">[('request_type','=','overtime')]</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">No overtime requests found</p>
+    </field>
+</record>
+
+<record id="action_overtime_report_approved" model="ir.actions.act_window">
+    <field name="name">Approved Overtime</field>
+    <field name="res_model">payment.request</field>
+    <field name="view_mode">list,graph,pivot,form</field>
+    <field name="view_ids" eval="[(5,0,0),
+        (0,0,{'view_mode':'list','view_id':ref('view_overtime_report_list')}),
+        (0,0,{'view_mode':'graph','view_id':ref('view_overtime_graph')}),
+        (0,0,{'view_mode':'pivot','view_id':ref('view_overtime_pivot')}),
+    ]"/>
+    <field name="domain">[('request_type','=','overtime'),('state','=','approved')]</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">No approved overtime found</p>
+    </field>
+</record>
+
+<record id="action_overtime_report_pending" model="ir.actions.act_window">
+    <field name="name">Pending Overtime</field>
+    <field name="res_model">payment.request</field>
+    <field name="view_mode">list,form</field>
+    <field name="view_ids" eval="[(5,0,0),
+        (0,0,{'view_mode':'list','view_id':ref('view_overtime_report_list')}),
+    ]"/>
+    <field name="domain">[('request_type','=','overtime'),('state','in',['submitted','reviewed','verified'])]</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">No pending overtime requests</p>
+    </field>
+</record>
+
+</data>
+</odoo>

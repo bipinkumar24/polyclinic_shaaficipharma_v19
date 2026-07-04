@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════════════
+     BULK REQUEST WIZARD — FORM VIEW
+══════════════════════════════════════════════════ -->
+<record id="view_bulk_request_wizard_form" model="ir.ui.view">
+    <field name="name">bulk.request.wizard.form</field>
+    <field name="model">bulk.request.wizard</field>
+    <field name="arch" type="xml">
+        <form string="Bulk Payment Request">
+            <sheet>
+
+                <!-- Summary bar -->
+                <div class="oe_button_box" name="button_box">
+                    <button class="oe_stat_button" icon="fa-users" type="object"
+                            name="action_select_all" string="">
+                        <div class="o_stat_info">
+                            <field name="total_included" class="o_stat_value"/>
+                            <span class="o_stat_text">Selected</span>
+                        </div>
+                    </button>
+                    <button class="oe_stat_button" icon="fa-list" type="object"
+                            name="action_select_all" string="">
+                        <div class="o_stat_info">
+                            <field name="total_lines" class="o_stat_value"/>
+                            <span class="o_stat_text">Total Employees</span>
+                        </div>
+                    </button>
+                    <button class="oe_stat_button" icon="fa-money" type="object"
+                            name="action_select_all" string="">
+                        <div class="o_stat_info">
+                            <field name="total_amount" class="o_stat_value" widget="monetary"/>
+                            <span class="o_stat_text">Total Amount</span>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="oe_title">
+                    <h2>
+                        Bulk
+                        <field name="request_type" class="oe_inline"/>
+                        Request
+                    </h2>
+                </div>
+
+                <!-- Step 1: Settings -->
+                <group string="1. Request Settings">
+                    <group>
+                        <field name="request_type" widget="radio"
+                               options="{'horizontal': true}"/>
+                        <field name="date_request"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="currency_id"/>
+                        <field name="auto_submit"/>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Shared justification for all requests..."/>
+                    </group>
+                </group>
+
+                <!-- Advance-specific settings -->
+                <group string="Advance Defaults" invisible="request_type != 'advance'">
+                    <group>
+                        <field name="advance_month" required="request_type == 'advance'"/>
+                        <field name="advance_year"/>
+                    </group>
+                    <group>
+                        <field name="default_advance_percentage"
+                               placeholder="e.g. 50 for 50%"/>
+                    </group>
+                </group>
+
+                <!-- Overtime-specific settings -->
+                <group string="Overtime Defaults" invisible="request_type != 'overtime'">
+                    <group>
+                        <field name="overtime_date" required="request_type == 'overtime'"/>
+                        <field name="default_overtime_hours" placeholder="e.g. 8"/>
+                    </group>
+                    <group>
+                        <field name="default_overtime_rate" placeholder="e.g. 15.00"/>
+                    </group>
+                </group>
+
+                <!-- Step 2: Load employees -->
+                <group string="2. Load Employees">
+                    <group>
+                        <field name="filter_department_id"
+                               placeholder="Leave empty to load all employees"/>
+                    </group>
+                    <group>
+                        <div style="display:flex;gap:8px;margin-top:4px">
+                            <button name="action_load_employees" type="object"
+                                    string="Load Employees" class="btn-primary"/>
+                            <button name="action_select_all" type="object"
+                                    string="Select All" class="btn-secondary"
+                                    invisible="total_lines == 0"/>
+                            <button name="action_deselect_all" type="object"
+                                    string="Deselect All" class="btn-secondary"
+                                    invisible="total_lines == 0"/>
+                            <button name="action_clear_lines" type="object"
+                                    string="Clear" class="btn-secondary"
+                                    invisible="total_lines == 0"/>
+                        </div>
+                    </group>
+                </group>
+
+                <!-- Step 3: Employee lines — ADVANCE -->
+                <notebook invisible="total_lines == 0">
+                    <page string="Employee Lines" invisible="request_type != 'advance'">
+                        <field name="line_ids"
+                               context="{'default_wizard_id': id}">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="include" string=""/>
+                                <field name="employee_id" required="1"/>
+                                <field name="department_id" readonly="1"/>
+                                <field name="advance_percentage" string="% Salary"
+                                       optional="show"/>
+                                <field name="advance_amount" widget="monetary"
+                                       string="Amount" required="1"
+                                       sum="Total"/>
+                                <field name="description" string="Note" optional="show"/>
+                                <field name="status" readonly="1" optional="show"/>
+                                <field name="currency_id" column_invisible="1"/>
+                            </list>
+                        </field>
+                    </page>
+                    <page string="Employee Lines" invisible="request_type != 'overtime'">
+                        <field name="line_ids"
+                               context="{'default_wizard_id': id}">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="include" string=""/>
+                                <field name="employee_id" required="1"/>
+                                <field name="department_id" readonly="1"/>
+                                <field name="overtime_hours" string="Hours"
+                                       required="1"/>
+                                <field name="overtime_rate" string="Rate/hr"
+                                       required="1"/>
+                                <field name="overtime_amount" widget="monetary"
+                                       string="Amount" readonly="1"
+                                       sum="Total"/>
+                                <field name="description" string="Note" optional="show"/>
+                                <field name="status" readonly="1" optional="show"/>
+                                <field name="currency_id" column_invisible="1"/>
+                            </list>
+                        </field>
+                    </page>
+                </notebook>
+
+            </sheet>
+            <footer>
+                <button name="action_create_requests"
+                        string="Create Requests"
+                        type="object"
+                        class="btn-primary"
+                        invisible="total_included == 0"
+                        confirm="Create payment requests for all selected employees?"/>
+                <button string="Cancel"
+                        class="btn-secondary"
+                        special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
+
+<!-- ══════════════════════════════════════════════════
+     ACTIONS TO OPEN THE WIZARD
+══════════════════════════════════════════════════ -->
+
+<record id="action_bulk_advance_wizard" model="ir.actions.act_window">
+    <field name="name">Bulk Salary Advance</field>
+    <field name="res_model">bulk.request.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+    <field name="context">{'default_request_type': 'advance'}</field>
+</record>
+
+<record id="action_bulk_overtime_wizard" model="ir.actions.act_window">
+    <field name="name">Bulk Overtime</field>
+    <field name="res_model">bulk.request.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+    <field name="context">{'default_request_type': 'overtime'}</field>
+</record>
+
+</data>
+</odoo>

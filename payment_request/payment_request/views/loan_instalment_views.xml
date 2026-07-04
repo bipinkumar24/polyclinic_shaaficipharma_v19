@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+<!-- ══════════════════════════════════════════
+     INSTALMENT FORM VIEW
+══════════════════════════════════════════ -->
+<record id="view_loan_instalment_form" model="ir.ui.view">
+    <field name="name">loan.instalment.form</field>
+    <field name="model">loan.instalment</field>
+    <field name="arch" type="xml">
+        <form string="Loan Instalment">
+            <header>
+                <button name="action_mark_paid" string="Mark as Paid"
+                        type="object" class="btn-success"
+                        invisible="state in ('paid','waived')"
+                        confirm="Mark this instalment as paid?"/>
+                <button name="action_waive" string="Waive"
+                        type="object"
+                        invisible="state in ('paid','waived')"
+                        groups="payment_request.group_payment_request_finance"/>
+                <button name="action_reset_pending" string="Reset to Pending"
+                        type="object"
+                        invisible="state not in ('paid','waived')"
+                        groups="payment_request.group_payment_request_admin"/>
+                <field name="state" widget="statusbar"
+                       statusbar_visible="pending,due,paid"/>
+            </header>
+            <sheet>
+                <group>
+                    <group string="Instalment Info">
+                        <field name="loan_id" readonly="1"/>
+                        <field name="instalment_no" readonly="1"/>
+                        <field name="due_date" readonly="1"/>
+                        <field name="employee_id" readonly="1"/>
+                        <field name="department_id" readonly="1"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                    <group string="Amounts">
+                        <field name="principal_amount" widget="monetary" readonly="1"/>
+                        <field name="interest_amount" widget="monetary" readonly="1"/>
+                        <field name="amount" widget="monetary" readonly="1"/>
+                        <field name="balance_after" widget="monetary" readonly="1"/>
+                    </group>
+                </group>
+                <group string="Payment Details" invisible="state not in ('paid',)">
+                    <group>
+                        <field name="payment_date"/>
+                        <field name="amount_paid" widget="monetary"/>
+                    </group>
+                    <group>
+                        <field name="payment_reference"/>
+                        <field name="note"/>
+                    </group>
+                </group>
+                <group string="Notes" invisible="state in ('paid',)">
+                    <field name="note" nolabel="1" placeholder="Add a note..."/>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+
+<!-- ══════════════════════════════════════════
+     INSTALMENT LIST VIEW
+══════════════════════════════════════════ -->
+<record id="view_loan_instalment_list" model="ir.ui.view">
+    <field name="name">loan.instalment.list</field>
+    <field name="model">loan.instalment</field>
+    <field name="arch" type="xml">
+        <list string="Instalment Schedule"
+              editable="bottom"
+              decoration-success="state == 'paid'"
+              decoration-danger="state == 'overdue'"
+              decoration-warning="state == 'due'"
+              decoration-muted="state == 'waived'">
+            <field name="instalment_no" string="No." readonly="1" width="50"/>
+            <field name="loan_id" readonly="1"/>
+            <field name="employee_id" readonly="1"/>
+            <field name="due_date" readonly="1"/>
+            <field name="principal_amount" widget="monetary" readonly="1" sum="Total Principal"/>
+            <field name="interest_amount" widget="monetary" readonly="1" sum="Total Interest"/>
+            <field name="amount" widget="monetary" readonly="1" sum="Total Amount"/>
+            <field name="amount_paid" widget="monetary" sum="Total Paid"/>
+            <field name="balance_after" widget="monetary" readonly="1"/>
+            <field name="state" readonly="1"/>
+            <field name="payment_date" optional="show"/>
+            <field name="payment_reference" optional="show"/>
+            <field name="currency_id" column_invisible="1"/>
+            <button name="action_mark_paid" string="Pay"
+                    type="object" icon="fa-check-circle"
+                    invisible="state in ('paid','waived')"
+                    class="btn-sm btn-success"/>
+        </list>
+    </field>
+</record>
+
+
+<!-- ══════════════════════════════════════════
+     LOAN REPORT / SUMMARY LIST
+══════════════════════════════════════════ -->
+<record id="view_loan_report_list" model="ir.ui.view">
+    <field name="name">payment.request.loan.report.list</field>
+    <field name="model">payment.request</field>
+    <field name="arch" type="xml">
+        <list string="Loan Report">
+            <field name="name" string="Loan Ref."/>
+            <field name="employee_id"/>
+            <field name="department_id"/>
+            <field name="date_approved"/>
+            <field name="amount_approved" widget="monetary" string="Loan Amount"/>
+            <field name="loan_repayment_months" string="Months"/>
+            <field name="loan_interest_rate" string="Rate %"/>
+            <field name="loan_total_repayable" widget="monetary" string="Total Repayable"/>
+            <field name="amount_paid_total" widget="monetary" string="Total Paid"/>
+            <field name="amount_outstanding" widget="monetary" string="Outstanding"/>
+            <field name="instalments_paid" string="Paid"/>
+            <field name="instalment_count" string="Total"/>
+            <field name="instalments_overdue" string="Overdue"/>
+            <field name="loan_completion_pct" string="% Done" widget="progressbar"/>
+            <field name="currency_id" column_invisible="1"/>
+            <field name="state" column_invisible="1"/>
+        </list>
+    </field>
+</record>
+
+
+<!-- ══════════════════════════════════════════
+     LOAN PIVOT VIEW
+══════════════════════════════════════════ -->
+<record id="view_loan_pivot" model="ir.ui.view">
+    <field name="name">payment.request.loan.pivot</field>
+    <field name="model">payment.request</field>
+    <field name="arch" type="xml">
+        <pivot string="Loan Analysis">
+            <field name="department_id" type="row"/>
+            <field name="employee_id" type="row"/>
+            <field name="amount_approved" type="measure" string="Loan Amount"/>
+            <field name="loan_total_repayable" type="measure" string="Total Repayable"/>
+        </pivot>
+    </field>
+</record>
+
+
+<!-- ══════════════════════════════════════════
+     LOAN GRAPH VIEW
+══════════════════════════════════════════ -->
+<record id="view_loan_graph" model="ir.ui.view">
+    <field name="name">payment.request.loan.graph</field>
+    <field name="model">payment.request</field>
+    <field name="arch" type="xml">
+        <graph string="Loan Analysis" type="bar">
+            <field name="department_id" type="row"/>
+            <field name="amount_approved" type="measure" string="Loan Amount"/>
+        </graph>
+    </field>
+</record>
+
+
+<!-- ══════════════════════════════════════════
+     INSTALMENT GRAPH VIEW
+══════════════════════════════════════════ -->
+<record id="view_instalment_graph" model="ir.ui.view">
+    <field name="name">loan.instalment.graph</field>
+    <field name="model">loan.instalment</field>
+    <field name="arch" type="xml">
+        <graph string="Instalment Analysis" type="bar">
+            <field name="state" type="row"/>
+            <field name="amount" type="measure"/>
+        </graph>
+    </field>
+</record>
+
+
+<!-- ══════════════════════════════════════════
+     ACTIONS
+══════════════════════════════════════════ -->
+
+<!-- All instalments (admin) -->
+<record id="action_loan_instalment_all" model="ir.actions.act_window">
+    <field name="name">All Instalments</field>
+    <field name="res_model">loan.instalment</field>
+    <field name="view_mode">list,form,graph</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">No instalments yet</p>
+        <p>Generate instalment schedules from approved loan requests.</p>
+    </field>
+</record>
+
+<!-- Overdue instalments -->
+<record id="action_loan_instalment_overdue" model="ir.actions.act_window">
+    <field name="name">Overdue Instalments</field>
+    <field name="res_model">loan.instalment</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('state','=','overdue')]</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">No overdue instalments</p>
+    </field>
+</record>
+
+<!-- Due this month -->
+<record id="action_loan_instalment_due" model="ir.actions.act_window">
+    <field name="name">Due This Month</field>
+    <field name="res_model">loan.instalment</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('state','in',['pending','due'])]</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">No pending instalments</p>
+    </field>
+</record>
+
+<!-- Loan report (approved loans only) -->
+<record id="action_loan_report" model="ir.actions.act_window">
+    <field name="name">Loan Report</field>
+    <field name="res_model">payment.request</field>
+    <field name="view_mode">list,graph,pivot,form</field>
+    <field name="view_ids" eval="[(5,0,0),
+        (0,0,{'view_mode':'list','view_id':ref('view_loan_report_list')}),
+        (0,0,{'view_mode':'graph','view_id':ref('view_loan_graph')}),
+        (0,0,{'view_mode':'pivot','view_id':ref('view_loan_pivot')}),
+    ]"/>
+    <field name="domain">[('request_type','=','loan'),('state','=','approved')]</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">No approved loans yet</p>
+    </field>
+</record>
+
+<!-- Instalment schedule by employee -->
+<record id="action_loan_instalment_by_employee" model="ir.actions.act_window">
+    <field name="name">Schedule by Employee</field>
+    <field name="res_model">loan.instalment</field>
+    <field name="view_mode">list,graph</field>
+    <field name="context">{'group_by': 'employee_id'}</field>
+    <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">No instalment records found</p>
+    </field>
+</record>
+
+<!-- Scheduled action for auto overdue -->
+<record id="ir_cron_update_overdue_instalments" model="ir.cron">
+    <field name="name">Payment Request: Update Overdue Instalments</field>
+    <field name="model_id" ref="model_loan_instalment"/>
+    <field name="state">code</field>
+    <field name="code">model._cron_update_overdue()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">days</field>
+    <field name="active">True</field>
+</record>
+
+</data>
+</odoo>

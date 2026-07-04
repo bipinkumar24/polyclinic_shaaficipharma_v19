@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Submitted -->
+        <record id="email_template_payment_request_submitted" model="mail.template">
+            <field name="name">Payment Request: Submitted for Review</field>
+            <field name="model_id" ref="model_payment_request"/>
+            <field name="subject">Payment Request {{ object.name }} submitted for your review</field>
+            <field name="body_html"><![CDATA[
+<p>Dear Manager,</p>
+<p>A new payment request has been submitted and requires your review.</p>
+<table style="border-collapse:collapse;width:100%">
+  <tr><td style="padding:4px 8px;font-weight:bold">Reference</td><td style="padding:4px 8px">{{ object.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Type</td><td style="padding:4px 8px">{{ object._get_request_type_label() }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Requested by</td><td style="padding:4px 8px">{{ object.employee_id.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Amount</td><td style="padding:4px 8px">{{ object.amount_requested }} {{ object.currency_id.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Date</td><td style="padding:4px 8px">{{ object.date_request }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Description</td><td style="padding:4px 8px">{{ object.description }}</td></tr>
+</table>
+<p>Please log in to Odoo to review this request.</p>
+            ]]></field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <!-- Reviewed -->
+        <record id="email_template_payment_request_reviewed" model="mail.template">
+            <field name="name">Payment Request: Reviewed — Sent to Finance</field>
+            <field name="model_id" ref="model_payment_request"/>
+            <field name="subject">Payment Request {{ object.name }} reviewed — pending finance verification</field>
+            <field name="body_html"><![CDATA[
+<p>Dear Finance Team,</p>
+<p>The following payment request has been reviewed by the department manager and requires your verification.</p>
+<table style="border-collapse:collapse;width:100%">
+  <tr><td style="padding:4px 8px;font-weight:bold">Reference</td><td style="padding:4px 8px">{{ object.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Type</td><td style="padding:4px 8px">{{ object._get_request_type_label() }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Requested by</td><td style="padding:4px 8px">{{ object.employee_id.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Amount</td><td style="padding:4px 8px">{{ object.amount_requested }} {{ object.currency_id.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Reviewed by</td><td style="padding:4px 8px">{{ object.reviewed_by.name }}</td></tr>
+</table>
+<p>Please log in to Odoo to verify this request.</p>
+            ]]></field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <!-- Verified -->
+        <record id="email_template_payment_request_verified" model="mail.template">
+            <field name="name">Payment Request: Verified — Pending Final Approval</field>
+            <field name="model_id" ref="model_payment_request"/>
+            <field name="subject">Payment Request {{ object.name }} — pending your final approval</field>
+            <field name="body_html"><![CDATA[
+<p>Dear Approver,</p>
+<p>The following payment request has been verified by finance and requires your final approval.</p>
+<table style="border-collapse:collapse;width:100%">
+  <tr><td style="padding:4px 8px;font-weight:bold">Reference</td><td style="padding:4px 8px">{{ object.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Type</td><td style="padding:4px 8px">{{ object._get_request_type_label() }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Requested by</td><td style="padding:4px 8px">{{ object.employee_id.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Amount</td><td style="padding:4px 8px">{{ object.amount_approved }} {{ object.currency_id.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Verified by</td><td style="padding:4px 8px">{{ object.verified_by.name }}</td></tr>
+</table>
+<p>Please log in to Odoo to give your final approval.</p>
+            ]]></field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <!-- Approved -->
+        <record id="email_template_payment_request_approved" model="mail.template">
+            <field name="name">Payment Request: Approved</field>
+            <field name="model_id" ref="model_payment_request"/>
+            <field name="subject">Your payment request {{ object.name }} has been APPROVED</field>
+            <field name="body_html"><![CDATA[
+<p>Dear {{ object.employee_id.name }},</p>
+<p>We are pleased to inform you that your payment request has been <strong>approved</strong>.</p>
+<table style="border-collapse:collapse;width:100%">
+  <tr><td style="padding:4px 8px;font-weight:bold">Reference</td><td style="padding:4px 8px">{{ object.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Type</td><td style="padding:4px 8px">{{ object._get_request_type_label() }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Approved Amount</td><td style="padding:4px 8px">{{ object.amount_approved }} {{ object.currency_id.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Approved by</td><td style="padding:4px 8px">{{ object.approved_by.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Approved on</td><td style="padding:4px 8px">{{ object.date_approved }}</td></tr>
+</table>
+<p>The finance team will process the payment shortly. Please contact HR/Finance if you have any questions.</p>
+            ]]></field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <!-- Rejected -->
+        <record id="email_template_payment_request_rejected" model="mail.template">
+            <field name="name">Payment Request: Rejected</field>
+            <field name="model_id" ref="model_payment_request"/>
+            <field name="subject">Your payment request {{ object.name }} has been rejected</field>
+            <field name="body_html"><![CDATA[
+<p>Dear {{ object.employee_id.name }},</p>
+<p>We regret to inform you that your payment request has been <strong>rejected</strong>.</p>
+<table style="border-collapse:collapse;width:100%">
+  <tr><td style="padding:4px 8px;font-weight:bold">Reference</td><td style="padding:4px 8px">{{ object.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Type</td><td style="padding:4px 8px">{{ object._get_request_type_label() }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Amount Requested</td><td style="padding:4px 8px">{{ object.amount_requested }} {{ object.currency_id.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Rejected by</td><td style="padding:4px 8px">{{ object.rejected_by.name }}</td></tr>
+  <tr><td style="padding:4px 8px;font-weight:bold">Reason</td><td style="padding:4px 8px">{{ object.rejection_reason }}</td></tr>
+</table>
+<p>You may revise and resubmit your request. Please contact your manager or HR for more information.</p>
+            ]]></field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

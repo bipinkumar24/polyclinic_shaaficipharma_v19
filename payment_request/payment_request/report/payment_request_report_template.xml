@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+<template id="report_payment_request_document">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <style>
+                        .pr-title{font-size:22px;font-weight:bold}
+                        .pr-ref{font-size:14px;color:#555;margin-top:4px}
+                        .pr-badge{display:inline-block;padding:3px 12px;border-radius:12px;font-size:12px;font-weight:bold}
+                        .badge-draft{background:#e9ecef;color:#495057}
+                        .badge-submitted{background:#cfe2ff;color:#084298}
+                        .badge-reviewed{background:#fff3cd;color:#664d03}
+                        .badge-verified{background:#e0cffc;color:#3d0a91}
+                        .badge-approved{background:#d1e7dd;color:#0a3622}
+                        .badge-rejected{background:#f8d7da;color:#58151c}
+                        .badge-cancelled{background:#e9ecef;color:#495057}
+                        .section-title{font-size:12px;font-weight:bold;text-transform:uppercase;
+                            letter-spacing:.05em;color:#444;border-bottom:1px solid #ddd;
+                            padding-bottom:3px;margin:16px 0 8px}
+                        .info-table td{padding:5px 8px;vertical-align:top;font-size:12px}
+                        .info-table td:first-child{font-weight:bold;color:#555;width:200px}
+                        .amount-box{border:1px solid #dee2e6;border-radius:8px;padding:12px 20px;
+                            text-align:center;background:#f8f9fa}
+                        .amount-label{font-size:11px;color:#666}
+                        .amount-value{font-size:22px;font-weight:bold;color:#333}
+                        .step-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:8px}
+                        .dot-done{background:#198754}
+                        .dot-pending{background:#dee2e6}
+                        .dot-rejected{background:#dc3545}
+                        .sig-line{border-top:1px solid #333;padding-top:5px;font-size:11px;text-align:center}
+                    </style>
+
+                    <!-- Header -->
+                    <div style="border-bottom:2px solid #333;padding-bottom:10px;margin-bottom:16px">
+                        <div class="pr-title">Payment Request</div>
+                        <div class="pr-ref">
+                            <t t-esc="o.name"/>&#160;&#160;
+                            <span t-attf-class="pr-badge badge-#{o.state}">
+                                <t t-esc="dict([('draft','Draft'),('submitted','Submitted'),('reviewed','Reviewed'),('verified','Verified'),('approved','Approved'),('rejected','Rejected'),('cancelled','Cancelled')]).get(o.state,o.state)"/>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Amount summary -->
+                    <div class="row" style="margin-bottom:16px">
+                        <div class="col-6">
+                            <div class="amount-box">
+                                <div class="amount-label">Amount Requested</div>
+                                <div class="amount-value">
+                                    <t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.2f}'.format(o.amount_requested)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <t t-if="o.state in ('approved',)">
+                        <div class="col-6">
+                            <div class="amount-box" style="border-color:#198754">
+                                <div class="amount-label">Amount Approved</div>
+                                <div class="amount-value" style="color:#198754">
+                                    <t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.2f}'.format(o.amount_approved)"/>
+                                </div>
+                            </div>
+                        </div>
+                        </t>
+                    </div>
+
+                    <!-- Request info -->
+                    <div class="section-title">Request Information</div>
+                    <table class="info-table" width="100%">
+                        <tr>
+                            <td>Request Type</td>
+                            <td><t t-esc="dict([('loan','Loan'),('advance','Salary Advance'),('overtime','Overtime'),('purchase','Purchase Request'),('expense','Expense'),('other','Other')]).get(o.request_type,o.request_type)"/></td>
+                            <td>Priority</td>
+                            <td><t t-esc="dict([('0','Normal'),('1','High'),('2','Urgent')]).get(o.request_priority or '0','Normal')"/></td>
+                        </tr>
+                        <tr>
+                            <td>Employee</td>
+                            <td><t t-esc="o.employee_id.name"/></td>
+                            <td>Department</td>
+                            <td><t t-esc="o.department_id.name or '&#8212;'"/></td>
+                        </tr>
+                        <tr>
+                            <td>Request Date</td>
+                            <td><t t-esc="o.date_request"/></td>
+                            <td>Date Needed</td>
+                            <td><t t-esc="o.date_needed or '&#8212;'"/></td>
+                        </tr>
+                        <tr>
+                            <td>Billing Partner</td>
+                            <td colspan="3"><t t-esc="o.partner_id.name or '&#8212;'"/></td>
+                        </tr>
+                        <tr>
+                            <td>Description</td>
+                            <td colspan="3"><t t-esc="o.description"/></td>
+                        </tr>
+                    </table>
+
+                    <!-- LOAN SECTION -->
+                    <t t-if="o.request_type == 'loan'">
+                        <div class="section-title">Loan Application Details</div>
+                        <table class="info-table" width="100%">
+                            <tr>
+                                <td>Loan Purpose</td>
+                                <td><t t-esc="dict([('emergency_medical','Emergency Medical'),('education','Education / Training'),('housing','Housing / Rent'),('vehicle','Vehicle Purchase'),('wedding','Wedding / Family Event'),('debt_settlement','Debt Settlement'),('personal','Personal'),('other','Other')]).get(o.loan_purpose or '','&#8212;')"/></td>
+                                <td>Existing Outstanding</td>
+                                <td><t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.2f}'.format(o.loan_existing_loans)"/></td>
+                            </tr>
+                            <tr>
+                                <td>Total Debt After</td>
+                                <td><t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.2f}'.format(o.loan_total_debt)"/></td>
+                                <td>Repayment Method</td>
+                                <td><t t-esc="dict([('salary_deduction','Monthly Salary Deduction'),('lump_sum','Lump Sum'),('custom','Custom Schedule')]).get(o.loan_repayment_method or '','&#8212;')"/></td>
+                            </tr>
+                            <tr>
+                                <td>Repayment Period</td>
+                                <td><t t-esc="o.loan_repayment_months"/> months</td>
+                                <td>First Deduction Date</td>
+                                <td><t t-esc="o.loan_first_deduction_date or '&#8212;'"/></td>
+                            </tr>
+                            <tr>
+                                <td>Interest Rate</td>
+                                <td><t t-esc="'{:.2f}'.format(o.loan_interest_rate)"/>%</td>
+                                <td>Monthly Deduction</td>
+                                <td><t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.2f}'.format(o.loan_monthly_deduction)"/></td>
+                            </tr>
+                            <tr>
+                                <td>Total Repayable</td>
+                                <td><t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.2f}'.format(o.loan_total_repayable)"/></td>
+                                <td>Disbursement</td>
+                                <td><t t-esc="dict([('bank_transfer','Bank Transfer'),('cash','Cash'),('cheque','Cheque')]).get(o.loan_disbursement_method or '','&#8212;')"/></td>
+                            </tr>
+                            <t t-if="o.loan_bank_account">
+                            <tr>
+                                <td>Bank Account / IBAN</td>
+                                <td colspan="3"><t t-esc="o.loan_bank_account"/></td>
+                            </tr>
+                            </t>
+                        </table>
+
+                        <t t-if="o.loan_guarantor">
+                        <div class="section-title">Guarantor Information</div>
+                        <table class="info-table" width="100%">
+                            <tr>
+                                <td>Guarantor Name</td>
+                                <td><t t-esc="o.loan_guarantor"/></td>
+                                <td>ID Number</td>
+                                <td><t t-esc="o.loan_guarantor_id_no or '&#8212;'"/></td>
+                            </tr>
+                            <tr>
+                                <td>Phone</td>
+                                <td colspan="3"><t t-esc="o.loan_guarantor_phone or '&#8212;'"/></td>
+                            </tr>
+                        </table>
+                        </t>
+
+                        <t t-if="o.loan_collateral">
+                        <div class="section-title">Collateral / Security</div>
+                        <p style="font-size:12px"><t t-esc="o.loan_collateral"/></p>
+                        </t>
+
+                        <t t-if="o.loan_purpose_detail">
+                        <div class="section-title">Purpose Detail</div>
+                        <p style="font-size:12px"><t t-esc="o.loan_purpose_detail"/></p>
+                        </t>
+
+                        <div style="background:#f8f9fa;border:1px solid #dee2e6;border-radius:6px;padding:10px;margin-top:10px;font-size:12px">
+                            <strong>Employee Declaration:</strong>
+                            I, <t t-esc="o.employee_id.name"/>, hereby declare that the information provided above is accurate
+                            and I authorize the company to deduct the monthly instalments from my salary as agreed.
+                            Terms accepted: <strong><t t-esc="'Yes' if o.loan_terms_accepted else 'No'"/></strong>
+                        </div>
+                    </t>
+
+                    <!-- ADVANCE -->
+                    <t t-if="o.request_type == 'advance'">
+                        <div class="section-title">Salary Advance Details</div>
+                        <table class="info-table" width="100%">
+                            <tr>
+                                <td>Month</td><td><t t-esc="o.advance_month"/>/<t t-esc="o.advance_year"/></td>
+                                <td>% of Salary</td><td><t t-esc="'{:.1f}'.format(o.advance_percentage)"/>%</td>
+                            </tr>
+                        </table>
+                    </t>
+
+                    <!-- OVERTIME -->
+                    <t t-if="o.request_type == 'overtime'">
+                        <div class="section-title">Overtime Details</div>
+                        <table class="info-table" width="100%">
+                            <tr>
+                                <td>Work Date</td><td><t t-esc="o.overtime_date"/></td>
+                                <td>Hours</td><td><t t-esc="o.overtime_hours"/> hrs</td>
+                            </tr>
+                            <tr>
+                                <td>Hourly Rate</td>
+                                <td><t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.2f}'.format(o.overtime_rate)"/></td>
+                                <td></td><td></td>
+                            </tr>
+                        </table>
+                    </t>
+
+                    <!-- PURCHASE -->
+                    <t t-if="o.request_type == 'purchase'">
+                        <div class="section-title">Purchase Details</div>
+                        <table class="info-table" width="100%">
+                            <tr>
+                                <td>Vendor</td><td><t t-esc="o.vendor_name or '&#8212;'"/></td>
+                                <td>PO Reference</td><td><t t-esc="o.po_reference or '&#8212;'"/></td>
+                            </tr>
+                        </table>
+                        <t t-if="o.purchase_line_ids">
+                        <table width="100%" style="margin-top:8px;border-collapse:collapse">
+                            <thead>
+                                <tr style="background:#f8f9fa">
+                                    <th style="padding:5px 8px;border:1px solid #ddd;text-align:left;font-size:12px">Description</th>
+                                    <th style="padding:5px 8px;border:1px solid #ddd;text-align:right;font-size:12px">Qty</th>
+                                    <th style="padding:5px 8px;border:1px solid #ddd;text-align:right;font-size:12px">Unit Price</th>
+                                    <th style="padding:5px 8px;border:1px solid #ddd;text-align:right;font-size:12px">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.purchase_line_ids" t-as="line">
+                                <tr>
+                                    <td style="padding:5px 8px;border:1px solid #ddd;font-size:12px"><t t-esc="line.description"/></td>
+                                    <td style="padding:5px 8px;border:1px solid #ddd;text-align:right;font-size:12px"><t t-esc="line.quantity"/></td>
+                                    <td style="padding:5px 8px;border:1px solid #ddd;text-align:right;font-size:12px"><t t-esc="'{:,.2f}'.format(line.unit_price)"/></td>
+                                    <td style="padding:5px 8px;border:1px solid #ddd;text-align:right;font-size:12px"><t t-esc="'{:,.2f}'.format(line.subtotal)"/></td>
+                                </tr>
+                                </t>
+                                <tr style="font-weight:bold;background:#f8f9fa">
+                                    <td colspan="3" style="padding:5px 8px;border:1px solid #ddd;text-align:right;font-size:12px">Total</td>
+                                    <td style="padding:5px 8px;border:1px solid #ddd;text-align:right;font-size:12px">
+                                        <t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.2f}'.format(o.purchase_total)"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </t>
+                    </t>
+
+                    <!-- EXPENSE -->
+                    <t t-if="o.request_type == 'expense'">
+                        <div class="section-title">Expense Details</div>
+                        <table class="info-table" width="100%">
+                            <tr>
+                                <td>Category</td>
+                                <td><t t-esc="dict([('travel','Travel'),('accommodation','Accommodation'),('meals','Meals'),('communication','Communication'),('stationery','Stationery'),('training','Training'),('other','Other')]).get(o.expense_category or '','&#8212;')"/></td>
+                                <td>Period</td>
+                                <td><t t-esc="o.expense_period_from or '&#8212;'"/> &#8212; <t t-esc="o.expense_period_to or '&#8212;'"/></td>
+                            </tr>
+                        </table>
+                    </t>
+
+                    <!-- Approval trail -->
+                    <div class="section-title">Approval Trail</div>
+                    <t t-foreach="[('Requester', o.requested_by, o.date_request, True, ''),
+                                    ('Dept. Manager', o.reviewed_by, o.date_reviewed, bool(o.reviewed_by), o.manager_note or ''),
+                                    ('Finance Officer', o.verified_by, o.date_verified, bool(o.verified_by), o.finance_note or ''),
+                                    ('GM Approver', o.approved_by, o.date_approved, bool(o.approved_by), o.approver_note or '')]" t-as="step">
+                    <div style="display:flex;align-items:flex-start;margin-bottom:6px;padding:6px;border:1px solid #eee;border-radius:4px">
+                        <span t-attf-class="step-dot dot-#{('done' if step[3] else 'pending')}"/>
+                        <div style="font-size:12px">
+                            <strong><t t-esc="step[0]"/></strong>
+                            <t t-if="step[1]"> &#8212; <t t-esc="step[1].name"/></t>
+                            <t t-if="step[2]"> <span style="color:#888">(<t t-esc="step[2]"/>)</span></t>
+                            <t t-if="step[4]"><br/><span style="color:#555"><t t-esc="step[4]"/></span></t>
+                        </div>
+                    </div>
+                    </t>
+
+                    <t t-if="o.bill_id">
+                    <div style="background:#d1e7dd;border:1px solid #a3cfbb;border-radius:6px;padding:10px;margin-top:10px;font-size:12px">
+                        <strong>Bill Generated:</strong> <t t-esc="o.bill_id.name"/>
+                        &#160; | &#160; Status: <t t-esc="o.bill_id.payment_state or '&#8212;'"/>
+                    </div>
+                    </t>
+
+                    <!-- Signatures -->
+                    <t t-if="o.state == 'approved'">
+                        <div style="margin-top:40px;display:flex;justify-content:space-between">
+                            <div style="width:200px">
+                                <div class="sig-line">Requester<br/><t t-esc="o.employee_id.name"/></div>
+                            </div>
+                            <div style="width:200px">
+                                <div class="sig-line">Finance Officer<br/><t t-esc="o.verified_by.name or '&#8212;'"/></div>
+                            </div>
+                            <div style="width:200px">
+                                <div class="sig-line">Approved By<br/><t t-esc="o.approved_by.name or '&#8212;'"/></div>
+                            </div>
+                        </div>
+                    </t>
+
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+</data>
+</odoo>

@@ -1,0 +1,31 @@
+/* Payment Request Module — Backend Styles */
+
+.o_payment_request_form .o_statusbar_status button[data-value="rejected"] {
+    color: #dc3545 !important;
+}
+
+.o_payment_request_form .o_statusbar_status button[data-value="approved"] {
+    color: #198754 !important;
+}
+
+/* Type badges in list view */
+.o_field_badge.o_field_payment_type span {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+/* Priority colors in kanban */
+.o_kanban_record .badge {
+    font-size: 11px;
+}
+
+/* Approval trail page */
+.o_notebook .o_page .o_group[string="Review Stage"],
+.o_notebook .o_page .o_group[string="Finance Verification"],
+.o_notebook .o_page .o_group[string="Final Approval"] {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+}

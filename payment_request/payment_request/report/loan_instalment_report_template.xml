@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+<template id="report_loan_instalment_schedule_document">
+    <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <style>
+                        .rpt-title{font-size:20px;font-weight:bold}
+                        .rpt-sub{font-size:13px;color:#555;margin-top:3px}
+                        .section-h{font-size:11px;font-weight:bold;text-transform:uppercase;
+                            letter-spacing:.05em;color:#333;border-bottom:2px solid #333;
+                            padding-bottom:4px;margin:14px 0 8px}
+                        .info-table td{padding:5px 10px;font-size:12px;vertical-align:top}
+                        .info-table td:first-child{font-weight:bold;color:#555;width:180px}
+                        .sched-table{width:100%;border-collapse:collapse;margin-top:6px}
+                        .sched-table th{background:#2c3e50;color:#fff;padding:7px 8px;
+                            font-size:11px;text-align:center;font-weight:600}
+                        .sched-table td{padding:6px 8px;font-size:11px;text-align:right;
+                            border-bottom:1px solid #eee}
+                        .sched-table td.left{text-align:left}
+                        .sched-table td.center{text-align:center}
+                        .sched-table tr:nth-child(even){background:#f8f9fa}
+                        .sched-table tr.paid{background:#d1e7dd!important}
+                        .sched-table tr.overdue{background:#f8d7da!important}
+                        .sched-table tr.waived{background:#e9ecef!important;color:#888}
+                        .sched-table tr.due{background:#fff3cd!important}
+                        .sched-table .total-row{background:#2c3e50!important;color:#fff;font-weight:bold}
+                        .summary-box{border:1px solid #dee2e6;border-radius:6px;padding:10px 14px;
+                            margin:8px 4px;text-align:center;background:#f8f9fa;display:inline-block;min-width:120px}
+                        .summary-num{font-size:18px;font-weight:bold;color:#2c3e50}
+                        .summary-lbl{font-size:10px;color:#666;text-transform:uppercase;margin-top:2px}
+                        .badge{display:inline-block;padding:2px 8px;border-radius:10px;
+                            font-size:10px;font-weight:bold}
+                        .badge-paid{background:#d1e7dd;color:#0a3622}
+                        .badge-pending{background:#cfe2ff;color:#084298}
+                        .badge-overdue{background:#f8d7da;color:#58151c}
+                        .badge-due{background:#fff3cd;color:#664d03}
+                        .badge-waived{background:#e9ecef;color:#495057}
+                        .progress-bar-outer{background:#dee2e6;border-radius:4px;height:10px;width:100%}
+                        .progress-bar-inner{background:#198754;border-radius:4px;height:10px}
+                    </style>
+
+                    <!-- Header -->
+                    <div style="border-bottom:3px solid #2c3e50;padding-bottom:12px;margin-bottom:16px">
+                        <div class="rpt-title">Loan Instalment Schedule</div>
+                        <div class="rpt-sub">
+                            <t t-esc="o.name"/> &#160;|&#160;
+                            <t t-esc="o.employee_id.name"/>
+                            <t t-if="o.department_id"> &#160;|&#160; <t t-esc="o.department_id.name"/></t>
+                        </div>
+                    </div>
+
+                    <!-- Loan summary cards -->
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+                        <div class="summary-box">
+                            <div class="summary-num"><t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.0f}'.format(o.amount_approved or 0)"/></div>
+                            <div class="summary-lbl">Loan Amount</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="summary-num"><t t-esc="o.loan_repayment_months"/> mo</div>
+                            <div class="summary-lbl">Tenure</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="summary-num"><t t-esc="'{:.1f}'.format(o.loan_interest_rate or 0)"/>%</div>
+                            <div class="summary-lbl">Annual Rate</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="summary-num"><t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.0f}'.format(o.loan_monthly_deduction or 0)"/></div>
+                            <div class="summary-lbl">Monthly Instalment</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="summary-num"><t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.0f}'.format(o.loan_total_repayable or 0)"/></div>
+                            <div class="summary-lbl">Total Repayable</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="summary-num" style="color:#198754"><t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.0f}'.format(o.amount_paid_total or 0)"/></div>
+                            <div class="summary-lbl">Total Paid</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="summary-num" style="color:#dc3545"><t t-esc="o.currency_id.symbol"/><t t-esc="'{:,.0f}'.format(o.amount_outstanding or 0)"/></div>
+                            <div class="summary-lbl">Outstanding</div>
+                        </div>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div style="margin-bottom:14px">
+                        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+                            <span>Loan Progress</span>
+                            <span><t t-esc="o.instalments_paid"/> / <t t-esc="o.instalment_count"/> instalments paid (<t t-esc="'{:.1f}'.format(o.loan_completion_pct or 0)"/>%)</span>
+                        </div>
+                        <div class="progress-bar-outer">
+                            <div class="progress-bar-inner" t-attf-style="width:#{min(o.loan_completion_pct or 0, 100):.0f}%"/>
+                        </div>
+                    </div>
+
+                    <!-- Loan details -->
+                    <div class="section-h">Loan Details</div>
+                    <table class="info-table" width="100%">
+                        <tr>
+                            <td>Loan Reference</td><td><t t-esc="o.name"/></td>
+                            <td>Approval Date</td><td><t t-esc="o.date_approved or '&#8212;'"/></td>
+                        </tr>
+                        <tr>
+                            <td>Employee</td><td><t t-esc="o.employee_id.name"/></td>
+                            <td>Department</td><td><t t-esc="o.department_id.name or '&#8212;'"/></td>
+                        </tr>
+                        <tr>
+                            <td>Loan Purpose</td>
+                            <td><t t-esc="dict([('emergency_medical','Emergency Medical'),('education','Education'),('housing','Housing'),('vehicle','Vehicle'),('wedding','Wedding'),('debt_settlement','Debt Settlement'),('personal','Personal'),('other','Other')]).get(o.loan_purpose or '','&#8212;')"/></td>
+                            <td>First Deduction</td><td><t t-esc="o.loan_first_deduction_date or '&#8212;'"/></td>
+                        </tr>
+                        <tr>
+                            <td>Repayment Method</td>
+                            <td><t t-esc="dict([('salary_deduction','Monthly Salary Deduction'),('lump_sum','Lump Sum'),('custom','Custom')]).get(o.loan_repayment_method or '','&#8212;')"/></td>
+                            <td>Disbursement</td>
+                            <td><t t-esc="dict([('bank_transfer','Bank Transfer'),('cash','Cash'),('cheque','Cheque')]).get(o.loan_disbursement_method or '','&#8212;')"/></td>
+                        </tr>
+                        <t t-if="o.loan_bank_account">
+                        <tr>
+                            <td>Bank Account</td><td colspan="3"><t t-esc="o.loan_bank_account"/></td>
+                        </tr>
+                        </t>
+                        <t t-if="o.bill_id">
+                        <tr>
+                            <td>Vendor Bill</td><td colspan="3"><t t-esc="o.bill_id.name"/></td>
+                        </tr>
+                        </t>
+                    </table>
+
+                    <!-- Instalment schedule table -->
+                    <div class="section-h">Instalment Schedule</div>
+                    <t t-if="o.instalment_ids">
+                    <table class="sched-table">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;width:40px">No.</th>
+                                <th style="text-align:left">Due Date</th>
+                                <th>Principal</th>
+                                <th>Interest</th>
+                                <th>Instalment</th>
+                                <th>Paid</th>
+                                <th>Balance</th>
+                                <th style="text-align:center">Status</th>
+                                <th style="text-align:left">Payment Date</th>
+                                <th style="text-align:left">Ref.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="o.instalment_ids" t-as="inst">
+                            <tr t-attf-class="#{inst.state}">
+                                <td class="center"><t t-esc="inst.instalment_no"/></td>
+                                <td class="left"><t t-esc="inst.due_date"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(inst.principal_amount)"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(inst.interest_amount)"/></td>
+                                <td style="font-weight:bold"><t t-esc="'{:,.2f}'.format(inst.amount)"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(inst.amount_paid)"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(inst.balance_after)"/></td>
+                                <td class="center">
+                                    <span t-attf-class="badge badge-#{inst.state}">
+                                        <t t-esc="dict([('pending','Pending'),('due','Due'),('paid','Paid'),('overdue','Overdue'),('waived','Waived')]).get(inst.state,inst.state)"/>
+                                    </span>
+                                </td>
+                                <td class="left"><t t-esc="inst.payment_date or ''"/></td>
+                                <td class="left"><t t-esc="inst.payment_reference or ''"/></td>
+                            </tr>
+                            </t>
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="2" style="text-align:left;padding:7px 8px">TOTAL</td>
+                                <td><t t-esc="'{:,.2f}'.format(sum(o.instalment_ids.mapped('principal_amount')))"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(sum(o.instalment_ids.mapped('interest_amount')))"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(sum(o.instalment_ids.mapped('amount')))"/></td>
+                                <td><t t-esc="'{:,.2f}'.format(sum(o.instalment_ids.mapped('amount_paid')))"/></td>
+                                <td colspan="4"/>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    </t>
+                    <t t-else="">
+                    <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:12px;font-size:12px;color:#664d03">
+                        No instalment schedule generated yet. Open the loan record and click "Generate Instalment Schedule".
+                    </div>
+                    </t>
+
+                    <!-- Legend -->
+                    <div style="margin-top:14px;font-size:10px;color:#666">
+                        <strong>Legend:</strong>&#160;
+                        <span class="badge badge-paid">Paid</span>&#160;
+                        <span class="badge badge-pending">Pending</span>&#160;
+                        <span class="badge badge-due">Due</span>&#160;
+                        <span class="badge badge-overdue">Overdue</span>&#160;
+                        <span class="badge badge-waived">Waived</span>
+                    </div>
+
+                    <!-- Signature area -->
+                    <div style="margin-top:40px;display:flex;justify-content:space-between">
+                        <div style="width:200px;text-align:center">
+                            <div style="border-top:1px solid #333;padding-top:6px;font-size:11px">
+                                Employee Signature<br/><t t-esc="o.employee_id.name"/>
+                            </div>
+                        </div>
+                        <div style="width:200px;text-align:center">
+                            <div style="border-top:1px solid #333;padding-top:6px;font-size:11px">
+                                Finance Officer<br/><t t-esc="o.verified_by.name or '&#8212;'"/>
+                            </div>
+                        </div>
+                        <div style="width:200px;text-align:center">
+                            <div style="border-top:1px solid #333;padding-top:6px;font-size:11px">
+                                Approved By<br/><t t-esc="o.approved_by.name or '&#8212;'"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </t>
+        </t>
+    </t>
+</template>
+</data>
+</odoo>
