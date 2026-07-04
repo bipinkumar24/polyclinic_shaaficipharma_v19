@@ -284,7 +284,16 @@ class ProductRemoteServer(models.Model):
                     active_test=False
                 ).search([("login", "=", login)], limit=1)
                 if login_owner and login_owner.id != existing_physician.user_id.id:
-                    login = False  # belongs to a different account - fall back below
+                    raise UserError(
+                        _("Physician '%(name)s' (remote id %(rid)s): email %(email)s already "
+                          "belongs to another local user (#%(uid)s) - skipped, not duplicated.")
+                        % {
+                            "name": data.get("name"),
+                            "rid": data.get("id"),
+                            "email": login,
+                            "uid": login_owner.id,
+                        }
+                    )
             if not login:
                 login = "HMS-DR-%s" % (data.get("code") or data.get("id"))
             vals["login"] = login
