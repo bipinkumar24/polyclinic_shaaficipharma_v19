@@ -11,9 +11,22 @@ class Hr_Employee(models.Model):
 	loan_ids = fields.One2many('loan.request','employee_id')
 	policy_ids = fields.Many2many('loan.policies','rel_hr_employee_policies_id',string="Employees")
 	allow_multiple_loan = fields.Boolean(string="Allow Multiple Loans")
-	partner_id = fields.Many2one('res.partner', string="Partner")
-	disburse_journal_id = fields.Many2one('account.journal',string="Disbure Journal",domain="[('type', 'in', ('bank', 'cash','sale','purchase'))]")
-	employee_account_id = fields.Many2one('account.account',string="Employee Account")  
+	# These three fields live only on hr.employee (they are NOT mirrored on
+	# hr.employee.public). Per Odoo core's documented rule (see the class
+	# docstring in hr/models/hr_employee.py), such fields MUST carry
+	# groups="hr.group_hr_user"; otherwise, since they default to prefetch=True,
+	# they get pulled into the prefetch batch whenever ANY hr.employee field is
+	# read by a user without hr.employee access (e.g. a POS cashier/manager
+	# closing a session). hr.employee.fetch() then rejects the batch via
+	# _check_private_fields() -> AccessError ("not available for employee public
+	# profiles"), blocking POS session closing. Restricting the fields to
+	# hr.group_hr_user makes _has_field_access() exclude them from the batch for
+	# non-HR users, so the incidental read no longer fails. This grants no extra
+	# access: the hr.employee model's read ACL is already limited to
+	# hr.group_hr_user, so only those users could ever read these fields anyway.
+	partner_id = fields.Many2one('res.partner', string="Partner", groups="hr.group_hr_user")
+	disburse_journal_id = fields.Many2one('account.journal',string="Disbure Journal",domain="[('type', 'in', ('bank', 'cash','sale','purchase'))]", groups="hr.group_hr_user")
+	employee_account_id = fields.Many2one('account.account',string="Employee Account", groups="hr.group_hr_user")
 
 
 	def get_installment_loan(self,id,date_from,date_to) :
