@@ -107,25 +107,38 @@ patch(ProductScreen.prototype, {
             requestedQtyInBaseUom = requestedQty;
         }
         // 🔹 Validation
-        debugger
         if ((totalOrderedInBaseUom + requestedQtyInBaseUom) > av_quantity) {
-            if (variant.point_of_sale_uom && totalOrderedInBaseUom < requestedQtyInBaseUom) {
-                options.quantity = 0;
 
-                await super.addProductToOrder(product, options);
+            // if (requestedQtyInBaseUom > av_quantity && totalOrderedInBaseUom < requestedQtyInBaseUom) {
+            //     options.quantity = 0;
 
-                return;
+            //     await super.addProductToOrder(product, options);
+
+            //     return;
+            // }
+            const remainingQty = Math.max(0, av_quantity - totalOrderedInBaseUom);
+            if (requestedQtyInBaseUom > remainingQty) {
+                if (remainingQty <= 0) {
+                    this.dialog.add(AlertDialog, {
+                        title: _t("Insufficient Stock"),
+                        body: _t(
+                            `Cannot add ${requestedQty} ${lineUom.name} of ${product.name}. Available in this location: ${onhandQtyInLocation} ${baseUom.name}.`
+                        ),
+                    });
+                    return;
+                }
+
+                options.quantity = remainingQty;
+
+                this.dialog.add(AlertDialog, {
+                    title: _t("Limited Stock"),
+                    body: _t(
+                        `Only ${remainingQty} ${baseUom.name} is available.`
+                    ),
+                });
             }
-
-            this.dialog.add(AlertDialog, {
-                title: _t("Insufficient Stock"),
-                body: _t(
-                    `Cannot add ${requestedQty} ${lineUom.name} of ${product.name}. Available in this location: ${onhandQtyInLocation} ${baseUom.name}.`
-                ),
-            });
-            return;
+            
         }
-
         // 🔹 If validation passed, add product
         await super.addProductToOrder(product, options);
     }

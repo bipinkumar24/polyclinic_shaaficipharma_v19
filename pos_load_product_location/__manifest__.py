@@ -4,7 +4,7 @@
 
 {
     "name": "POS Load Product Location",
-    "version": "19.0.1.2",
+    "version": "19.0.1.4",
     "license": "OPL-1",
     "author": "Kanak Infosystems LLP.",
     "website": "https://www.kanakinfosystems.com",
@@ -19,7 +19,11 @@
     "data": [
         "views/res_config_settings.xml",
     ],
-    "assets": {},
+    "assets": {
+        "point_of_sale._assets_pos": [
+            "pos_load_product_location/static/src/app/services/pos_store.js",
+        ],
+    },
     "images": ["static/description/banner.jpg"],
     "installable": True,
     "price": 35,

@@ -21,7 +21,7 @@
 ###############################################################################
 {
     'name': 'POS Auto Lot Selection',
-    'version': '19.0.1.0.1',
+    'version': '19.0.1.0.2',
     'category': 'Point of Sale',
     'summary': """Automatic lot selection in POS """,
     'description': """This module helps to Auto select Lot/Serial numbers for
@@ -30,7 +30,13 @@
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
     'website': "https://www.cybrosys.com",
-    'depends': ['point_of_sale', 'mrp','mrp_product_expiry','product'],
+    'depends': [
+        'point_of_sale', 'mrp', 'mrp_product_expiry', 'product',
+        # Provides config.stock_location_ids and loads stock.quant into the POS
+        # (product.stock_quant_ids), both of which product.js relies on, plus the
+        # real-time post-order stock refresh this module needs.
+        'pos_load_product_location',
+    ],
     'assets': {
         'point_of_sale._assets_pos': [
             'pos_auto_lot_selection/static/src/js/product.js',

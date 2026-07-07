@@ -107,9 +107,20 @@ patch(PosStore.prototype, {
                     onhandQtyInLocation += quant.quantity || 0;
                 }
             }
+        } else if (product.stock_quant_ids === undefined && selectedLocId.length) {
+            // Fallback: the stock.quant cache isn't loaded into this POS session,
+            // so fetch the live on-hand quantity rather than capping against
+            // missing data. (When the cache IS loaded, an empty list correctly
+            // means zero stock and no RPC is made.)
+            onhandQtyInLocation = await this.env.services.orm.call(
+                "product.product",
+                "get_pos_location_onhand_qty",
+                [],
+                { product_id: product.id, location_ids: selectedLocId }
+            );
         }
         if (product.point_of_sale_uom && onhandQtyInLocation < values.qty) {
-            debugger
+            
             let orderqty = values.qty;
             values.qty = onhandQtyInLocation;
             this.dialog.add(AlertDialog, {
