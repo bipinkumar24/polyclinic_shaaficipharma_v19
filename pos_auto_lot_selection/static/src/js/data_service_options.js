@@ -8,10 +8,13 @@ patch(DataServiceOptions.prototype, {
             ...super.databaseTable,
             "pos.pack.operation.lot": {
                 key: "id",
+                // Optional chaining already guards a lot with no parent line/order.
                 condition: (record) =>
-                    record.pos_order_line_id?.order_id?.canBeRemovedFromIndexedDB,
+                    record?.pos_order_line_id?.order_id?.canBeRemovedFromIndexedDB,
                 getRecordsBasedOnLines: (orderlines) =>
-                    orderlines.flatMap((line) => line.pack_lot_ids),
+                    (orderlines ?? [])
+                        .flatMap((line) => line?.pack_lot_ids ?? [])
+                        .filter((lot) => lot && lot.pos_order_line_id?.product_id),
             },
         };
     },

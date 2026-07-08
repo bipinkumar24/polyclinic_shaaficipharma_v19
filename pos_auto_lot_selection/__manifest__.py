@@ -21,7 +21,7 @@
 ###############################################################################
 {
     'name': 'POS Auto Lot Selection',
-    'version': '19.0.1.0.2',
+    'version': '19.0.1.0.3',
     'category': 'Point of Sale',
     'summary': """Automatic lot selection in POS """,
     'description': """This module helps to Auto select Lot/Serial numbers for
@@ -40,6 +40,7 @@
     'assets': {
         'point_of_sale._assets_pos': [
             'pos_auto_lot_selection/static/src/js/data_service_options.js',
+            'pos_auto_lot_selection/static/src/js/pos_order_line.js',
             'pos_auto_lot_selection/static/src/js/product.js',
         ],
     },
