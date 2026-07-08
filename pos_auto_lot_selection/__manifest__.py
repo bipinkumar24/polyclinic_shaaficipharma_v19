@@ -39,6 +39,7 @@
     ],
     'assets': {
         'point_of_sale._assets_pos': [
+            'pos_auto_lot_selection/static/src/js/data_service_options.js',
             'pos_auto_lot_selection/static/src/js/product.js',
         ],
     },
