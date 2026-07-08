@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="patient_laboratory_test_view_remote_sync" model="ir.ui.view">
+        <field name="name">patient.laboratory.test.form.remote.sync</field>
+        <field name="model">patient.laboratory.test</field>
+        <field name="inherit_id" ref="acs_laboratory.patient_laboratory_test_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='test_id']" position="after">
+                <field name="x_v18_name" readonly="1"
+                       invisible="not x_v18_name"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="patient_laboratory_test_list_remote_sync" model="ir.ui.view">
+        <field name="name">patient.laboratory.test.list.remote.sync</field>
+        <field name="model">patient.laboratory.test</field>
+        <field name="inherit_id" ref="acs_laboratory.patient_laboratory_test_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="x_v18_name" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

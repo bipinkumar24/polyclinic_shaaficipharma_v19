@@ -193,7 +193,6 @@ class AcsLabTestView(models.Model):
         self._update_lab_test_groups_view()
         # actions.get_bindings() depends on action records
         self.env.registry.clear_cache()
-        # self.env['ir.actions.actions'].clear_caches()
         return res
 
     def write(self, values):
@@ -203,14 +202,14 @@ class AcsLabTestView(models.Model):
         if 'category_id' in values:
             self._update_lab_test_groups_view()
         # actions.get_bindings() depends on action records
-        self.env['ir.actions.actions'].clear_caches()
+        self.env.registry.clear_cache()
         return res
 
     def unlink(self):
         res = super(AcsLabTestView, self).unlink()
         self._update_lab_test_groups_view()
         # actions.get_bindings() depends on action records
-        self.env['ir.actions.actions'].clear_caches()
+        self.env.registry.clear_cache()
         return res
 
     @api.model

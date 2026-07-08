@@ -217,8 +217,8 @@ class ProductRemoteServer(models.Model):
                 % {"label": context_label, "pid": partner_id}
             )
 
-    def _prepare_vals(self, model, data, plan, cache, m2m_names):
-        vals = super()._prepare_vals(model, data, plan, cache, m2m_names)
+    def _prepare_vals(self, model, data, plan, cache, m2m_names, o2m_commands=None):
+        vals = super()._prepare_vals(model, data, plan, cache, m2m_names, o2m_commands)
         if model == "hms.patient":
             # `name` must never be written here - see the EXTRA_READ_FIELDS
             # comment above. partner_id is always an already-synced, already
